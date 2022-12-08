@@ -1,3 +1,0 @@
-[submodule "dep/pymycobot"]
-	path = dep/pymycobot
-	url = git@github.com:elephantrobotics/pymycobot.git
