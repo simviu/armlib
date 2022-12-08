@@ -1,6 +1,9 @@
 import socket
 import sys
 
+from pymycobot.mycobot import MyCobot
+from pymycobot.genre import Angle, Coord
+
 HOST = ''  
 PORT = 8192
 
