@@ -12,7 +12,7 @@ Sp<Arm> Arm::create(const string& sModel)
     size_t nf = sModel.find("robot://");
     if(nf!=string::npos)
     {
-        string sUri = sModel.substr(nf);
+        string sUri = sModel.substr(nf+8);
         return mkSp<ArmTcp>(sUri);
     }
 
