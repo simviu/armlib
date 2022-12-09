@@ -1,11 +1,32 @@
+# Tcp server for mycobot.
+# Dependencies: pip install pymycobot
+
 import socket
 import sys
+import numpy as np
 
 from pymycobot.mycobot import MyCobot
 from pymycobot.genre import Angle, Coord
 
 HOST = ''  
 PORT = 8192
+#----------
+# Arm tip st
+class TipSt:
+    def __init__(self):
+        t = np.array([0,0,0])
+        e = np.array([0,0,0])
+        grip = 0
+
+#----------
+def parse_cmdln(s):
+    ss = s.split(' ')
+    cmd = ss.pop(0)
+    kvs={}
+    for s in ss:
+        k,v = s.split('=')
+        kvs[k] = v
+    return cmd,kvs
 
 #----------
 # ArmServer
@@ -55,7 +76,16 @@ class ArmServer():
     def run_cmd(self, scmd):
         ok = True
         print("run cmd:"+scmd)
+        cmd,kvs = parse_cmdln(scmd)
+        if cmd == "moveto":
+            self.moveto(kvs)
+
         return ok, "{st:ok}"
+    
+    def moveto(self):
+        t = np.fromstring(kvs[xyz], ',')
+        e = np.
+        s = "moveto: ("+
 
 #----------
 # main
