@@ -20,6 +20,9 @@ class TipSt:
         self.t = np.array([0,0,0])
         self.e = np.array([0,0,0])
         self.grip = 0
+
+        self.mc_ = setup()
+
     
     def parse(self,kvs):
         self.t = np.fromstring(kvs["xyz"], sep=',')
@@ -32,6 +35,10 @@ class TipSt:
         s = s + str(self.gr)
         return s
 
+    def pose_vec(self):
+        t = self.t
+        e = self.e
+        v = [t[0],t[1],t[2],e[0].e[1].e[2]]
         
 
 #----------
@@ -67,6 +74,16 @@ class ArmServer():
 
         print('Socket server now listening on port '+str(port)+'...')
         self.sock_ = s
+
+    #----
+    def set_grip(self, grip):
+        #--- grip range from 0-1.0, 1.0 is full open
+        # PWM range center at 1500
+        e = 1500 + (grip-0.5) * 1000
+        if grip:
+            self.mc_.set_encoder(7, 1300)
+        else:
+            self.mc_.set_encoder(7, 2048)
 
     #--------------
     def run(self):
@@ -107,6 +124,9 @@ class ArmServer():
         if spd > K_spd_max_mc:
         	spd = K_spd_max_mc
         s = "moveto: "+ ts.str() + ", spd="+str(spd)
+        pv = ts.pose_vec()
+        self.mc_.send_coords(pv, spd, 0)
+        self.set_grip(ts.gr)
         print(s)
 
 #----------
