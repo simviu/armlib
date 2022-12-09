@@ -10,13 +10,29 @@ from pymycobot.genre import Angle, Coord
 
 HOST = ''  
 PORT = 8192
+K_spd_scl = 10
+K_spd_max_mc = 100 # mycobot spd max 100
+
 #----------
 # Arm tip st
 class TipSt:
     def __init__(self):
-        t = np.array([0,0,0])
-        e = np.array([0,0,0])
-        grip = 0
+        self.t = np.array([0,0,0])
+        self.e = np.array([0,0,0])
+        self.grip = 0
+    
+    def parse(self,kvs):
+        self.t = np.fromstring(kvs["xyz"], sep=',')
+        self.e = np.fromstring(kvs["rvec"], sep=',')
+        self.gr = float(kvs['grip'])
+
+    def str(self):
+        s = "t="+ str(self.t) +", e="
+        s = s + str(self.e) + ", grip="
+        s = s + str(self.gr)
+        return s
+
+        
 
 #----------
 def parse_cmdln(s):
@@ -24,6 +40,7 @@ def parse_cmdln(s):
     cmd = ss.pop(0)
     kvs={}
     for s in ss:
+        print('  s:"'+s+'"')
         k,v = s.split('=')
         kvs[k] = v
     return cmd,kvs
@@ -82,10 +99,28 @@ class ArmServer():
 
         return ok, "{st:ok}"
     
-    def moveto(self):
-        t = np.fromstring(kvs[xyz], ',')
-        e = np.
-        s = "moveto: ("+
+    #------
+    def moveto(self, kvs):
+        ts = TipSt()
+        ts.parse(kvs)
+        spd = float(kvs["spd"]) * K_spd_scl
+        if spd > K_spd_max_mc:
+        	spd = K_spd_max_mc
+        s = "moveto: "+ ts.str() + ", spd="+str(spd)
+        print(s)
+
+#----------
+# 
+# ---------
+def test():
+    scmd = "moveto xyz=1.2,3.4,5.6 rvec=10.2,20.4,30.5 grip=0.00"
+    print('scmd="'+scmd+'"')
+    cmd,kvs = parse_cmdln(scmd)
+    print("cmd:["+cmd+"]")
+    ts = TipSt()
+    ts.parse(kvs)
+    print("ts={"+ts.str()+"}")
+
 
 #----------
 # main
@@ -93,6 +128,8 @@ class ArmServer():
 
 
 if __name__ == "__main__":
+   # test()
+
     svr = ArmServer(PORT)
     svr.run()
 

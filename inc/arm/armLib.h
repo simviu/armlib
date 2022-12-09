@@ -53,11 +53,11 @@ namespace arm{
     class Arm{
     public:
         struct Cfg{
-            double maxSpeed = 1;
+            float maxSpeed = 1;
         }; Cfg cfg_;
         //----
         virtual bool init()=0;
-        virtual bool moveTo(const TipSt& ts) =0;
+        virtual bool moveTo(const TipSt& ts, float spd=1.0) =0;
         virtual ArmSt getSt()const =0;
 
         //---- factory 

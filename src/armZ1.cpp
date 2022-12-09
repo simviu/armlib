@@ -64,7 +64,7 @@ bool ArmZ1::done()const
 */
 
 //-----
-bool ArmZ1::moveTo(const TipSt& ts)
+bool ArmZ1::moveTo(const TipSt& ts, float spd)
 {
     auto& uarm = *p_uarm_;
     auto& cmd = uarm._trajCmd;
@@ -72,7 +72,9 @@ bool ArmZ1::moveTo(const TipSt& ts)
 
     auto p = conv(ts.T);
     Vec6 v = PosturetoVec6(p);
-    uarm.MoveJ(v,  ts.gripper, cfg_.maxSpeed);
+
+    float spd1 = std::max(spd, cfg_.maxSpeed);
+    uarm.MoveJ(v,  ts.gripper, spd1);
     return true;
 
 }

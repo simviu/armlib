@@ -11,7 +11,7 @@ namespace arm{
         ArmTcp(const string& sUri); // 'host:port'
 
         virtual bool init()override;
-        virtual bool moveTo(const TipSt& ts) override;
+        virtual bool moveTo(const TipSt& ts, float spd) override;
         virtual ArmSt getSt()const override; 
         virtual bool test()override;
      //   virtual bool done()const override;

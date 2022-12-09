@@ -43,12 +43,14 @@ void ArmTcp::onRecv(const char* buf, int len)
 }
 
 //-----
-bool ArmTcp::moveTo(const TipSt& ts) 
+bool ArmTcp::moveTo(const TipSt& ts, float spd) 
 {
     string s = "moveto ";
-    s += "xyz=" + str(ts.T.t) + " ";
-    s += "rvec=" + ts.T.e.str()+ " ";
-    s += "grip=" + str(ts.gripper);
+
+    s += "xyz=" + remove(str(ts.T.t), ' ') + " ";
+    s += "rvec=" + remove(ts.T.e.str(), ' ') + " ";
+    s += "grip=" + str(ts.gripper) +" ";
+    s += "spd=" + str(std::max(spd, cfg_.maxSpeed));
 
     bool ok = client_.send(s);
     return ok;
