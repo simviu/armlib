@@ -7,6 +7,8 @@ import numpy as np
 
 from pymycobot.mycobot import MyCobot
 from pymycobot.genre import Angle, Coord
+from port_setup import setup
+
 
 HOST = ''  
 PORT = 8192
@@ -21,7 +23,6 @@ class TipSt:
         self.e = np.array([0,0,0])
         self.grip = 0
 
-        self.mc_ = setup()
 
     
     def parse(self,kvs):
@@ -38,8 +39,9 @@ class TipSt:
     def pose_vec(self):
         t = self.t
         e = self.e
-        v = [t[0],t[1],t[2],e[0].e[1].e[2]]
-        
+        v = [t[0],t[1],t[2],e[0],e[1],e[2]]
+        return v
+
 
 #----------
 def parse_cmdln(s):
@@ -57,7 +59,10 @@ def parse_cmdln(s):
 #----------
 class ArmServer():
     def __init__(self, port):
-            
+        #---- setup mycobot
+        self.mc_ = setup()
+        
+        #---- socket server
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('# Socket created')
         # Create socket on port
@@ -125,7 +130,7 @@ class ArmServer():
         	spd = K_spd_max_mc
         s = "moveto: "+ ts.str() + ", spd="+str(spd)
         pv = ts.pose_vec()
-        self.mc_.send_coords(pv, spd, 0)
+        self.mc_.send_coords(pv, int(spd), 0)
         self.set_grip(ts.gr)
         print(s)
 
