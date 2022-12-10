@@ -57,6 +57,8 @@ namespace arm{
         }; Cfg cfg_;
         //----
         virtual bool init()=0;
+        virtual bool release()=0;
+        virtual bool reset()=0;
         virtual bool moveTo(const TipSt& ts, float spd=1.0) =0;
         virtual ArmSt getSt()const =0;
 
