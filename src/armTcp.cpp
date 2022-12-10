@@ -41,6 +41,18 @@ void ArmTcp::onRecv(const char* buf, int len)
     log_d("socket recv:"+s);
 
 }
+//----
+bool ArmTcp::release()
+{
+    return client_.send("release");
+}
+
+//---
+bool ArmTcp::reset()
+{
+    return client_.send("reset");
+
+}
 
 //-----
 bool ArmTcp::moveTo(const TipSt& ts, float spd) 
