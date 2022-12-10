@@ -3,3 +3,4 @@ rundir/
 rosws/
 tmp/
 
+*.pyc

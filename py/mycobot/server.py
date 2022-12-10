@@ -4,6 +4,7 @@
 import socket
 import sys
 import numpy as np
+import time
 
 from pymycobot.mycobot import MyCobot
 from pymycobot.genre import Angle, Coord
@@ -14,6 +15,14 @@ HOST = ''
 PORT = 8192
 K_spd_scl = 10
 K_spd_max_mc = 100 # mycobot spd max 100
+
+K_pose_readyPick = [160, -100, 100, -80, 22, -160]
+#K_pose_rst = [153.19, 137.81, -153.54, 156.79, 87.27, 13.62]
+
+K_pose_t1 = [120, -100, 80, -70, 42, -175]
+K_pose_t2 = [140, -80, 100, -60, 20, -170]
+K_pose_t3 = [140, -100, 100, -80, 22, -160]
+
 
 #----------
 # Arm tip st
@@ -135,9 +144,9 @@ class ArmServer():
         print(s)
 
 #----------
-# 
+# tests
 # ---------
-def test():
+def test1():
     scmd = "moveto xyz=1.2,3.4,5.6 rvec=10.2,20.4,30.5 grip=0.00"
     print('scmd="'+scmd+'"')
     cmd,kvs = parse_cmdln(scmd)
@@ -146,6 +155,26 @@ def test():
     ts.parse(kvs)
     print("ts={"+ts.str()+"}")
 
+#----
+def test2():
+    mc = setup()
+    spd = 20
+     
+#    print("pose readyPick");
+#    mc.send_coords(K_pose_readyPick, spd, 0)
+#    time.sleep(5)
+
+    print("pose t1")
+    mc.send_coords(K_pose_t1, spd, 0)
+    time.sleep(5)
+
+    print("pose t2")
+    mc.send_coords(K_pose_t2, spd, 0)
+    time.sleep(5)
+
+    print("pose t3")
+    mc.send_coords(K_pose_t3, spd, 0)
+    time.sleep(5)
 
 #----------
 # main
@@ -153,7 +182,7 @@ def test():
 
 
 if __name__ == "__main__":
-   # test()
+   # test2()
 
     svr = ArmServer(PORT)
     svr.run()
