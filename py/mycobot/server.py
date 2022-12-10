@@ -13,7 +13,7 @@ from port_setup import setup
 
 HOST = ''  
 PORT = 8192
-K_spd_scl = 10
+K_spd_scl = 100
 K_spd_max_mc = 100 # mycobot spd max 100
 
 K_pose_readyPick = [160, -100, 100, -80, 22, -160]
@@ -111,6 +111,8 @@ class ArmServer():
         while True:     
             data = conn.recv(1024)
             scmd = data.decode('UTF-8')    # convert to string (Python 3 only)
+            if scmd == '':
+                continue
 
             print( "recv:"+scmd )     
             #--- run command
@@ -127,6 +129,9 @@ class ArmServer():
         cmd,kvs = parse_cmdln(scmd)
         if cmd == "moveto":
             self.moveto(kvs)
+        elif cmd == "release":
+            self.mc_.release_all_servos()
+
 
         return ok, "{st:ok}"
     
