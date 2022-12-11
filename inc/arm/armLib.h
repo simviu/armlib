@@ -56,15 +56,15 @@ namespace arm{
             float maxSpeed = 1;
         }; Cfg cfg_;
         //----
-        virtual bool init()=0;
-        virtual bool release()=0;
-        virtual bool reset()=0;
-        virtual bool moveTo(const TipSt& ts, float spd=1.0) =0;
-        virtual ArmSt getSt()const =0;
+        virtual bool init(){ return true; };
+        virtual bool release(){ return true; };
+        virtual bool reset(){  return true; };
+        virtual bool moveTo(const TipSt& ts, float spd=1.0){  return true; };
+        virtual ArmSt getSt()const { ArmSt st; return st; };
 
         //---- factory 
         static Sp<Arm> create(const string& sModel);
-        virtual bool test()=0;
+        virtual bool test(){ return false; };
      //   virtual bool done()const=0;
     };
     //--------

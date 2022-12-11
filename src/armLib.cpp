@@ -15,6 +15,8 @@ Sp<Arm> Arm::create(const string& sModel)
         string sUri = sModel.substr(nf+8);
         return mkSp<ArmTcp>(sUri);
     }
+    else if(sModel=="dummy")
+        return mkSp<Arm>();
 
 #ifdef WITH_ARM_Z1
     else if(sModel=="z1")
