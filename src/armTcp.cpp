@@ -1,6 +1,29 @@
 #include "arm/armTcp.h"
+#include "json/json.h"
 
 using namespace arm;
+
+namespace{
+    // TODO : fix hack for ArmTcp::getSt() const
+    std::mutex mtx_; 
+    //----
+    bool decSt(const Json::Value& jd, 
+                ArmSt& st)
+    {
+    
+        auto& jtip = jd["tip"];
+        auto& tip = st.tip;
+        bool ok = true;
+        //--- options
+        auto& jT = jtip["T"];
+        auto& T = tip.T;
+        ok &= s2v(jT["t"].asString(), T.t);
+        ok &= T.e.parse(jT["e"].asString());
+        return ok;
+    }
+}
+
+//----
 
 ArmTcp::ArmTcp(const string& sHost, int port)
 {
@@ -39,7 +62,23 @@ void ArmTcp::onRecv(const char* buf, int len)
 {
     string s(buf, len);
     log_d("socket recv:"+s);
-
+    bool ok = true;
+    mtx_.unlock();
+    //---- decode json
+    try{
+        Json::Reader rdr;
+        Json::Value jd;
+        ok &= decSt(jd["st"], data_.cur_st);
+    }
+    catch(exception& e)
+    {
+        log_e("exception caught:"+string(e.what()));
+        ok = false;
+    }
+    mtx_.unlock();
+    //---
+    if(!ok)
+        log_e("Recv json err");
 }
 //----
 bool ArmTcp::release()
@@ -57,6 +96,7 @@ bool ArmTcp::reset()
 //-----
 bool ArmTcp::moveTo(const TipSt& ts, float spd) 
 {
+    mtx_.lock();
     string s = "moveto ";
 
     s += "xyz=" + remove(str(ts.T.t), ' ') + " ";
@@ -65,15 +105,17 @@ bool ArmTcp::moveTo(const TipSt& ts, float spd)
     s += "spd=" + str(std::max(spd, cfg_.maxSpeed));
 
     bool ok = client_.send(s);
+    mtx_.unlock();
     return ok;
 
 }
 
-ArmSt ArmTcp::getSt()const 
+ArmSt ArmTcp::getSt() const
 {
-    ArmSt st;
+    mtx_.lock();
+    ArmSt st = data_.cur_st;
+    mtx_.unlock();
     return st;
-
 }
 
 bool ArmTcp::test()

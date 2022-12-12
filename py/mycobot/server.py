@@ -126,15 +126,35 @@ class ArmServer():
     def run_cmd(self, scmd):
         ok = True
         print("run cmd:"+scmd)
+        jres = "{ack:ok}"
         cmd,kvs = parse_cmdln(scmd)
         if cmd == "moveto":
             self.moveto(kvs)
         elif cmd == "release":
             self.mc_.release_all_servos()
+        elif cmd == "st":
+            jres = self.enc_st()
+
+        return ok, jres
+    #------
+    def enc_st(self):
+        v = self.mc_.get_coords()
+        jt = str(v(0))+","+str(v(1))+","+str(v(2))
+        je = str(v(3))+","+str(v(4))+","+str(v(5))
+        jT = {}
+        jT["t"] = jt
+        jT["e"] = je
+
+        jtip = {}
+        jtip["T"] = jT
+        jst = {}
+        jst["tip"] = jtip
+
+        jres = {}
+        jres["st"] = jst
+        return jres
 
 
-        return ok, "{st:ok}"
-    
     #------
     def moveto(self, kvs):
         ts = TipSt()

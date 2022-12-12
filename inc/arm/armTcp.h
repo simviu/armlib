@@ -20,7 +20,13 @@ namespace arm{
     protected:
         socket::Client client_;
         void onRecv(const char* buf, int len);
-        
+        struct Data{
+            ArmSt cur_st;
+        }; Data data_;
+        //std::mutex mtx_; TODO:
+
+        //---
+
        
     };
 }
