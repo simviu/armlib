@@ -105,20 +105,7 @@ bool ArmCmd::run_server(CStrs& args)
         log_e(" failed to get para 'port'");
         return false;
     }
-    //-----
-    svr.setRcv([&](const char* buf , int len){
-        string scmd(buf, len);
-        log_i("Run cmd:'"+scmd+"'");
-
-        //---- run cmd
-        bool ok = this->run(scmd);
-        string sj = string("{") +
-            (ok?"'st':'ok'" :"'st':'fail'") +
-            "'res':" + data_.s_jres +
-            "}";
-        svr.send(sj);
-
-    });
+    
     //-----
     bool ok = svr.start(port);
     if(!ok)
@@ -129,7 +116,22 @@ bool ArmCmd::run_server(CStrs& args)
     //---- server started
 
     while(svr.isRunning())
+    {
+        string scmd;
+        if(!svr.readLn(scmd)) 
+            break;
+
+
+        //---- run cmd
+        bool ok = this->run(scmd);
+        string sj = string("{") +
+            (ok?"'st':'ok'" :"'st':'fail'") +
+            "'res':" + data_.s_jres +
+            "}";
+        svr.send(sj);
+
         sys::sleepMS(200);
+    }
     log_i("Server shutdown");
     //---- 
     return true;

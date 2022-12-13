@@ -2,16 +2,21 @@
 
 using namespace test; 
 namespace{
-    void wait_done(const Arm& arm)
+    bool wait_done(Arm& arm)
     {
         
      // while(!arm.done())
         for(int i=0;i<20;i++)
         {
             sys::sleepMS(100);
-            auto st = arm.getSt();
+            ArmSt st;
+            if(!arm.getSt(st)){
+                log_e("fail to get arm st");
+                return false;
+            } break;
             log_i("Tip : " + st.tip.str());
         }
+        return true;
     }
 }
 //----

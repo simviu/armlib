@@ -4,8 +4,7 @@
 using namespace arm;
 
 namespace{
-    // TODO : fix hack for ArmTcp::getSt() const
-    std::mutex mtx_; 
+     
     //----
     bool decSt(const Json::Value& jd, 
                 ArmSt& st)
@@ -50,24 +49,38 @@ ArmTcp::ArmTcp(const string& sUri)
 bool ArmTcp::init()
 {
     auto& cntx = client_.cntx_;
-    client_.setRcv([&](const char* buf, int len){
-        onRecv(buf, len);
-    });
+
     bool ok = client_.connect(cntx.sHost, cntx.port); 
+    //---
+    st_thd_ = std::thread([&](){
+        while(1)
+        {
+            read_st();
+            sys::sleep(1.0/cfg_.fps_st);
+        }
+    });
+    st_thd_.detach();
+
     return ok;
 }
 
 //----
-void ArmTcp::onRecv(const char* buf, int len)
-{
-    string s(buf, len);
-    log_d("socket recv:"+s);
+void ArmTcp::read_st()    
+{   
+    mtx_.lock();
+ 
+    client_.send("st");
+    string sln;
+    if(!client_.readLn(sln))
+        return;
+    //----
     bool ok = true;
-    mtx_.unlock();
     //---- decode json
     try{
         Json::Reader rdr;
         Json::Value jd;
+        rdr.parse(sln, jd);
+
         ok &= decSt(jd["st"], data_.cur_st);
     }
     catch(exception& e)
@@ -102,7 +115,9 @@ bool ArmTcp::moveTo(const TipSt& ts, float spd)
     s += "xyz=" + remove(str(ts.T.t), ' ') + " ";
     s += "rvec=" + remove(ts.T.e.str(), ' ') + " ";
     s += "grip=" + str(ts.gripper) +" ";
-    s += "spd=" + str(std::max(spd, cfg_.maxSpeed));
+
+    float spdm = Arm::cfg_.maxSpeed;
+    s += "spd=" + str(std::max(spd, spdm));
 
     bool ok = client_.send(s);
     mtx_.unlock();
@@ -110,12 +125,12 @@ bool ArmTcp::moveTo(const TipSt& ts, float spd)
 
 }
 
-ArmSt ArmTcp::getSt() const
+bool ArmTcp::getSt(ArmSt& st)
 {
     mtx_.lock();
-    ArmSt st = data_.cur_st;
+    st = data_.cur_st;
     mtx_.unlock();
-    return st;
+    return true;
 }
 
 bool ArmTcp::test()

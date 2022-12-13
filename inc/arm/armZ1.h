@@ -21,7 +21,7 @@ namespace unitree{
 
         virtual bool init()override;
         virtual bool moveTo(const TipSt& ts, float spd) override;
-        virtual ArmSt getSt()const override; 
+        virtual bool getSt(ArmSt& st) override; 
         virtual bool test()override;
      //   virtual bool done()const override;
     protected:

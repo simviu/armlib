@@ -79,13 +79,13 @@ bool ArmZ1::moveTo(const TipSt& ts, float spd)
 
 }
 //-----
-ArmSt ArmZ1::getSt()const
+bool ArmZ1::getSt(ArmSt& st)const
 {
-    ArmSt st;
+    // TODO: validation
     auto& rs = pCtrlComp_->recvState;
     st.tip.T = conv(rs.cartesianState);
     st.tip.gripper = rs.jointState[6].Pos;
-    return st;
+    return true;
 }
 
 

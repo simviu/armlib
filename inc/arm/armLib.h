@@ -60,7 +60,7 @@ namespace arm{
         virtual bool release(){ return true; };
         virtual bool reset(){  return true; };
         virtual bool moveTo(const TipSt& ts, float spd=1.0){  return true; };
-        virtual ArmSt getSt()const { ArmSt st; return st; };
+        virtual bool getSt(ArmSt& st) { return false; }
 
         //---- factory 
         static Sp<Arm> create(const string& sModel);
