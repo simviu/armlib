@@ -31,21 +31,21 @@ def test(mycobot):
 
     set_grip(mycobot, False)
     time.sleep(1)
-    mycobot.send_coords([160, -100, 140, -89.36, 42.82, -176.93], sp, 0)
+    mycobot.send_coords([-110, -200, 140,  85, 40, 0  ], sp, 0)
     time.sleep(1)
-    mycobot.send_coords([160, -100, 40, -89.36, 42.82, -176.93], sp, 0)
+    mycobot.send_coords([-110, -200, 80,  85, 40, 0], sp, 0)
     time.sleep(1)
     set_grip(mycobot, True)
     time.sleep(1)
-    mycobot.send_coords([-17.3, -190, 140, -91.3, 56.66, 173.02], sp, 0)
+    mycobot.send_coords([ 110, -200, 140,  85, 40, 0  ], sp, 0)
     time.sleep(1)
 
-    mycobot.send_coords([-17.3, -190, 40, -91.3, 56.66, 173.02], sp, 0)
+    mycobot.send_coords([ 110, -200, 160,  85, 40, 0  ], sp, 0)
     time.sleep(1)
     set_grip(mycobot, False)
     time.sleep(1)
 
-    mycobot.send_coords([80, -190, 140, -91.3, 56.66, 173.02], sp, 0)
+    mycobot.send_coords([ 110, -200, 160,  85, 40, 0  ], sp, 0)
     time.sleep(1)
 
 

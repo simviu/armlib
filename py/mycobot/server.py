@@ -143,7 +143,12 @@ class ArmServer():
         return ok, jres
     #------
     def enc_st(self):
+        jres = {}
+
         v = self.mc_.get_coords()
+        if len(v) < 6 :
+            return jres
+
         jt = str(v[0])+","+str(v[1])+","+str(v[2])
         je = str(v[3])+","+str(v[4])+","+str(v[5])
         jT = {}
@@ -155,7 +160,6 @@ class ArmServer():
         jst = {}
         jst["tip"] = jtip
 
-        jres = {}
         jres["st"] = jst
         return jres
 
