@@ -26,9 +26,13 @@ namespace arm{
         socket::Client client_;
         struct Data{
             ArmSt cur_st;
+            mth::Pipe<string> cmds; // cmd que            
         }; Data data_;
-        std::mutex mtx_; 
+        
+        std::mutex mtx_st_; 
+
         void read_st();
-        std::thread st_thd_;
+        void send_cmds();
+        std::thread thd_;
     };
 }
