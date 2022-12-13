@@ -31,8 +31,6 @@ class TipSt:
         self.t = np.array([0,0,0])
         self.e = np.array([0,0,0])
         self.grip = 0
-
-
     
     def parse(self,kvs):
         self.t = np.fromstring(kvs["xyz"], sep=',')
@@ -161,7 +159,7 @@ class ArmServer():
         ts.parse(kvs)
         spd = float(kvs["spd"]) * K_spd_scl
         if spd > K_spd_max_mc:
-        	spd = K_spd_max_mc
+            spd = K_spd_max_mc
         s = "moveto: "+ ts.str() + ", spd="+str(spd)
         pv = ts.pose_vec()
         self.mc_.send_coords(pv, int(spd), 0)
