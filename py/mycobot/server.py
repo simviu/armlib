@@ -70,6 +70,9 @@ class ArmServer():
         #---- setup mycobot
         self.mc_ = setup()
         
+        #--- initial release
+        self.mc_.release_all_servos()
+
         #---- socket server
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('# Socket created')
