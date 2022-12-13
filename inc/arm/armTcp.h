@@ -26,6 +26,7 @@ namespace arm{
         socket::Client client_;
         struct Data{
             ArmSt cur_st;
+            bool b_st_val = false;
             mth::Pipe<string> cmds; // cmd que            
         }; Data data_;
         

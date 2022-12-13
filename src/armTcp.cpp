@@ -87,14 +87,14 @@ bool ArmTcp::init()
 //----
 void ArmTcp::read_st()    
 {   
-    log_d("read_st()...");
+    //log_d("read_st()...");
     client_.send("st");
     string sln;
     if(!client_.readLn(sln)) {
         log_d("read_st failed");
         return;
     }
-    log_d("read_st() recv:["+sln+"]");
+    //log_d("read_st() recv:["+sln+"]");
     //----
     ArmSt st;
     if(!decSt(sln, st))
@@ -105,6 +105,7 @@ void ArmTcp::read_st()
     //---- fill st
     std::unique_lock<std::mutex> lk(mtx_st_);
     data_.cur_st = st;
+    data_.b_st_val = true;
 
 
 }
@@ -118,7 +119,8 @@ void ArmTcp::send_cmds()
     while(cmds.size()>0)
     {
         string scmd = cmds.pop();
-        log_d("armTcp sending cmd:'"+scmd+"'");
+        if(scmd=="")continue;
+        //log_d("armTcp sending cmd:'"+scmd+"'");
         
         if(!client_.send(scmd+"\n"))
         {
@@ -170,7 +172,7 @@ bool ArmTcp::getSt(ArmSt& st)
 {
     std::unique_lock<std::mutex> lk(mtx_st_);
     st = data_.cur_st;
-    return true;
+    return data_.b_st_val;
 }
 
 bool ArmTcp::test()
