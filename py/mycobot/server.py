@@ -5,6 +5,7 @@ import socket
 import sys
 import numpy as np
 import time
+import json
 
 from pymycobot.mycobot import MyCobot
 from pymycobot.genre import Angle, Coord
@@ -116,8 +117,11 @@ class ArmServer():
             #--- run command
             ok, jres = self.run_cmd(scmd)
 
-            #--- ack
-            conn.send(bytes(jres, "utf-8"))
+            #--- acka
+            sr = json.dumps(jres) + "\n" 
+            print("sending ["+sr+"]...")
+            conn.send(bytes(sr, "utf-8"))
+            print("  sent")
 
         #s.close()
     #------
@@ -137,8 +141,8 @@ class ArmServer():
     #------
     def enc_st(self):
         v = self.mc_.get_coords()
-        jt = str(v(0))+","+str(v(1))+","+str(v(2))
-        je = str(v(3))+","+str(v(4))+","+str(v(5))
+        jt = str(v[0])+","+str(v[1])+","+str(v[2])
+        je = str(v[3])+","+str(v[4])+","+str(v[5])
         jT = {}
         jT["t"] = jt
         jT["e"] = je
