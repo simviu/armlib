@@ -131,7 +131,8 @@ class ArmServer():
     def run_cmd(self, scmd):
         ok = True
         print("run cmd:"+scmd)
-        jres = "{ack:ok}"
+        jr = {"ack":"ok"}
+        jres = "{}"
         cmd,kvs = parse_cmdln(scmd)
         if cmd == "moveto":
             self.moveto(kvs)
@@ -140,7 +141,7 @@ class ArmServer():
         elif cmd == "st":
             jres = self.enc_st()
 
-        return ok, jres
+        return ok, jr
     #------
     def enc_st(self):
         jres = {}

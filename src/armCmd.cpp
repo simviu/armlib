@@ -6,6 +6,13 @@ using namespace arm;
 namespace{
     struct LCfg{
     }; LCfg lc_;
+    //----
+    string enc_json(const ArmSt& st)
+    {
+        
+        string s;
+        return s;
+    }
 }
 
 
@@ -15,28 +22,28 @@ ArmCmd::ArmCmd()
     
 
     //----
-    {
-        add("init", mkSp<Cmd>("init name=[NAME]",
-        [&](CStrs& args)->bool{ 
-            StrTbl kv; parseKV(args, kv);
-            string sN = lookup(kv, "arm");
-            p_arm_ = Arm::create(sN);
-            if(p_arm_==nullptr)
-                return false;
-            return p_arm_->init();
+    add("init", mkSp<Cmd>("init name=[NAME]",
+    [&](CStrs& args)->bool{ 
+        StrTbl kv; parseKV(args, kv);
+        string sN = lookup(kv, "arm");
+        p_arm_ = Arm::create(sN);
+        if(p_arm_==nullptr)
+            return false;
+        return p_arm_->init();
 
-        }));
-    }
+    }));
     //----
-    {
-        add("moveto", mkSp<Cmd>("moveto <x,y,z,rx,ry,rz>",
-        [&](CStrs& args)->bool{ return moveto(args); }));
-    }
+    add("moveto", mkSp<Cmd>("moveto <x,y,z,rx,ry,rz>",
+    [&](CStrs& args)->bool{ return moveto(args); }));
     //----
-    {
-        add("server", mkSp<Cmd>("server port=PORT",
-        [&](CStrs& args)->bool{ return run_server(args); }));
-    }
+    add("st", mkSp<Cmd>("(get status)",
+    [&](CStrs& args)->bool{ 
+        return getSt();
+    }));
+    //----s
+    add("server", mkSp<Cmd>("server port=PORT",
+    [&](CStrs& args)->bool{ return run_server(args); }));
+    
 }
 //----
 bool ArmCmd::checkInit(CStrs& args)
@@ -121,13 +128,13 @@ bool ArmCmd::run_server(CStrs& args)
         if(!svr.readLn(scmd)) 
             break;
 
-
         //---- run cmd
+        data_.s_jres = "{}"; // to be filled by runcmd
         bool ok = this->run(scmd);
         string sj = string("{") +
-            (ok?"'st':'ok'" :"'st':'fail'") +
+            (ok?"'ack':'ok'" :"'ack':'fail'") +
             "'res':" + data_.s_jres +
-            "}";
+            "}\n";
         svr.send(sj);
 
         sys::sleepMS(200);
@@ -136,3 +143,15 @@ bool ArmCmd::run_server(CStrs& args)
     //---- 
     return true;
 }
+
+//----
+bool ArmCmd::getSt()
+{
+    if(p_arm_==nullptr)
+        return false;
+    ArmSt st;
+    bool ok = p_arm_->getSt(st);
+    data_.s_jres = enc_json(st);
+    return ok;
+}
+
