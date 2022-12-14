@@ -94,7 +94,7 @@ void ArmTcp::read_st()
         log_d("read_st failed");
         return;
     }
-    //log_d("read_st() recv:["+sln+"]");
+    log_d("read_st() recv:["+sln+"]");
     //----
     ArmSt st;
     if(!decSt(sln, st))
@@ -106,14 +106,14 @@ void ArmTcp::read_st()
     std::unique_lock<std::mutex> lk(mtx_st_);
     data_.cur_st = st;
     data_.b_st_val = true;
-
+    log_d("ArmTcp read_st() cur_st ok, tip at:"+str(st.tip.T.t));
 
 }
 
 //----
 void ArmTcp::send_cmds()    
 {   
-    log_d("ArmTcp send_cmds()...");
+    //log_d("ArmTcp send_cmds()...");
     auto& cmds = data_.cmds;
     
     while(cmds.size()>0)
