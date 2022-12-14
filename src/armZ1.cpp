@@ -48,8 +48,8 @@ bool ArmZ1::init()
     uarm.labelRun("forward");
 
     //---- current st
-    auto st = getSt();
-    log_i("  Tip at: "+st.tip.str());
+    //auto st = getSt();
+    //log_i("  Tip at: "+st.tip.str());
     return true;
 }
 
@@ -79,7 +79,7 @@ bool ArmZ1::moveTo(const TipSt& ts, float spd)
 
 }
 //-----
-bool ArmZ1::getSt(ArmSt& st)const
+bool ArmZ1::getSt(ArmSt& st)
 {
     // TODO: validation
     auto& rs = pCtrlComp_->recvState;
