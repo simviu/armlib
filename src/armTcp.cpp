@@ -29,8 +29,9 @@ namespace{
             Json::Reader rdr;
             Json::Value jd;
             rdr.parse(sln, jd);
-            ok &= (jd["ack"].asString()=="ok");
-            ok &= decSt_json(jd["st"]["res"], st);
+            ok &= jd["ok"].asBool();
+            if(ok)
+                ok &= decSt_json(jd["res"]["st"], st);
         }
         catch(exception& e)
         {

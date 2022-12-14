@@ -10,7 +10,7 @@ namespace{
     string enc_json(const ArmSt& st)
     {
         
-        string s;
+        string s="{}";
         return s;
     }
 }
@@ -132,7 +132,7 @@ bool ArmCmd::run_server(CStrs& args)
         data_.s_jres = "{}"; // to be filled by runcmd
         bool ok = this->run(scmd);
         string sj = string("{") +
-            (ok?"'ack':'ok'" :"'ack':'fail'") +
+            (ok?"'ok':true" :"'ok':false") +
             "'res':" + data_.s_jres +
             "}\n";
         svr.send(sj);
