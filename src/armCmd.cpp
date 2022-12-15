@@ -54,9 +54,14 @@ bool ArmCmd::checkInit(CStrs& args)
     StrTbl kv; parseKV(args, kv);
     string sArm = lookup(kv, "arm");
     if(sArm=="")
-        p_arm_ = Arm::create(sArm);
+    {
+        log_e("missing : arm=<ARM_NAME>");
+        return false;
+    }
+    //---
+    p_arm_ = Arm::create(sArm);
     if(p_arm_==nullptr) {
-        log_e("Arm null");
+        log_e("Arm create failed:'"+sArm+"'");
         return false;
     }
 
@@ -102,6 +107,10 @@ bool ArmCmd::moveto(CStrs& args)
 //----- arm server
 bool ArmCmd::run_server(CStrs& args)
 {
+
+    if(!checkInit(args))
+        return false;
+
     socket::Server svr;
 
     StrTbl kv; parseKV(args, kv);
@@ -125,8 +134,12 @@ bool ArmCmd::run_server(CStrs& args)
     while(svr.isRunning())
     {
         string scmd;
+
         if(!svr.readLn(scmd)) 
-            break;
+        {
+            sys::sleep(0.2);
+            continue;
+        }
 
         //---- run cmd
         data_.s_jres = "{}"; // to be filled by runcmd
