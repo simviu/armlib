@@ -71,7 +71,7 @@ bool ArmTest::test_moveTo()const
     
     //----3
     log_i("-------------- Pose 2 ");
-    
+       
     ts.gripper = 0;
     ts.T.e = Euler(180*0.9,0,0);
     log_i("arm moveTo: "+ts.T.str()+"...");

@@ -27,14 +27,9 @@ if(WITH_ARM_Z1)
     include_directories(
         inc 
         dep/z1_sdk/include/unitree_arm_sdk
-        ${EIGEN3_INCLUDE_DIR}
-        $ENV{vsnLib_DIR}/inc
-        ${JsonCpp_INCLUDE_DIR}
-        /opt/dep/local/include
-        /usr/include/jsoncpp
         )
     link_directories(dep/z1_sdk/lib)
-    set(Z1_LINK_LIB Z1_SDK_Linux64)
+    set(WITH_ARM_LIBS "${WITH_ARM_LIBS} Z1_SDK_Linux64")
     add_definitions(-DWITH_ARM_Z1)
 endif()
 
@@ -42,7 +37,6 @@ FILE(GLOB  SRC_CORE src/*.cpp)
 add_library(armLib ${SRC_CORE} )
 target_link_libraries(armLib   
     vsnLib 
-    ${Z1_LINK_LIB}
     -fPIC
     pthread
     ${OpenCV_LIBRARIES}
@@ -51,9 +45,15 @@ target_link_libraries(armLib
 
 FILE(GLOB  SRC_TEST test/*.cpp)
 add_executable(armTest ${SRC_TEST})
-target_link_libraries(armTest armLib)
+target_link_libraries(armTest 
+    armLib
+    ${WITH_ARM_LIBS}
+    )
 
 FILE(GLOB  SRC_ARMCMD app/armCmd/*.cpp)
 add_executable(armcmd ${SRC_ARMCMD})
-target_link_libraries(armcmd armLib)
+target_link_libraries(armcmd 
+    armLib
+    ${WITH_ARM_LIBS}
+    )
 
