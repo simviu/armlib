@@ -6,6 +6,10 @@ using namespace arm;
 using namespace unitree;
 
 namespace{
+    struct LCfg{
+        float grip_scl = -0.3; // 0 close, 1 open
+    }; LCfg lc_;
+    //----
    Posture conv(const Trans& T)
    {
       Posture p;
@@ -74,7 +78,8 @@ bool ArmZ1::moveTo(const TipSt& ts, float spd)
     Vec6 v = PosturetoVec6(p);
 
     float spd1 = std::max(spd, cfg_.maxSpeed);
-    uarm.MoveJ(v,  ts.gripper, spd1);
+    float gr = ts.gripper * lc_.grip_scl;
+    uarm.MoveJ(v,  gr, spd1);
     return true;
 
 }
