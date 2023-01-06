@@ -19,10 +19,10 @@ namespace{
 //-------
 ArmCmd::ArmCmd()
 {
-    
+    sHelp_ = "(robot arm commands)";
 
     //----
-    add("init", mkSp<Cmd>("init name=[NAME]",
+    add("init", mkSp<Cmd>("name=[NAME]",
     [&](CStrs& args)->bool{ 
         StrTbl kv; parseKV(args, kv);
         string sN = lookup(kv, "arm");
@@ -33,7 +33,7 @@ ArmCmd::ArmCmd()
 
     }));
     //----
-    add("moveto", mkSp<Cmd>("moveto <x,y,z,rx,ry,rz>",
+    add("moveto", mkSp<Cmd>("xyz=x,y,z rvec=rx,ry,rz grip=[0:1]",
     [&](CStrs& args)->bool{ return moveto(args); }));
     //----
     add("st", mkSp<Cmd>("(get status)",
@@ -41,7 +41,7 @@ ArmCmd::ArmCmd()
         return getSt();
     }));
     //----s
-    add("server", mkSp<Cmd>("server port=PORT",
+    add("server", mkSp<Cmd>("port=PORT",
     [&](CStrs& args)->bool{ return run_server(args); }));
     
 }
