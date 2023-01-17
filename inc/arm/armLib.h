@@ -75,15 +75,15 @@ namespace arm{
     public:
         ArmCmd();
 
+        bool init(CStrs& args);
     protected:
         struct Data{
-            string s_jres; // cmd result json string
+            bool hasInit = false;
         }; Data data_;
         Sp<Arm> p_arm_ = nullptr;
 
         bool moveto(CStrs& args);
-        bool run_server(CStrs& args);
-        bool checkInit(CStrs& args);
+        bool checkInit();
         bool getSt();
     };
 }

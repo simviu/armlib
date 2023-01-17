@@ -24,13 +24,7 @@ ArmCmd::ArmCmd()
     //----
     add("init", mkSp<Cmd>("name=[NAME]",
     [&](CStrs& args)->bool{ 
-        StrTbl kv; parseKV(args, kv);
-        string sN = lookup(kv, "arm");
-        p_arm_ = Arm::create(sN);
-        if(p_arm_==nullptr)
-            return false;
-        return p_arm_->init();
-
+        return init(args);
     }));
     //----
     add("moveto", mkSp<Cmd>("xyz=x,y,z rvec=rx,ry,rz grip=[0:1]",
@@ -40,43 +34,54 @@ ArmCmd::ArmCmd()
     [&](CStrs& args)->bool{ 
         return getSt();
     }));
-    //----s
-    add("server", mkSp<Cmd>("port=PORT",
-    [&](CStrs& args)->bool{ return run_server(args); }));
-    
+  
+  
 }
 //----
-bool ArmCmd::checkInit(CStrs& args)
+bool ArmCmd::init(CStrs& args)
 {
-    if(p_arm_!=nullptr)
-        return true;
-    
-    StrTbl kv; parseKV(args, kv);
-    string sArm = lookup(kv, "arm");
-    if(sArm=="")
-    {
-        log_e("missing : arm=<ARM_NAME>");
-        return false;
-    }
-    //---
-    p_arm_ = Arm::create(sArm);
-    if(p_arm_==nullptr) {
-        log_e("Arm create failed:'"+sArm+"'");
-        return false;
-    }
+    data_.hasInit = false;
 
-    bool ok = p_arm_->init();
-    return ok;  
+    StrTbl kv; parseKV(args, kv);
+    string sN = lookup(kv, "arm");
+    if(sN=="")
+    {
+        log_e("Missing or empty arg arm=''");
+        return false;
+    }
+    auto p = Arm::create(sN);
+    if(p==nullptr)
+    {
+        log_e("Arm create failed:'"+sN+"'");
+        return false;
+    }
+    bool ok = p->init();
+    if(!ok) {
+        log_e("Arm init failed:'"+sN+"'");
+        return false;
+    }
+    log_i("Arm init ok : '"+sN+"'");
+    p_arm_ = p;
+    data_.hasInit = true;
+    return true;
+}
+
+//----
+bool ArmCmd::checkInit()
+{
+    if(data_.hasInit) return true;
+    log_e("Arm not init");
+    return false;
 }
 
 //----
 bool ArmCmd::moveto(CStrs& args)
 {
+    if(!checkInit())
+        return false;
+
     assert(p_arm_!=nullptr);
     auto& arm = *p_arm_;
-
-    if(!checkInit(args))
-        return false;
 
     //----
     StrTbl kv; parseKV(args, kv);
@@ -96,64 +101,11 @@ bool ArmCmd::moveto(CStrs& args)
         log_e("Error parsing args");
         return false;
     }
-    log_i("run cmd moveto:"+st.str());
+   // log_i("run cmd moveto:"+st.str());
 
     //---- run
     arm.moveTo(st);
 
-    return true;
-}
-
-//----- arm server
-bool ArmCmd::run_server(CStrs& args)
-{
-
-    if(!checkInit(args))
-        return false;
-
-    socket::Server svr;
-
-    StrTbl kv; parseKV(args, kv);
-    string s_port = lookup(kv, string("port"));
-    int port=0; 
-    if(!s2d(s_port, port))
-    {
-        log_e(" failed to get para 'port'");
-        return false;
-    }
-    
-    //-----
-    bool ok = svr.start(port);
-    if(!ok)
-    {
-        log_e("Failed to start server at port:"+to_string(port));
-        return false;
-    }
-    //---- server started
-
-    while(svr.isRunning())
-    {
-        string scmd;
-
-        if(!svr.readLn(scmd)) 
-        {
-            sys::sleep(0.2);
-            continue;
-        }
-
-        //---- run cmd
-        data_.s_jres = "{}"; // to be filled by runcmd
-        bool ok = this->run(scmd);
-        string sj = string("{") +
-            (ok?"'ok':true" :"'ok':false") +
-            ",'res':" + data_.s_jres +
-            "}\n";
-        svr.send(sj);
-
-        sys::sleepMS(200);
-    }
-    log_i("Server shutdown");
-    //---- 
     return true;
 }
 
@@ -164,7 +116,8 @@ bool ArmCmd::getSt()
         return false;
     ArmSt st;
     bool ok = p_arm_->getSt(st);
-    data_.s_jres = enc_json(st);
+    string s = enc_json(st);
+    log_i("arm_st:"+s);
     return ok;
 }
 

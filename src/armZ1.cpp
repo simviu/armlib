@@ -37,7 +37,7 @@ namespace{
 bool ArmZ1::init()
 {
     auto& uarm = *p_uarm_;
-    log_i("Init Arm Z1...");
+    log_i("Init Arm Z1(Connect to z1_ctrl_ROS/UDP)...");
     uarm.sendRecvThread->start();
     //----
     log_i("Back to start...");
