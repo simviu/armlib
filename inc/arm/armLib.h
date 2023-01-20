@@ -36,16 +36,14 @@ namespace arm{
     };
     //---
     struct JointSt{
-        double r=0;
+        double r=0; // angle
         // other status, acc, rot speed etc
     };
     //-----
     struct ArmSt{
         TipSt tip;
         vector<JointSt> joints;
-        string str()const{
-            return "{ tip:"+tip.str() + "}";
-        }
+        string str()const;
     };
     //----------
     // Arm

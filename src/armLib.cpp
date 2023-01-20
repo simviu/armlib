@@ -4,7 +4,18 @@
 
 using namespace arm;
 
-
+//----
+string ArmSt::str()const
+{
+    string sj;
+    int N = joints.size();
+    for(int i=0;i<N;i++)
+        sj += ((i==0)?"":",")+::str(joints[i].r);
+    string s = "{ tip:"+tip.str() + 
+               ", joints:["+sj+"] }";
+    return s;
+        
+}
 //---- factory
 Sp<Arm> Arm::create(const string& sModel)
 {

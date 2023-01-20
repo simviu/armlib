@@ -9,6 +9,15 @@ namespace{
     struct LCfg{
         float grip_scl = -0.3; // 0 close, 1 open
     }; LCfg lc_;
+
+    //----
+    TipSt get_st_init()
+    {
+        TipSt st;
+        st.T.t << 0.2, 0, 0.3;
+        return st;
+    }
+
     //----
    Posture conv(const Trans& T)
    {
@@ -40,9 +49,9 @@ bool ArmZ1::init()
     log_i("Init Arm Z1(Connect to z1_ctrl_ROS/UDP)...");
     uarm.sendRecvThread->start();
     //----
-    log_i("Back to start...");
-    uarm.backToStart();
-    log_i("Now at start st.");
+//    log_i("Back to start...");
+//    uarm.backToStart();
+//    log_i("Now at start st.");
 
     sys::sleepMS(1000);
     log_i("Init Arm Z1 done");
@@ -50,6 +59,9 @@ bool ArmZ1::init()
     //--- init state
     uarm.setFsm(ArmFSMState::JOINTCTRL);
     uarm.labelRun("forward");
+
+    //---- move to init pos
+    moveTo(get_st_init(), 1.0);
 
     //---- current st
     //auto st = getSt();
@@ -90,6 +102,13 @@ bool ArmZ1::getSt(ArmSt& st)
     auto& rs = pCtrlComp_->recvState;
     st.tip.T = conv(rs.cartesianState);
     st.tip.gripper = rs.jointState[6].Pos;
+    st.joints.clear();
+    for(int i=0;i<6;i++)
+    {
+        JointSt j; 
+        j.r = rs.jointState[i].Pos;
+        st.joints.push_back(j);
+    }
     return true;
 }
 

@@ -6,13 +6,7 @@ using namespace arm;
 namespace{
     struct LCfg{
     }; LCfg lc_;
-    //----
-    string enc_json(const ArmSt& st)
-    {
-        
-        string s="{}";
-        return s;
-    }
+    
 }
 
 
@@ -116,8 +110,7 @@ bool ArmCmd::getSt()
         return false;
     ArmSt st;
     bool ok = p_arm_->getSt(st);
-    string s = enc_json(st);
-    log_i("arm_st:"+s);
+    log_i("arm_st:"+st.str());
     return ok;
 }
 
