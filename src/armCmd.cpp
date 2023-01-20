@@ -22,7 +22,7 @@ ArmCmd::ArmCmd()
     sHelp_ = "(robot arm commands)";
 
     //----
-    add("init", mkSp<Cmd>("name=[NAME]",
+    add("init", mkSp<Cmd>("arm=[z1]",
     [&](CStrs& args)->bool{ 
         return init(args);
     }));
