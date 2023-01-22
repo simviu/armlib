@@ -21,7 +21,7 @@ ArmCmd::ArmCmd()
         return init(args);
     }));
     //----
-    add("moveto", mkSp<Cmd>("xyz=x,y,z rvec=rx,ry,rz grip=[0:1]",
+    add("moveto", mkSp<Cmd>("xyz=x,y,z [euler=rx,ry,rz] [grip=0...1]",
     [&](CStrs& args)->bool{ return moveto(args); }));
     //----
     add("st", mkSp<Cmd>("(get status)",
@@ -80,14 +80,14 @@ bool ArmCmd::moveto(CStrs& args)
     //----
     StrTbl kv; parseKV(args, kv);
     string sxyz = lookup(kv, string("xyz"));
-    string srvec = lookup(kv, string("rvec"));
+    string se = lookup(kv, string("euler"));
     string sgrip = lookup(kv, string("grip"));
 
     //----
     TipSt st;
     
     bool ok = true;
-    ok &= st.T.e.parse(srvec);
+    ok &= st.T.e.from(se);
     ok &= s2v(sxyz, st.T.t);
     ok &= s2d(sgrip, st.gripper);
     if(!ok)

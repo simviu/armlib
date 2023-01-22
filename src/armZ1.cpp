@@ -22,9 +22,9 @@ namespace{
    Posture conv(const Trans& T)
    {
       Posture p;
-      p.pitch = toRad(T.e.p);
-      p.roll = toRad(T.e.r);
-      p.yaw = toRad(T.e.y);
+      p.roll = toRad(T.e.rx);
+      p.pitch = toRad(T.e.ry);
+      p.yaw = toRad(T.e.rz);
       p.x = T.t.x();
       p.y = T.t.y();
       p.z = T.t.z();
@@ -35,9 +35,9 @@ namespace{
    {
        Trans T;
        T.t << p.x, p.y, p.z;
-       T.e.y = p.yaw;
-       T.e.r = p.roll;
-       T.e.p = p.pitch;
+       T.e.rx = toDgr(p.roll);
+       T.e.ry = toDgr(p.pitch);
+       T.e.rz = toDgr(p.yaw);
        return T;
    }
 }
