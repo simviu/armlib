@@ -35,7 +35,7 @@ class TipSt:
     
     def parse(self,kvs):
         self.t = np.fromstring(kvs["xyz"], sep=',')
-        self.e = np.fromstring(kvs["rvec"], sep=',')
+        self.e = np.fromstring(kvs["euler"], sep=',')
         self.gr = float(kvs['grip'])
 
     def str(self):
