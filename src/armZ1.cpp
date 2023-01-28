@@ -58,7 +58,7 @@ bool ArmZ1::init()
 
     //--- init state
     uarm.setFsm(ArmFSMState::JOINTCTRL);
-    uarm.labelRun("forward");
+ // uarm.labelRun("forward");
 
     //---- move to init pos
     moveTo(get_st_init(), 1.0);
