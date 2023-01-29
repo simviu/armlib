@@ -31,7 +31,7 @@ Sp<Arm> Arm::create(const string& sModel)
 
 #ifdef WITH_ARM_Z1
     else if(sModel=="z1")
-        return mkSp<unitree::ArmZ1>();
+        return mkSp<UNITREE_ARM::ArmZ1>();
 #endif 
 
     log_e("Unkonw Arm type:'"+sModel+"'");

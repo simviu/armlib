@@ -6,17 +6,18 @@ using namespace arm;
 
 #ifdef WITH_ARM_Z1
 
-#include "control/unitreeArm.h"
+#include "unitree_arm_sdk/control/unitreeArm.h"
 
-namespace unitree{
+namespace UNITREE_ARM
+{
     //----
     class ArmZ1 : public Arm
     {
     public:
         ArmZ1()
         {
-            pCtrlComp_ = new CtrlComponents(0.002);
-            p_uarm_ = new unitreeArm(pCtrlComp_);
+        //    pCtrlComp_ = new CtrlComponents(0.002);
+            p_uarm_ = new unitreeArm(true);
         }
 
         virtual bool init()override;
