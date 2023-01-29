@@ -26,17 +26,19 @@ include_directories(
 
 #----------- Arm Z1 -------------
 if(WITH_ARM_Z1)
-    add_subdirectory(dep/z1_sdk)
+    SET(Z1_SDK $ENV{armLib_DIR}/dep/unitree/z1_sdk)
+    message(STATUS "Z1_SDK=${Z1_SDK}")
+    add_subdirectory(${Z1_SDK})
     include_directories(
         inc 
-        dep/z1_sdk/include/unitree_arm_sdk
+        ${Z1_SDK}/include/
         ${EIGEN3_INCLUDE_DIR}
         $ENV{vsnLib_DIR}/inc
         ${JsonCpp_INCLUDE_DIR}
         /opt/dep/local/include
         /usr/include/jsoncpp
         )
-    link_directories(dep/z1_sdk/lib)
+    link_directories(${Z1_SDK}/lib)
     set(Z1_LINK_LIB Z1_SDK_Linux64)
     add_definitions(-DWITH_ARM_Z1)
 endif()

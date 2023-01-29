@@ -3,7 +3,7 @@
 #ifdef WITH_ARM_Z1
 
 using namespace arm;
-using namespace unitree;
+using namespace UNITREE_ARM;
 
 namespace{
     struct LCfg{
@@ -19,12 +19,13 @@ namespace{
     }
 
     //----
+    // TODO: remove conv(), use vec6 directly
    Posture conv(const Trans& T)
    {
       Posture p;
-      p.roll = toRad(T.e.rx);
-      p.pitch = toRad(T.e.ry);
-      p.yaw = toRad(T.e.rz);
+      p.rx = toRad(T.e.rx);
+      p.ry = toRad(T.e.ry);
+      p.rz = toRad(T.e.rz);
       p.x = T.t.x();
       p.y = T.t.y();
       p.z = T.t.z();
@@ -35,9 +36,9 @@ namespace{
    {
        Trans T;
        T.t << p.x, p.y, p.z;
-       T.e.rx = toDgr(p.roll);
-       T.e.ry = toDgr(p.pitch);
-       T.e.rz = toDgr(p.yaw);
+       T.e.rx = toDgr(p.rx);
+       T.e.ry = toDgr(p.ry);
+       T.e.rz = toDgr(p.rz);
        return T;
    }
 }
@@ -58,7 +59,7 @@ bool ArmZ1::init()
 
     //--- init state
     uarm.setFsm(ArmFSMState::JOINTCTRL);
-    uarm.labelRun("forward");
+ // uarm.labelRun("forward");
 
     //---- move to init pos
     moveTo(get_st_init(), 1.0);
@@ -82,9 +83,8 @@ bool ArmZ1::done()const
 //-----
 bool ArmZ1::moveTo(const TipSt& ts, float spd)
 {
+    assert(p_uarm_!=nullptr);
     auto& uarm = *p_uarm_;
-    auto& cmd = uarm._trajCmd;
-    auto& ctrlc = *pCtrlComp_;
 
     auto p = conv(ts.T);
     Vec6 v = PosturetoVec6(p);
@@ -95,6 +95,19 @@ bool ArmZ1::moveTo(const TipSt& ts, float spd)
     return true;
 
 }
+//-----
+// Note : for z1 traj file, stored into :
+//   ../config/Traj_<LABEL_NAME>.csv
+bool ArmZ1::play(const string& sName)
+{
+    log_i("Arm play file:"+sName);
+
+    assert(p_uarm_!=nullptr);
+    auto& uarm = *p_uarm_;
+    uarm.teachRepeat(sName);
+    return true;
+}
+
 //-----
 bool ArmZ1::getSt(ArmSt& st)
 {
@@ -115,6 +128,9 @@ bool ArmZ1::getSt(ArmSt& st)
 
 bool ArmZ1::test()
 {
+    log_e("ArmZ1::test() not yet");
+    return false;
+    /* // deprecated
     auto& uarm = *p_uarm_;
     
     Vec6 posture[2];
@@ -176,7 +192,9 @@ bool ArmZ1::test()
     while (ctrlc.recvState.state != ArmFSMState::JOINTCTRL){
         usleep(ctrlc.dt*1000000);
     }
+    
     return true;
+    */
 }
 
 #endif // #ifdef WITH_ARM_Z1

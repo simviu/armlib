@@ -1,0 +1,3 @@
+[submodule "dep/unitree"]
+	path = dep/unitree
+	url = git@github.com:simviu/unitree.git

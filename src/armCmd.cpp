@@ -28,6 +28,12 @@ ArmCmd::ArmCmd()
     [&](CStrs& args)->bool{ 
         return getSt();
     }));
+    //----
+    add("play", mkSp<Cmd>("name=<LABEL_NAME> ",
+    [&](CStrs& args)->bool{ 
+        StrTbl kv; parseKV(args, kv);
+        return play(lookup(kv, "name"));
+    }));
   
   
 }
@@ -114,3 +120,11 @@ bool ArmCmd::getSt()
     return ok;
 }
 
+//----
+bool ArmCmd::play(const string& sf)
+{
+    if(!checkInit())
+        return false;
+    assert(p_arm_!=nullptr);
+    return p_arm_->play(sf);
+}
