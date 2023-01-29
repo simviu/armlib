@@ -28,6 +28,12 @@ ArmCmd::ArmCmd()
     [&](CStrs& args)->bool{ 
         return getSt();
     }));
+    //----
+    add("play", mkSp<Cmd>("file=TrajFile",
+    [&](CStrs& args)->bool{ 
+        StrTbl kv; parseKV(args, kv);
+        return playFile(lookup(kv, "file"));
+    }));
   
   
 }
@@ -114,3 +120,9 @@ bool ArmCmd::getSt()
     return ok;
 }
 
+//----
+bool ArmCmd::playFile(const string& sf)
+{
+
+    return true;
+}

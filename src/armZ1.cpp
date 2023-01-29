@@ -82,6 +82,7 @@ bool ArmZ1::done()const
 //-----
 bool ArmZ1::moveTo(const TipSt& ts, float spd)
 {
+    assert(p_uarm_!=nullptr);
     auto& uarm = *p_uarm_;
     auto& cmd = uarm._trajCmd;
     auto& ctrlc = *pCtrlComp_;
@@ -95,6 +96,18 @@ bool ArmZ1::moveTo(const TipSt& ts, float spd)
     return true;
 
 }
+//-----
+bool ArmZ1::playFile(const string& sf)
+{
+    log_i("Arm play file:"+sf);
+    if(!fexist(sf))
+        { log_e(sf); return false; }
+    assert(p_uarm_!=nullptr);
+    auto& uarm = *p_uarm_;
+    uarm.teachRepeat(sf);
+    return true;
+}
+
 //-----
 bool ArmZ1::getSt(ArmSt& st)
 {
