@@ -59,7 +59,7 @@ namespace arm{
         virtual bool reset(){  return true; };
         virtual bool moveTo(const TipSt& ts, float spd=1.0){  return true; };
         virtual bool getSt(ArmSt& st) { return false; }
-        virtual bool playFile(const string& sf){ return false; };
+        virtual bool play(const string& sf){ return false; };
         //---- factory 
         static Sp<Arm> create(const string& sModel);
         virtual bool test(){ return false; };
@@ -83,6 +83,6 @@ namespace arm{
         bool moveto(CStrs& args);
         bool checkInit();
         bool getSt();
-        bool playFile(const string& sf);
+        bool play(const string& sf);
     };
 }

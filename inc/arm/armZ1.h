@@ -24,7 +24,7 @@ namespace UNITREE_ARM
         virtual bool moveTo(const TipSt& ts, float spd) override;
         virtual bool getSt(ArmSt& st) override; 
         virtual bool test()override;
-        virtual bool playFile(const string& sf)override;
+        virtual bool play(const string& sf)override;
      //   virtual bool done()const override;
     protected:
         CtrlComponents* pCtrlComp_ = nullptr;

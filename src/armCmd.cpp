@@ -29,10 +29,10 @@ ArmCmd::ArmCmd()
         return getSt();
     }));
     //----
-    add("play", mkSp<Cmd>("file=TrajFile",
+    add("play", mkSp<Cmd>("name=<LABEL_NAME> ",
     [&](CStrs& args)->bool{ 
         StrTbl kv; parseKV(args, kv);
-        return playFile(lookup(kv, "file"));
+        return play(lookup(kv, "name"));
     }));
   
   
@@ -121,10 +121,10 @@ bool ArmCmd::getSt()
 }
 
 //----
-bool ArmCmd::playFile(const string& sf)
+bool ArmCmd::play(const string& sf)
 {
     if(!checkInit())
         return false;
     assert(p_arm_!=nullptr);
-    return p_arm_->playFile(sf);
+    return p_arm_->play(sf);
 }

@@ -96,15 +96,15 @@ bool ArmZ1::moveTo(const TipSt& ts, float spd)
 
 }
 //-----
-bool ArmZ1::playFile(const string& sf)
+// Note : for z1 traj file, stored into :
+//   ../config/Traj_<LABEL_NAME>.csv
+bool ArmZ1::play(const string& sName)
 {
-    log_i("Arm play file:"+sf);
-  //  if(!fexist(sf))
-    //    { log_ef(sf); return false; }
+    log_i("Arm play file:"+sName);
+
     assert(p_uarm_!=nullptr);
     auto& uarm = *p_uarm_;
-    string sf1 = sf; // TODO: hack unkown bug
-    uarm.teachRepeat(sf1);
+    uarm.teachRepeat(sName);
     return true;
 }
 
