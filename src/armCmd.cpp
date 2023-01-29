@@ -123,6 +123,8 @@ bool ArmCmd::getSt()
 //----
 bool ArmCmd::playFile(const string& sf)
 {
-
-    return true;
+    if(!checkInit())
+        return false;
+    assert(p_arm_!=nullptr);
+    return p_arm_->playFile(sf);
 }
