@@ -104,7 +104,8 @@ bool ArmZ1::playFile(const string& sf)
         { log_e(sf); return false; }
     assert(p_uarm_!=nullptr);
     auto& uarm = *p_uarm_;
-    uarm.teachRepeat(sf);
+    string sf1 = sf; // TODO: hack unkown bug
+    uarm.teachRepeat(sf1);
     return true;
 }
 
