@@ -16,7 +16,7 @@ namespace UNITREE_ARM
     public:
         ArmZ1()
         {
-        //    pCtrlComp_ = new CtrlComponents(0.002);
+        //    pCtrlComp_ = new CtrlComponents(0.002, true);
             p_uarm_ = new unitreeArm(true);
         }
 
@@ -27,7 +27,7 @@ namespace UNITREE_ARM
         virtual bool play(const string& sf)override;
      //   virtual bool done()const override;
     protected:
-        CtrlComponents* pCtrlComp_ = nullptr;
+        //CtrlComponents* pCtrlComp_ = nullptr;
         unitreeArm* p_uarm_ = nullptr;
     };
 }

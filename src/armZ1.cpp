@@ -111,8 +111,10 @@ bool ArmZ1::play(const string& sName)
 //-----
 bool ArmZ1::getSt(ArmSt& st)
 {
+    assert(p_uarm_!=nullptr);
+    auto& uarm = *p_uarm_;
     // TODO: validation
-    auto& rs = pCtrlComp_->recvState;
+    auto& rs = uarm._ctrlComp->recvState;
     st.tip.T = conv(rs.cartesianState);
     st.tip.gripper = rs.jointState[6].Pos;
     st.joints.clear();
