@@ -24,8 +24,8 @@ namespace arm{
         Trans(){ t << 0,0,0; }
         vec3 t;
         Euler e;
-        string str()const // json str
-        { return "{t:\""+vsn::str(t,3)+"\", ypr:\"" +e.str()+"\"}";  }
+        string str()const ;
+        bool set(const string& s);
     };
     //----------
     struct TipSt{
@@ -52,6 +52,7 @@ namespace arm{
     public:
         struct Cfg{
             float maxSpeed = 1;
+            float dfltSpeed = 1;
         }; Cfg cfg_;
         //----
         virtual bool init(){ return true; };
@@ -60,10 +61,15 @@ namespace arm{
         virtual bool moveTo(const TipSt& ts, float spd=1.0){  return true; };
         virtual bool getSt(ArmSt& st) { return false; }
         virtual bool play(const string& sf){ return false; };
+        virtual bool test(){ return false; };
+        virtual bool done()const{return true;};
         //---- factory 
         static Sp<Arm> create(const string& sModel);
-        virtual bool test(){ return false; };
-     //   virtual bool done()const=0;
+        //---- functions
+        bool grab(const Trans& T_target,
+                  const Trans& T_close);
+        void waitDone();
+
     };
     //--------
     // ArmCmd
@@ -81,6 +87,7 @@ namespace arm{
         Sp<Arm> p_arm_ = nullptr;
 
         bool moveto(CStrs& args);
+        bool grab(CStrs& args);
         bool checkInit();
         bool getSt();
         bool play(const string& sf);

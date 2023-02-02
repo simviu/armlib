@@ -34,6 +34,9 @@ ArmCmd::ArmCmd()
         StrTbl kv; parseKV(args, kv);
         return play(lookup(kv, "name"));
     }));
+    //----
+    add("grab", mkSp<Cmd>("target=<x,y,z>  close=<x,y,z> euler=rx,ry,rz",
+    [&](CStrs& args)->bool{ return grab(args);  }));
   
   
 }
@@ -93,7 +96,7 @@ bool ArmCmd::moveto(CStrs& args)
     TipSt st;
     
     bool ok = true;
-    ok &= st.T.e.from(se);
+    ok &= st.T.e.set(se);
     ok &= s2v(sxyz, st.T.t);
     ok &= s2d(sgrip, st.gripper);
     if(!ok)
@@ -107,6 +110,24 @@ bool ArmCmd::moveto(CStrs& args)
     arm.moveTo(st);
 
     return true;
+}
+
+//---
+bool ArmCmd::grab(CStrs& args)
+{
+    if(!checkInit())
+        return false;
+
+    StrTbl kv; parseKV(args, kv);
+    Trans Tt, Tc;
+    bool ok = true;
+    ok &= s2v(lookup(kv, "target"), Tt.t);
+    ok &= s2v(lookup(kv, "close"), Tt.t);
+    Euler e;
+    ok &= e.set(lookup(kv, "euler"));
+    Tt.e = Tc.e = e;
+    assert(p_arm_!=nullptr);
+    return p_arm_->grab(Tt, Tc);    
 }
 
 //----

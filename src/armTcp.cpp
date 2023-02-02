@@ -17,7 +17,7 @@ namespace{
         auto& jT = jtip["T"];
         auto& T = tip.T;
         ok &= s2v(jT["t"].asString(), T.t);
-        ok &= T.e.from(jT["e"].asString());
+        ok &= T.e.set(jT["e"].asString());
         return ok;
     }
     //---- decSt

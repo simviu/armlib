@@ -71,14 +71,16 @@ bool ArmZ1::init()
 }
 
 //----- TODO: not yet
-/*
+
 bool ArmZ1::done()const
 {
-    auto& ctrlc = *pCtrlComp_;
-    return ctrlc.recvState.state == ArmFSMState::JOINTCTRL;
+    assert(p_uarm_!=nullptr);
+
+    auto& cc = *p_uarm_->_ctrlComp;
+    return cc.recvState.state == ArmFSMState::JOINTCTRL;
 
 }
-*/
+
 
 //-----
 bool ArmZ1::moveTo(const TipSt& ts, float spd)
