@@ -96,14 +96,19 @@ bool ArmCmd::moveto(CStrs& args)
     TipSt st;
     
     bool ok = true;
-    ok &= st.T.e.set(se);
+    
     ok &= s2v(sxyz, st.T.t);
-    ok &= s2d(sgrip, st.gripper);
     if(!ok)
     {
         log_e("Error parsing args");
         return false;
     }
+
+    // option
+    if(sgrip!="")
+        s2d(sgrip, st.gripper);
+    if(se!="")
+        st.T.e.set(se);
    // log_i("run cmd moveto:"+st.str());
 
     //---- run
@@ -122,9 +127,10 @@ bool ArmCmd::grab(CStrs& args)
     Trans Tt, Tc;
     bool ok = true;
     ok &= s2v(lookup(kv, "target"), Tt.t);
-    ok &= s2v(lookup(kv, "close"), Tt.t);
+    ok &= s2v(lookup(kv, "close"), Tc.t);
     Euler e;
     ok &= e.set(lookup(kv, "euler"));
+    if(!ok){ log_e("syntax err"); return false; }
     Tt.e = Tc.e = e;
     assert(p_arm_!=nullptr);
     return p_arm_->grab(Tt, Tc);    

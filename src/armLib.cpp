@@ -64,6 +64,7 @@ Sp<Arm> Arm::create(const string& sModel)
 //----
 void Arm::waitDone()
 {
+    sys::sleep(0.05);
     while(!done())
         sys::sleep(0.01);
 }
@@ -91,6 +92,6 @@ bool Arm::grab(const Trans& T_target,
     moveTo(t, v);
     waitDone();
 
-    return false; 
+    return true; 
 }
 
