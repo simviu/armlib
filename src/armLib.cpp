@@ -81,17 +81,20 @@ bool Arm::grab(const Trans& T_target,
     auto& v = cfg_.dfltSpeed;
     moveTo(t, v);
     waitDone();
+    //sys::sleep(1);
 
     //---- forward
     t.T = T_target;
     moveTo(t, v);
     waitDone();
 
+    //sys::sleep(1);
     //---- grip close
     t.gripper = 0;
     moveTo(t, v);
     waitDone();
-
+    //sys::sleep(1);
+    
     return true; 
 }
 
