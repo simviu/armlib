@@ -112,9 +112,8 @@ bool ArmCmd::moveto(CStrs& args)
    // log_i("run cmd moveto:"+st.str());
 
     //---- run
-    arm.moveTo(st);
+    return arm.moveTo(st);
 
-    return true;
 }
 
 //---

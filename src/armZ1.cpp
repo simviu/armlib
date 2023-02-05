@@ -93,7 +93,12 @@ bool ArmZ1::moveTo(const TipSt& ts, float spd)
 
     float spd1 = std::max(spd, cfg_.maxSpeed);
     float gr = ts.gripper * lc_.grip_scl;
-    uarm.MoveJ(v,  gr, spd1);
+    bool hasIK = uarm.MoveJ(v,  gr, spd1);
+    if(!hasIK)
+    {
+        log_e("  MoveTo has no IK solution to:"+ts.str());
+        return false;
+    }
     return true;
 
 }
