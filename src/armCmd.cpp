@@ -35,7 +35,9 @@ ArmCmd::ArmCmd()
         return play(lookup(kv, "name"));
     }));
     //----
-    add("grab", mkSp<Cmd>("target=<x,y,z>  close=<x,y,z> euler=rx,ry,rz",
+    string s_h = "target=<x,y,z>  dT0=<dx,dy,dz> euler=rx,ry,rz";
+    s_h += "\n      (dT0 is offset for approach point)";
+    add("grab", mkSp<Cmd>(s_h,
     [&](CStrs& args)->bool{ return grab(args);  }));
   
   
@@ -126,7 +128,7 @@ bool ArmCmd::grab(CStrs& args)
     Trans Tt, Tc;
     bool ok = true;
     ok &= s2v(lookup(kv, "target"), Tt.t);
-    ok &= s2v(lookup(kv, "close"), Tc.t);
+    ok &= s2v(lookup(kv, "dT0"), Tc.t);
     Euler e;
     ok &= e.set(lookup(kv, "euler"));
     if(!ok){ log_e("syntax err"); return false; }

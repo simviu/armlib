@@ -71,12 +71,13 @@ void Arm::waitDone()
 
 //----
 bool Arm::grab(const Trans& T_target,
-               const Trans& T_close)
+               const Trans& dT0)
 {
     TipSt t; 
 
-    //---- close in
-    t.T = T_close;
+    //---- Approach
+    t.T = T_target;
+    t.T += dT0;
     t.gripper = 1;
     auto& v = cfg_.dfltSpeed;
     moveTo(t, v);
