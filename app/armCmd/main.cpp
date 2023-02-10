@@ -17,6 +17,6 @@ using namespace ut;
 //----------
 int main(int argc, char ** argv)
 {
-    ArmCmd ac;
+    ArmMng ac;
     return ac.run(argc, argv);
 }

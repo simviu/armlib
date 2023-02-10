@@ -66,12 +66,12 @@ namespace arm{
      //   virtual bool done()const=0;
     };
     //--------
-    // ArmCmd
+    // ArmMng
     //--------
-    class ArmCmd : public Cmd
+    class ArmMng : public Cmd
     {
     public:
-        ArmCmd();
+        ArmMng();
 
     protected:
         bool moveto(CStrs& args);

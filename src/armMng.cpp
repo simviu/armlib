@@ -11,7 +11,7 @@ namespace{
 
 
 //-------
-ArmCmd::ArmCmd()
+ArmMng::ArmMng()
 {
     sHelp_ = "(robot arm commands)";
 
@@ -43,7 +43,7 @@ ArmCmd::ArmCmd()
   
 }
 //----
-bool ArmCmd::init(CStrs& args)
+bool ArmMng::init(CStrs& args)
 {
     data_.hasInit = false;
 
@@ -72,7 +72,7 @@ bool ArmCmd::init(CStrs& args)
 }
 
 //----
-bool ArmCmd::checkInit()
+bool ArmMng::checkInit()
 {
     if(data_.hasInit) return true;
     log_e("Arm not init");
@@ -80,7 +80,7 @@ bool ArmCmd::checkInit()
 }
 
 //----
-bool ArmCmd::moveto(CStrs& args)
+bool ArmMng::moveto(CStrs& args)
 {
     if(!checkInit())
         return false;
@@ -119,7 +119,7 @@ bool ArmCmd::moveto(CStrs& args)
 }
 
 //---
-bool ArmCmd::grab(CStrs& args)
+bool ArmMng::grab(CStrs& args)
 {
     if(!checkInit())
         return false;
@@ -128,7 +128,7 @@ bool ArmCmd::grab(CStrs& args)
     Trans Tt, Tc;
     bool ok = true;
     ok &= s2v(lookup(kv, "target"), Tt.t);
-    ok &= s2v(lookup(kv, "dT0"), Tc.t);
+    ok &= s2v(lookup(kv, "dt0"), Tc.t);
     Euler e;
     ok &= e.set(lookup(kv, "euler"));
     if(!ok){ log_e("syntax err"); return false; }
@@ -138,7 +138,7 @@ bool ArmCmd::grab(CStrs& args)
 }
 
 //----
-bool ArmCmd::getSt()
+bool ArmMng::getSt()
 {
     if(p_arm_==nullptr)
         return false;
@@ -149,7 +149,7 @@ bool ArmCmd::getSt()
 }
 
 //----
-bool ArmCmd::play(const string& sf)
+bool ArmMng::play(const string& sf)
 {
     if(!checkInit())
         return false;

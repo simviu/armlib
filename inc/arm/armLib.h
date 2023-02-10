@@ -79,14 +79,15 @@ namespace arm{
 
     };
     //--------
-    // ArmCmd
+    // ArmMng
     //--------
-    class ArmCmd : public Cmd
+    class ArmMng : public Cmd
     {
     public:
-        ArmCmd();
+        ArmMng();
 
         bool init(CStrs& args);
+        auto getArm(){ return p_arm_; }
     protected:
         struct Data{
             bool hasInit = false;
