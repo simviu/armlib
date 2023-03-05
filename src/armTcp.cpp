@@ -91,7 +91,7 @@ void ArmTcp::read_st()
     //log_d("read_st()...");
     client_.send("st");
     string sln;
-    if(!client_.readLn(sln)) {
+    if(!client_.recvLn(sln)) {
         log_d("read_st failed");
         return;
     }
@@ -130,7 +130,7 @@ void ArmTcp::send_cmds()
         }
         //----
         string sln;
-        if(!client_.readLn(sln))
+        if(!client_.recvLn(sln))
         {
             log_e("ArmTcp read cmd ack fail");
             return;
