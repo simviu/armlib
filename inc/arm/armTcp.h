@@ -21,6 +21,9 @@ namespace arm{
         virtual bool moveTo(const TipSt& ts, float spd) override;
         virtual bool getSt(ArmSt& st) override; 
         virtual bool test()override;
+
+        bool send(const string& scmd)
+        {  data_.cmds.push(scmd); return true; }
      //   virtual bool done()const override;
     protected:
         socket::Client client_;
@@ -32,8 +35,8 @@ namespace arm{
         
         std::mutex mtx_st_; 
 
-        void read_st();
-        void send_cmds();
+        bool read_st();
+        bool send_cmds();
         std::thread thd_;
     };
 }

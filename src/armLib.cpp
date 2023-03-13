@@ -1,8 +1,11 @@
 #include "arm/armLib.h"
-#include "arm/armZ1.h"
-#include "arm/armTcp.h"
 
 using namespace arm;
+
+namespace{
+
+    map<string, Arm::FuncCre> creators_;
+}
 
 //------
 string Trans::str()const
@@ -39,27 +42,26 @@ string ArmSt::str()const
     return s;
         
 }
+
 //---- factory
 Sp<Arm> Arm::create(const string& sModel)
 {
-    //--- check if remote
-    size_t nf = sModel.find("robot://");
-    if(nf!=string::npos)
-    {
-        string sUri = sModel.substr(nf+8);
-        return mkSp<ArmTcp>(sUri);
-    }
-    else if(sModel=="dummy")
+    if(sModel=="dummy")
         return mkSp<Arm>();
+    
+    auto it = creators_.find(sModel);
+    if(it!=creators_.end())
+        return (it->second)();
+    
+    log_e("No creator found for '"+sModel+"'");
 
-#ifdef WITH_ARM_Z1
-    else if(sModel=="z1")
-        return mkSp<UNITREE_ARM::ArmZ1>();
-#endif 
-
-    log_e("Unkonw Arm type:'"+sModel+"'");
     return nullptr;
 
+}
+//----
+void Arm::addCreator(const string& sModel, FuncCre f)
+{
+    creators_[sModel] = f;
 }
 //----
 void Arm::waitDone()

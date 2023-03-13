@@ -69,8 +69,14 @@ namespace arm{
         virtual bool play(const string& sf){ return false; };
         virtual bool test(){ return false; };
         virtual bool done()const{return true;};
+        
         //---- factory 
         static Sp<Arm> create(const string& sModel);
+        //--- creators for factory 
+        using FuncCre = std::function<Sp<Arm>()>;
+        static void addCreator(const string& sModel,
+                               FuncCre f);
+
         //---- grab a place, with Pose,
         // dT0 is offset for approach point
         bool grab(const Trans& T_target,
@@ -86,7 +92,6 @@ namespace arm{
     public:
         ArmMng();
 
-        bool init(CStrs& args);
         auto getArm(){ return p_arm_; }
     protected:
         struct Data{
@@ -94,6 +99,10 @@ namespace arm{
         }; Data data_;
         Sp<Arm> p_arm_ = nullptr;
 
+        void init_cmds();
+         
+        bool init(CStrs& args);
+        bool client(CStrs& args);
         bool moveto(CStrs& args);
         bool grab(CStrs& args);
         bool checkInit();

@@ -24,7 +24,22 @@ include_directories(
     /usr/include/jsoncpp
     )
 
+FILE(GLOB  SRC_CORE src/*.cpp)
+add_library(armLib ${SRC_CORE} )
+target_link_libraries(armLib   
+    vsnLib 
+    -fPIC
+    pthread
+    ${OpenCV_LIBRARIES}
+    ${Eigen3_LIBRARY}    
+    )
+
+
 #----------- Arm Z1 -------------
+if(UNIX)
+    SET(WITH_ARM_Z1 True)
+endif()
+#-----
 if(WITH_ARM_Z1)
     SET(Z1_SDK $ENV{armLib_DIR}/dep/unitree/z1_sdk)
     message(STATUS "Z1_SDK=${Z1_SDK}")
@@ -43,22 +58,16 @@ if(WITH_ARM_Z1)
     add_definitions(-DWITH_ARM_Z1)
 endif()
 
-FILE(GLOB  SRC_CORE src/*.cpp)
-add_library(armLib ${SRC_CORE} )
-target_link_libraries(armLib   
-    vsnLib 
-    ${Z1_LINK_LIB}
-    -fPIC
-    pthread
-    ${OpenCV_LIBRARIES}
-    ${Eigen3_LIBRARY}    
-    )
+#------------- armTest
+#FILE(GLOB  SRC_TEST test/*.cpp)
+#add_executable(armTest ${SRC_TEST})
+#target_link_libraries(armTest armLib)
 
-FILE(GLOB  SRC_TEST test/*.cpp)
-add_executable(armTest ${SRC_TEST})
-target_link_libraries(armTest armLib)
-
+#------------- armcmd
 FILE(GLOB  SRC_ARMCMD app/armCmd/*.cpp)
 add_executable(armcmd ${SRC_ARMCMD})
-target_link_libraries(armcmd armLib)
+target_link_libraries(armcmd 
+    armLib
+    ${Z1_LINK_LIB}
+    )
 

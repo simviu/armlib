@@ -73,12 +73,14 @@ bool ArmTcp::init()
     bool ok = client_.connect(cntx.sHost, cntx.port); 
     //---
     thd_ = std::thread([&](){
-        while(1)
+        while(ok)
         {
-            read_st();
-            send_cmds();
+            ok &= read_st();
+            ok &= send_cmds();
             sys::sleep(1.0/cfg_.fps_st);
         }
+        //---- disconnected or error
+        log_i("ArmTcp client disconnected");
     });
     thd_.detach();
 
@@ -86,14 +88,14 @@ bool ArmTcp::init()
 }
 
 //----
-void ArmTcp::read_st()    
+bool ArmTcp::read_st()    
 {   
     //log_d("read_st()...");
     client_.send("st");
     string sln;
     if(!client_.recvLn(sln)) {
         log_d("read_st failed");
-        return;
+        return false;
     }
     log_d("read_st() recv:["+sln+"]");
     //----
@@ -101,18 +103,18 @@ void ArmTcp::read_st()
     if(!decSt(sln, st))
     {
         log_e("read_st() json err");
-        return;
+        return false;
     }
     //---- fill st
     std::unique_lock<std::mutex> lk(mtx_st_);
     data_.cur_st = st;
     data_.b_st_val = true;
     log_d("ArmTcp read_st() cur_st ok, tip at:"+str(st.tip.T.t));
-
+    return true;
 }
 
 //----
-void ArmTcp::send_cmds()    
+bool ArmTcp::send_cmds()    
 {   
     //log_d("ArmTcp send_cmds()...");
     auto& cmds = data_.cmds;
@@ -126,16 +128,17 @@ void ArmTcp::send_cmds()
         if(!client_.send(scmd+"\n"))
         {
             log_e("AmrTcp send_cmds fail");
-            return;
+            return false;
         }
         //----
         string sln;
         if(!client_.recvLn(sln))
         {
             log_e("ArmTcp read cmd ack fail");
-            return;
+            return false;
         }
     }
+    return true;
 
 }
 //----

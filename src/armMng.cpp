@@ -1,4 +1,5 @@
 #include "arm/armLib.h"
+#include "arm/armTcp.h"
 
 
 using namespace arm;
@@ -13,12 +14,25 @@ namespace{
 //-------
 ArmMng::ArmMng()
 {
+    init_cmds();
+    
+
+}
+
+//----
+void ArmMng::init_cmds()
+{
     sHelp_ = "(robot arm commands)";
 
     //----
     add("init", mkSp<Cmd>("arm=[z1]",
     [&](CStrs& args)->bool{ 
         return init(args);
+    }));
+    //----
+    add("client", mkSp<Cmd>("host=<HOST> port=<PORT> arm=[z1]",
+    [&](CStrs& args)->bool{ 
+        return client(args);
     }));
     //----
     add("moveto", mkSp<Cmd>("xyz=x,y,z [euler=rx,ry,rz] [grip=0...1]",
@@ -65,7 +79,47 @@ bool ArmMng::init(CStrs& args)
         log_e("Arm init failed:'"+sN+"'");
         return false;
     }
+
     log_i("Arm init ok : '"+sN+"'");
+    p_arm_ = p;
+    data_.hasInit = true;
+    return true;
+}
+//----
+bool ArmMng::client(CStrs& args)
+{
+    data_.hasInit = false;
+
+    KeyVals kvs(args);
+    string sHost, sArm; int port=-1;
+    bool ok = kvs.get("host", sHost) &&
+              kvs.get("port", port) &&
+              kvs.get("arm", sArm);
+    
+    if(!ok)
+    {
+        log_e("fail to get host, port, or arm");
+        return false;
+    }
+    //----
+    auto p = mkSp<ArmTcp>(sHost, port);
+    if(p==nullptr)
+    {
+        log_e("failed create client ");
+        return false;
+    }
+
+    //---- init
+    ok &= p->init();
+    ok &= p->send("init arm="+sArm);
+    if(!ok) {
+        log_e("Arm init failed");
+        return false;
+    }
+    stringstream s;
+    s << "Arm client connect ok, " << sHost;
+    s << ":" << port;
+    log_i(s.str());
     p_arm_ = p;
     data_.hasInit = true;
     return true;
