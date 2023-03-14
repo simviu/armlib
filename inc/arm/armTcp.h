@@ -22,21 +22,26 @@ namespace arm{
         virtual bool getSt(ArmSt& st) override; 
         virtual bool test()override;
 
-        bool send(const string& scmd)
-        {  data_.cmds.push(scmd); return true; }
-     //   virtual bool done()const override;
+        // init remote arm
+        bool init_arm(const string& sModel);
     protected:
         socket::Client client_;
         struct Data{
             ArmSt cur_st;
             bool b_st_val = false;
-            mth::Pipe<string> cmds; // cmd que            
+            //mth::Pipe<string> cmds; // cmd que            
         }; Data data_;
         
         std::mutex mtx_st_; 
 
+        bool run_once(); // one run in thread loop
         bool read_st();
-        bool send_cmds();
+        //bool send_cmds();
+
+        bool send(const string& scmd);
+        bool getAck(Cmd::Ack& ack);
+        //---
         std::thread thd_;
+        std::mutex  thd_mtx_;
     };
 }

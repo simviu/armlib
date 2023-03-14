@@ -111,11 +111,15 @@ bool ArmMng::client(CStrs& args)
 
     //---- init
     ok &= p->init();
-    ok &= p->send("init arm="+sArm);
+    sys::sleep(0.01);
+    ok &= p->init_arm(sArm);
     if(!ok) {
         log_e("Arm init failed");
         return false;
     }
+    sys::sleep(1);
+
+    //----
     stringstream s;
     s << "Arm client connect ok, " << sHost;
     s << ":" << port;
@@ -194,12 +198,18 @@ bool ArmMng::grab(CStrs& args)
 //----
 bool ArmMng::getSt()
 {
+    string s;
     if(p_arm_==nullptr)
-        return false;
+        s = "arm not init";
+
     ArmSt st;
-    bool ok = p_arm_->getSt(st);
-    log_i("arm_st:"+st.str());
-    return ok;
+    if(p_arm_->getSt(st))
+        s = st.str();
+    else
+        s = "fail to call arm getSt()";
+    
+    log_i("arm_st:"+s);
+    return true;
 }
 
 //----

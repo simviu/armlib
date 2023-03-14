@@ -71,22 +71,32 @@ bool ArmTcp::init()
     auto& cntx = client_.cntx_;
 
     bool ok = client_.connect(cntx.sHost, cntx.port); 
-    //---
+    //--- deprecated
+    /*
     thd_ = std::thread([&](){
         while(ok)
         {
-            ok &= read_st();
-            ok &= send_cmds();
+            ok = run_once();
             sys::sleep(1.0/cfg_.fps_st);
         }
         //---- disconnected or error
-        log_i("ArmTcp client disconnected");
+        log_i("ArmTcp client disconnected or failed");
     });
     thd_.detach();
-
+    */
     return ok;
 }
-
+//----
+/*
+bool ArmTcp::run_once()
+{
+    std::unique_lock<std::mutex> lock(thd_mtx_);
+    bool ok = true;
+    ok &= send_cmds();
+    ok &= read_st();
+    return ok;
+}
+*/
 //----
 bool ArmTcp::read_st()    
 {   
@@ -113,7 +123,8 @@ bool ArmTcp::read_st()
     return true;
 }
 
-//----
+//---- deprecated, switch to blocking mode
+/*
 bool ArmTcp::send_cmds()    
 {   
     //log_d("ArmTcp send_cmds()...");
@@ -141,6 +152,49 @@ bool ArmTcp::send_cmds()
     return true;
 
 }
+*/
+//----
+bool ArmTcp::init_arm(const string& sModel)
+{
+    return send("init arm="+sModel+"\n");
+}
+//--- blocking mode
+bool ArmTcp::send(const string& scmd)
+{  
+    if(!client_.send(scmd+"\n"))
+    {
+        log_e("ArmTcp send cmd fail");
+        return false;
+    }
+
+    //--- receive ack
+    Cmd::Ack ack;
+    if(!getAck(ack)) return false;
+    return true;
+}
+//----
+bool ArmTcp::getAck(Cmd::Ack& ack)
+{
+    vector<string> sLns;
+    while(1)
+    {
+        string s;
+        if(!client_.recvLn(s))
+        {
+            log_e("ArmTcp recv ack fail");
+            return false;
+        }
+        sLns.push_back(s);
+        //----
+    }
+    //---- decode
+    if(!ack.dec(sLns)) 
+        return false;
+    log_i("ArmTcp recv ack:");
+    log_i(ack.str());
+    return true;
+}
+
 //----
 bool ArmTcp::release()
 {
@@ -167,8 +221,7 @@ bool ArmTcp::moveTo(const TipSt& ts, float spd)
     s += "spd=" + str(std::max(spd, spdm));
 
     //bool ok = client_.send(s);
-    data_.cmds.push(s);
-    return true;
+    return send(s);
 
 }
 
