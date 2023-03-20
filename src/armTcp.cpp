@@ -156,7 +156,7 @@ bool ArmTcp::send_cmds()
 //----
 bool ArmTcp::init_arm(const string& sModel)
 {
-    return send("init arm="+sModel+"\n");
+    return send("init arm="+sModel);
 }
 //--- blocking mode
 bool ArmTcp::send(const string& scmd)
@@ -166,7 +166,7 @@ bool ArmTcp::send(const string& scmd)
         log_e("ArmTcp send cmd fail");
         return false;
     }
-
+    log_d("  wait ack...");
     //--- receive ack
     Cmd::Ack ack;
     if(!getAck(ack)) return false;
@@ -178,13 +178,17 @@ bool ArmTcp::getAck(Cmd::Ack& ack)
     vector<string> sLns;
     while(1)
     {
-        string s;
-        if(!client_.recvLn(s))
+        string sr;
+        if(!client_.recvLn(sr))
         {
             log_e("ArmTcp recv ack fail");
             return false;
         }
+        //
+        string s = ut::remove(sr, '\n');
+        log_d("recv ln:'"+s+"'");
         sLns.push_back(s);
+        if(s=="cmd_ack_end")break;
         //----
     }
     //---- decode
