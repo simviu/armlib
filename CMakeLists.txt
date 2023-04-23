@@ -14,9 +14,11 @@ link_directories(/opt/dep/local/lib)
 
 #---- 
 message(STATUS "vsnLb_DIR=$ENV{vsnLib_DIR}")
+message(STATUS "utLb_DIR=$ENV{utLib_DIR}")
 
 include_directories(
     inc 
+    $ENV{utLib_DIR}/inc
     ${EIGEN3_INCLUDE_DIR}
     $ENV{vsnLib_DIR}/inc
     ${JsonCpp_INCLUDE_DIR}
