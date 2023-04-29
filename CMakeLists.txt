@@ -57,7 +57,7 @@ if(WITH_ARM_Z1)
         /usr/include/jsoncpp
         )
     link_directories(${Z1_SDK}/lib)
-    set(Z1_LINK_LIB Z1_SDK_Linux64)
+    set(Z1_LINK_LIB Z1_SDK_x86_64)
     add_definitions(-DWITH_ARM_Z1)
 endif()
 

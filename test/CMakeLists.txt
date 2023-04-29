@@ -23,13 +23,13 @@ include_directories(
 
 #----------- Arm Z1 -------------
 if(WITH_ARM_Z1)
-    add_subdirectory(dep/z1_sdk)
+    add_subdirectory(dep/unitree/z1_sdk)
     include_directories(
         inc 
-        dep/z1_sdk/include/unitree_arm_sdk
+        dep/unitree/z1_sdk/include/unitree_arm_sdk
         )
-    link_directories(dep/z1_sdk/lib)
-    set(WITH_ARM_LIBS "${WITH_ARM_LIBS} Z1_SDK_Linux64")
+    link_directories(dep/unitree/z1_sdk/lib)
+    set(WITH_ARM_LIBS "${WITH_ARM_LIBS} Z1_SDK_x86_64")
     add_definitions(-DWITH_ARM_Z1)
 endif()
 
