@@ -80,6 +80,12 @@ bool ArmZ1::done()const
     return cc.recvState.state == ArmFSMState::JOINTCTRL;
 
 }
+//-----
+bool ArmZ1::setJoints(const ArmSt& st)
+{
+    
+    return true;
+}
 
 
 //-----
