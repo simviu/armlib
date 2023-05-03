@@ -64,6 +64,7 @@ namespace arm{
         virtual bool init(){ return true; };
         virtual bool release(){ return true; };
         virtual bool reset(){  return true; };
+        virtual bool setJoints(const ArmSt& st){  return true; };
         virtual bool moveTo(const TipSt& ts, float spd=1.0){  return true; };
         virtual bool getSt(ArmSt& st) { return false; }
         virtual bool play(const string& sf){ return false; };
@@ -103,6 +104,7 @@ namespace arm{
          
         bool init(CStrs& args);
         bool client(CStrs& args);
+        bool setJoints(CStrs& args);
         bool moveto(CStrs& args);
         bool grab(CStrs& args);
         bool checkInit();

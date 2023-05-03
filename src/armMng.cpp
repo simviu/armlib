@@ -35,6 +35,9 @@ void ArmMng::init_cmds()
         return client(args);
     }));
     //----
+    add("setJoints", mkSp<Cmd>("angles=[j1,j2,j3...] grip=GRIP",
+    [&](CStrs& args)->bool{ return setJoints(args); }));
+    //----
     add("moveto", mkSp<Cmd>("xyz=x,y,z [euler=rx,ry,rz] [grip=0...1]",
     [&](CStrs& args)->bool{ return moveto(args); }));
     //----
@@ -135,6 +138,26 @@ bool ArmMng::checkInit()
     if(data_.hasInit) return true;
     log_e("Arm not init");
     return false;
+}
+
+//----
+bool ArmMng::setJoints(CStrs& args)
+{
+    KeyVals kvs(args);
+    vector<double> as;
+    if(!s2data(kvs["angles"], as)) return false;
+    
+    assert(p_arm_!=nullptr);
+    auto& arm = *p_arm_;
+    
+    ArmSt st;
+    int i=0;
+    for(auto& a: as)
+        st.joints[i++].r = a;
+    if(!kvs.get("grip", st.tip.gripper))
+        return false;
+
+    return arm.setJoints(st);
 }
 
 //----
