@@ -38,7 +38,6 @@ target_link_libraries(armLib
 
 
 #----------- Arm Z1 -------------
-SET(WITH_ARM_Z1 True)
 if(APPLE)
     SET(WITH_ARM_Z1 False)
 endif()
