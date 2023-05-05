@@ -243,7 +243,7 @@ bool ArmTcp::test()
 }
 
 //----
-bool ArmTcp::setJoints(const ArmSt& st)
+bool ArmTcp::setJoints(const ArmSt& st, double t)
 {
     return true; 
 }

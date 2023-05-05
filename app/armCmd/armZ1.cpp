@@ -81,9 +81,15 @@ bool ArmZ1::done()const
 
 }
 //-----
-bool ArmZ1::setJoints(const ArmSt& st)
+bool ArmZ1::setJoints(const ArmSt& st, double t)
 {
-    
+    int n = 1000;
+    for(int i=0; i<n; i++)
+    {
+        arm.q = lastPos*(1-i/duration) + targetPos*(i/duration);
+        arm.qd = (targetPos-lastPos)/(duration*0.002);
+        usleep(2000);
+    }    
     return true;
 }
 

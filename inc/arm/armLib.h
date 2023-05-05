@@ -42,7 +42,7 @@ namespace arm{
     };
     //---
     struct JointSt{
-        double r=0; // angle
+        double r=0; // angle in degree
         // other status, acc, rot speed etc
     };
     //-----
@@ -64,7 +64,7 @@ namespace arm{
         virtual bool init(){ return true; };
         virtual bool release(){ return true; };
         virtual bool reset(){  return true; };
-        virtual bool setJoints(const ArmSt& st){  return true; };
+        virtual bool setJoints(const ArmSt& st, double t){  return true; };
         virtual bool moveTo(const TipSt& ts, float spd=1.0){  return true; };
         virtual bool getSt(ArmSt& st) { return false; }
         virtual bool play(const string& sf){ return false; };
