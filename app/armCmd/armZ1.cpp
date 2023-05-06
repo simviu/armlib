@@ -8,6 +8,10 @@ using namespace UNITREE_ARM;
 namespace{
     struct LCfg{
         float grip_scl = -0.6; // 0 close, 1 open
+        struct JointsCtrl{
+            double dt = 0.002;
+            int n = 1000;
+        }; JointsCtrl jsCtrl;
     }; LCfg lc_;
 
     //----
@@ -49,7 +53,7 @@ namespace{
         assert(js.size()==6);
         int i=0;
         for(auto& j : js)
-            v(i++, 0) = toDgr(j.r);
+            v(i++, 0) = toRad(j.r);
         return v;
    }
 }
@@ -96,6 +100,8 @@ bool ArmZ1::setJoints(const ArmSt& st, double t)
 {
     assert(p_uarm_);
     auto& arm = *p_uarm_;
+
+    auto& jsc = lc_.jsCtrl;
     Vec6 qt = stJointsVec(st); // target
     Vec6 q0 = arm.lowstate->getQ();
 
@@ -156,7 +162,7 @@ bool ArmZ1::getSt(ArmSt& st)
     for(int i=0;i<6;i++)
     {
         JointSt j; 
-        j.r = toRad(rs.jointState[i].Pos);
+        j.r = toDgr(rs.jointState[i].Pos);
         st.joints.push_back(j);
     }
     return true;

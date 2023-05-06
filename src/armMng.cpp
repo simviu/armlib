@@ -152,8 +152,13 @@ bool ArmMng::setJoints(CStrs& args)
     
     ArmSt st;
     int i=0;
+    st.joints.clear();
     for(auto& a: as)
-        st.joints[i++].r = a;
+    {
+        JointSt j; j.r = a;
+        st.joints.push_back(j);
+    }
+
     if(!kvs.get("grip", st.tip.gripper))
         return false;
     double t=0;
