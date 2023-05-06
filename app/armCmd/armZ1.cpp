@@ -41,6 +41,13 @@ namespace{
        T.e.rz = toDgr(p.rz);
        return T;
    }
+   //----
+   Vec6 stJointsVec(const ArmSt& st)
+   {
+        Vec6 v;
+
+        return v;
+   }
 }
 
 //-----
@@ -83,11 +90,16 @@ bool ArmZ1::done()const
 //-----
 bool ArmZ1::setJoints(const ArmSt& st, double t)
 {
+    assert(p_uarm_);
+    auto& arm = *p_uarm_;
+    Vec6 qt = stJointsVec(st); // target
+    Vec6 q0 = arm.lowstate->getQ();
+
     int n = 1000;
     for(int i=0; i<n; i++)
     {
-        arm.q = lastPos*(1-i/duration) + targetPos*(i/duration);
-        arm.qd = (targetPos-lastPos)/(duration*0.002);
+        arm.q = q0*(1-i/n) + qt*(i/n);
+        arm.qd = (qt-q0)/(n*0.002);
         usleep(2000);
     }    
     return true;

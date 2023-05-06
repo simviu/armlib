@@ -35,7 +35,7 @@ void ArmMng::init_cmds()
         return client(args);
     }));
     //----
-    add("setJoints", mkSp<Cmd>("angles=[j1,j2,j3...] grip=GRIP",
+    add("setJoints", mkSp<Cmd>("angles=[j1,j2,j3...] grip=GRIP t=SECONDS",
     [&](CStrs& args)->bool{ return setJoints(args); }));
     //----
     add("moveto", mkSp<Cmd>("xyz=x,y,z [euler=rx,ry,rz] [grip=0...1]",
@@ -156,8 +156,9 @@ bool ArmMng::setJoints(CStrs& args)
         st.joints[i++].r = a;
     if(!kvs.get("grip", st.tip.gripper))
         return false;
-
-    return arm.setJoints(st);
+    double t=0;
+    if(!kvs.get("t", t))return false;
+    return arm.setJoints(st, t);
 }
 
 //----
