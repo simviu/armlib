@@ -45,7 +45,11 @@ namespace{
    Vec6 stJointsVec(const ArmSt& st)
    {
         Vec6 v;
-
+        auto& js = st.joints;
+        assert(js.size()==6);
+        int i=0;
+        for(auto& j : js)
+            v(i++, 0) = toDgr(j.r);
         return v;
    }
 }
@@ -152,7 +156,7 @@ bool ArmZ1::getSt(ArmSt& st)
     for(int i=0;i<6;i++)
     {
         JointSt j; 
-        j.r = rs.jointState[i].Pos;
+        j.r = toRad(rs.jointState[i].Pos);
         st.joints.push_back(j);
     }
     return true;
