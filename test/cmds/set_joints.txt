@@ -1,0 +1,2 @@
+init arm=z1
+setJoints angles=0,50,-20,-20,0,-5 grip=1 t=2

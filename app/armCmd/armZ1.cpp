@@ -100,17 +100,22 @@ bool ArmZ1::setJoints(const ArmSt& st, double t)
 {
     assert(p_uarm_);
     auto& arm = *p_uarm_;
+    
+    //arm.sendRecvThread->start();
+    arm.startTrack(UNITREE_ARM::ArmFSMState::JOINTCTRL);
 
     auto& jsc = lc_.jsCtrl;
     Vec6 qt = stJointsVec(st); // target
     Vec6 q0 = arm.lowstate->getQ();
 
-    int n = 1000;
+    float dt = 0.002;
+    int n = t/dt;
     for(int i=0; i<n; i++)
     {
-        arm.q = q0*(1-i/n) + qt*(i/n);
-        arm.qd = (qt-q0)/(n*0.002);
-        usleep(2000);
+        float a = (float)i/n;
+        arm.q = q0*(1.0-a) + qt*a;
+        arm.qd = (qt-q0)/t;
+        sys::sleep(dt);
     }    
     return true;
 }
