@@ -144,6 +144,8 @@ bool ArmMng::checkInit()
 bool ArmMng::setJoints(CStrs& args)
 {
     KeyVals kvs(args);
+
+    //----
     vector<double> as;
     if(!s2data(kvs["angles"], as)) return false;
     
