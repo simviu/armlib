@@ -29,7 +29,7 @@ def send_cmd(scmd):
 #---- main
 send_cmd("init arm=z1")
 send_cmd("st")
-send_cmd("setJoints angles=0,50,-20,-20,0,-5 grip=1 t=2")
+send_cmd("setJoints angles=30,10,-20,20,20,-15 grip=1 t=2")
 send_cmd("st")
 
 time.sleep(5)
