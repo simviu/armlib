@@ -6,50 +6,58 @@ import time
 HOST = "127.0.0.1" 
 PORT = 8192  
 
-LN_MAX_CHARS = 1024
+LN_MAX_CHARS = 2048
 
 #-------------
 # ArmTcp
 #-------------
 class ArmTcp:
     def __init__(self):
+        self.sock_ = None
         return
 
     #----
     def recvLn(self):
+        if self.sock_ is None:
+            raise Exception('Not connected')
+            
         s = ""
-        while True:
-            c = str(sock.recv(1))
+        for i in range(LN_MAX_CHARS):
+            b = self.sock_.recv(1)
+            c = b.decode('UTF-8')
             if c == "\n":
                 return s
-            print("r:"+c)
+            #print("recv:"+c)
             s = s + c
-            
+
+        return s
             
         
     #----    
     def connect(self, sHost=HOST, port=PORT):
         print("ArmTcp connect to '"+sHost+"'" + str(port)+"...")
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        if self.sock is None:
-            print("socket failed")
-            return false
+        self.sock_ = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if self.sock_ is None:
+            raise Exception("socket failed")
         
-            self.sock.connect((sHost, port))
+        self.sock_.connect((sHost, port))
         
         # TODO: check connection
         print("connected")
-        return
-    
+
     #-----
     def init(self, sName):
-        scmd = "init arm="+sName # e.g. : "z1"
-        self.sock.sendall(bytes(scmd, "utf-8"))
+        return self.sendCmd("init arm="+sName)
+        
+        
+    #-----
+    def sendCmd(self, scmd):
+        self.sock_.sendall(bytes(scmd+"\n", "utf-8"))
         print("cmd sent:"+scmd)
         time.sleep(1)      
         
         sLn = self.recvLn()
-        print("Recv ln:"+sLn)  
+        print("Recv ack:"+sLn)  
         time.sleep(1)
         return True # TODO: check st
 
