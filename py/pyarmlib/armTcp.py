@@ -7,6 +7,7 @@ HOST = "127.0.0.1"
 PORT = 8192  
 
 LN_MAX_CHARS = 2048
+ACK_MAX_LNS = 100
 
 #-------------
 # ArmTcp
@@ -49,15 +50,51 @@ class ArmTcp:
     def init(self, sName):
         return self.sendCmd("init arm="+sName)
         
+    #-----
+    def getSt(self):
+        st = {}
+        self.sendCmd("st")
+        sLn = self.recvLn()
         
+        #---- decode json
+
+        return st
+        
+    #-----
+    def getAck(self):
+        ok = False
+        sRes = ""
+        bAck = False
+        for i in range(ACK_MAX_LNS):
+            s = self.recvLn()
+            ss = s.split("=")
+            if ss[0] == "cmd_ack":
+                bAck = True
+            elif ss[0] == "cmd_ack_end":
+                if not bAck:
+                    print("Error: header 'cmd_ack' not found")
+                    return False,sRes
+                return ok,sRes
+            elif ss[0] == "cmd_ok":
+                ok = True if ss[1] == "true" else False
+            else:
+                sRes = sRes + s +"\n"
+        raise("Error: getAck() didn't recv cmd_ack_end")
+        return False,sRes
+        
+    
     #-----
     def sendCmd(self, scmd):
         self.sock_.sendall(bytes(scmd+"\n", "utf-8"))
         print("cmd sent:"+scmd)
         time.sleep(1)      
         
-        sLn = self.recvLn()
-        print("Recv ack:"+sLn)  
+        #sLn = self.recvLn()
+        #print("Recv ack:"+sLn)  
+        ok,sRes = self.getAck()
+        sOk = "True" if ok else "False"
+        print("cmd_ok:" + sOk)
+        print("sRes:"+sRes)
         time.sleep(1)
         return True # TODO: check st
 
@@ -70,6 +107,8 @@ def test():
     arm.connect(HOST, PORT)
     arm.init("z1")      
     time.sleep(2)  
+    st = arm.getSt()
+    time.sleep(2)
 
 #----------
 # main

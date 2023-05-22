@@ -240,6 +240,7 @@ bool ArmMng::getSt()
         s = "fail to call arm getSt()";
     
     log_i("arm_st:"+s);
+    sRes_ = s;
     return true;
 }
 
