@@ -1,20 +1,34 @@
 
 import socket
 import time
-
+from common import *
 
 HOST = "127.0.0.1" 
 PORT = 8192  
 
 LN_MAX_CHARS = 2048
 ACK_MAX_LNS = 100
+#-------------
+
+#-------------
+class ArmSt:
+    def __init__(self):
+        self.T = Trans()
+        self.grip = 0.0
+        self.joints = np.array([])
+        return
 
 #-------------
 # ArmTcp
 #-------------
 class ArmTcp:
-    def __init__(self):
+    def __init__(self, sCmdPrfx=""):
+        self.sCmdPrfx = sCmdPrfx
         self.sock_ = None
+        return
+
+    #---- 
+    def dec_st(self, sSt):
         return
 
     #----
@@ -85,7 +99,7 @@ class ArmTcp:
     
     #-----
     def sendCmd(self, scmd):
-        self.sock_.sendall(bytes(scmd+"\n", "utf-8"))
+        self.sock_.sendall(bytes(self.sCmdPrfx +" "+ scmd+"\n", "utf-8"))
         print("cmd sent:"+scmd)
         time.sleep(1)      
         
