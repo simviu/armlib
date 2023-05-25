@@ -1,7 +1,7 @@
 
 import socket
 import time
-from common import *
+from utils import *
 
 HOST = "127.0.0.1" 
 PORT = 8192  
@@ -18,6 +18,12 @@ class ArmSt:
         self.joints = np.array([])
         return
 
+    #---- 
+    def dec(self, j):
+        self.T.dec(j['T'])
+        self.grip = float(j['grip'])
+        self.joins = np.loadtxt(j['joints'])
+        return
 #-------------
 # ArmTcp
 #-------------
@@ -27,9 +33,7 @@ class ArmTcp:
         self.sock_ = None
         return
 
-    #---- 
-    def dec_st(self, sSt):
-        return
+    
 
     #----
     def recvLn(self):
@@ -66,12 +70,13 @@ class ArmTcp:
         
     #-----
     def getSt(self):
-        st = {}
+        st = ArmSt()
         self.sendCmd("st")
         sLn = self.recvLn()
         
         #---- decode json
-
+        j = json.loads(sLn)
+        st.dec(j)
         return st
         
     #-----
@@ -122,6 +127,7 @@ def test():
     arm.init("z1")      
     time.sleep(2)  
     st = arm.getSt()
+    print("got st"+ st.str())
     time.sleep(2)
 
 #----------

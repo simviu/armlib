@@ -4,7 +4,8 @@ import numpy as np
 #---------------
 # utils
 #---------------
-
+def vec2s(v):
+    return str(v[0]) + "," + str(v[1]) + "," + str(v[2])
 
 #-------------
 class Trans:
@@ -19,12 +20,14 @@ class Trans:
         return str(json.dumps(self.enc()))
 
     def enc(self):
-        return {'t':str(self.t), 'e':str(self.e)}
+        return {'t':vec2s(self.t), 'e':vec2s(self.e)}
     
     def dec(self, s):
         j = json.loads(s)
-        self.t = j['t']
-        return j
+        print("j[t]="+str(j['t']))
+        self.t = np.fromstring(str(j['t']), sep=',')
+        self.e = np.fromstring(str(j['e']), sep=',')
+        return 
 
 
 #----------
@@ -37,11 +40,12 @@ def test():
     s1 = T.str()
     #---
     dt = np.array([0.1,0.2,0.3])
+    de = np.array([5,5,5])
     T.t = T.t + dt
+    T.e = T.e + de
+    print("T+dT:"+T.str())
 
-    print("T2 enc str:"+T.str())
     #---
-    T.t = T.t + dt
     T.dec(s1)
     print("s1 dec result:"+T.str())
     return 
