@@ -7,6 +7,13 @@ import numpy as np
 def vec2s(v):
     return str(v[0]) + "," + str(v[1]) + "," + str(v[2])
 
+#----
+def dgrIn180(a):
+        if a > 180:
+            return 180
+        elif a < -180:
+            return -180
+        return a
 #-------------
 class Trans:
     def __init__(self, 

@@ -1,32 +1,84 @@
 # Python program to demonstrate
 # scale widget
-
-from tkinter import *
+import tkinter as tk
 from tkinter import ttk
-from pyarmlib import armTcp
+import armTcp
+from utils import *
 
+#---- def
+SCROLL_DGR_UNITS = 1.0
+SCROLL_DGR_PAGES = 10.0
+SCROLL_BAR_W = 0.2
 #----------
 class JointCtrl:
     def __init__(self, container, idx):
+        #----
+        self.angle = 0.0 # degree -180 to 180
+        #----
         frm = ttk.Frame(container, padding=(3,3,12,12))
-        ln = Label(frm, text = "joint"+str(idx+1))
-        ls = Label(frm, text = "q,qd,Torque")
-        bar=Scrollbar(frm, orient='horizontal')
-        bar.set(0.30, 0.5)
+        ln = tk.Label(frm, text = "joint"+str(idx+1))
+        ls = tk.Label(frm, text = "q,qd,Torque")
+        la = tk.Label(frm, text = "angle")
 
-        ln.grid(row=0, column=0, sticky=(E,W))
-        bar.grid(row=0, column=1, sticky=(E,W))
-        ls.grid(row=0, column=2, sticky=(E,W))
+        bar=tk.Scrollbar(frm, orient='horizontal')
+        #bar.set(0.30, 0.5)
+        bar['command'] = self.scrollCbk
 
-        frm.columnconfigure(1, minsize=300)
-        frm.grid(row=idx, column=0, sticky=(N,S,W,E))
+        ln.grid(row=1, column=0, sticky=(tk.E,tk.W))
+        bar.grid(row=1, column=1, sticky=(tk.E,tk.W))
+        ls.grid(row=0, column=2, sticky=(tk.E,tk.W))
+        la.grid(row=0, column=1, sticky=(tk.E,tk.W))
+
+        frm.columnconfigure(1, minsize=500)
+        frm.rowconfigure(1, minsize=50)
+        frm.grid(row=idx, column=0, sticky=(tk.N,tk.S,tk.W,tk.E))
         self.frm = frm
+
+        self.bar = bar 
+        self.frm = frm
+        self.label_st = ls
+        self.label_angle = la
+
+        #----
+        self.update()
+        return
+    
+    #---- 
+    def update(self):
+        # angle
+        self.label_angle.configure(text=str(self.angle))
+        # bar
+        f = self.angle /360.0 + 0.5
+        df = SCROLL_BAR_W * 0.5
+        self.bar.set(f-df, f+df)
+        return
+    
+    #----
+    def scrollCbk(self, act,d,step=None):
+        a = self.angle 
+        if act == tk.SCROLL:
+            s = SCROLL_DGR_UNITS 
+            if step == tk.PAGES:
+                s = SCROLL_DGR_PAGES
+            a = a + float(d) * s 
+
+        elif act == tk.MOVETO:
+            a = (float(d) - 0.5)*360
+        else:
+            raise("Error: unkown act:"+str(act))
+
+        a = dgrIn180(a)
+        self.angle = a
+
+        self.update()
+        return
+        
 
 #---------
 class JointsPanel:
     def __init__(self, container):
         frm = ttk.Frame(container, padding=(3,3,12,12))
-        frm.grid(column=0, row=0, sticky=(N, S, E, W))
+        frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         
         self.joints = []
@@ -72,19 +124,19 @@ class App:
         #self.root.geometry("400x300")
 
         frm = ttk.Frame(root, padding=(3,3,12,12))
-        frm.grid(column=0, row=0, sticky=(N, S, E, W))
+        frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.jointsPanel = JointsPanel(frm)
         
         self.cmdInp = ttk.Entry(frm)
-        self.cmdInp.grid(column=0, row=1, columnspan=1, sticky=(S,E,W), pady=5, padx=5)
+        self.cmdInp.grid(column=0, row=1, columnspan=1, sticky=(tk.S,tk.E,tk.W), pady=5, padx=5)
 
         self.frm = frm
 
 #-------------------------
 #    main 
 #-------------------------
-root = Tk()
+root = tk.Tk()
 app = App(root)
 root.mainloop()
 
