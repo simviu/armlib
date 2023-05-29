@@ -1,6 +1,7 @@
 
 import socket
 import time
+import threading
 
 import numpy as np
 from armLib import *
@@ -19,24 +20,9 @@ class ArmTcp(Arm):
     def __init__(self, sCmdPrfx=""):
         self.sCmdPrfx = sCmdPrfx
         self.sock_ = None
+        self.lock_ = threading.Lock()
         return
 
-    #----
-    def recvLn(self):
-        if self.sock_ is None:
-            raise Exception('Not connected')
-            
-        s = ""
-        for i in range(LN_MAX_CHARS):
-            b = self.sock_.recv(1)
-            c = b.decode('UTF-8')
-            if c == "\n":
-                return s
-            #print("recv:"+c)
-            s = s + c
-
-        return s
-            
         
     #----    
     def connect(self, sHost=HOST, port=PORT):
@@ -52,24 +38,42 @@ class ArmTcp(Arm):
 
     #-----
     def init(self, sName):
-        return self.sendCmd("init arm="+sName)
+        return self.sendCmd_("init arm="+sName)
         
     #-----
     def getSt(self):
         st = ArmSt()
-        ok,sRes = self.sendCmd("st")
+        ok,sRes = self.sendCmd_("st")
         if ok:
             j = json.loads(sRes)
             st.dec(j)
         return ok,st
-        
+
+
+    #------------- private -------------
+    def recvLn_(self):
+        if self.sock_ is None:
+            raise Exception('Not connected')
+            
+        s = ""
+        for i in range(LN_MAX_CHARS):
+            b = self.sock_.recv(1)
+            c = b.decode('UTF-8')
+            if c == "\n":
+                return s
+            #print("recv:"+c)
+            s = s + c
+
+        return s
+            
+
     #-----
     def getAck_(self):
         ok = False
         sRes = ""
         bAck = False
         for i in range(ACK_MAX_LNS):
-            s = self.recvLn()
+            s = self.recvLn_()
             ss = s.split("=")
             if ss[0] == "cmd_ack":
                 bAck = True
@@ -87,7 +91,13 @@ class ArmTcp(Arm):
         
     
     #-----
-    def sendCmd(self, scmd):
+    def sendCmd_(self, scmd):
+        ok,sRes = False,""
+        with self.lock_:
+            ok,sRes = self.sendCmd_core_(scmd)
+        return ok,sRes
+    
+    def sendCmd_core_(self, scmd):
         self.sock_.sendall(bytes(self.sCmdPrfx +" "+ scmd+"\n", "utf-8"))
         print("cmd sent:"+scmd)
         time.sleep(1)      
