@@ -57,13 +57,11 @@ class ArmTcp(Arm):
     #-----
     def getSt(self):
         st = ArmSt()
-        self.sendCmd("st")
-        sLn = self.recvLn()
-        
-        #---- decode json
-        j = json.loads(sLn)
-        st.dec(j)
-        return st
+        ok,sRes = self.sendCmd("st")
+        if ok:
+            j = json.loads(sRes)
+            st.dec(j)
+        return ok,st
         
     #-----
     def getAck_(self):
@@ -101,7 +99,7 @@ class ArmTcp(Arm):
         print("cmd_ok:" + sOk)
         print("sRes:"+sRes)
         time.sleep(1)
-        return True # TODO: check st
+        return ok, sRes
 
 
 #----------
