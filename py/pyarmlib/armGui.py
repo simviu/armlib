@@ -2,13 +2,21 @@
 # scale widget
 import tkinter as tk
 from tkinter import ttk
-import armTcp
+from armTcp import *
 from utils import *
+from threading import Thread
 
 #---- def
 SCROLL_DGR_UNITS = 1.0
 SCROLL_DGR_PAGES = 10.0
 SCROLL_BAR_W = 0.2
+
+T_ST_THREAD = 1.0
+
+#--- for test
+TEST_HOST = "127.0.0.1"
+TEST_PORT = 8192
+
 #----------
 class JointCtrl:
     def __init__(self, container, idx):
@@ -76,18 +84,37 @@ class JointCtrl:
 
 #---------
 class JointsPanel:
-    def __init__(self, container, N_joints):
+    def __init__(self, container, arm, N_joints):
         frm = ttk.Frame(container, padding=(3,3,12,12))
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        
+        #----
         self.joints = []
         for i in range(N_joints):
             jc = JointCtrl(frm, i)
             self.joints.append(jc)
-            
-        self.frm = frm
         
+        #-----
+        self.frm  = frm
+        self.arm_ = arm
+
+        #---- st thread
+        print("start st thread...")
+        self.st_thread_ = Thread(self.func_get_st_())
+        self.st_thread_.run()
+        print("st thread running.")
+
+        return
+    
+    #--
+    def func_get_st_(self):
+        while True:
+            print("func_get_st_() call...")
+            ok,st = self.arm_.getSt()
+            time.sleep(T_ST_THREAD)
+        return
+
+
 #---------- test
 
 def test():
@@ -120,13 +147,15 @@ def test():
 class TestApp:
     def __init__(self, root):
 
-
+        arm = ArmTcp()
+        arm.connect(TEST_HOST, TEST_PORT)
+        arm.init('z1')
         #self.root.geometry("400x300")
 
         frm = ttk.Frame(root, padding=(3,3,12,12))
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        self.jointsPanel = JointsPanel(frm, 6)
+        self.jointsPanel = JointsPanel(frm, arm, 6)
         
         self.cmdInp = ttk.Entry(frm)
         self.cmdInp.grid(column=0, row=1, columnspan=1, sticky=(tk.S,tk.E,tk.W), pady=5, padx=5)

@@ -43,6 +43,10 @@ class ArmTcp(Arm):
     #-----
     def getSt(self):
         st = ArmSt()
+        if self.sock_ is None:
+            print("Error: sock_ none")
+            return False,st
+        
         ok,sRes = self.sendCmd_("st")
         if ok:
             j = json.loads(sRes)
