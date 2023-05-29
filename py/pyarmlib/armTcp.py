@@ -1,7 +1,9 @@
 
 import socket
 import time
-from utils import *
+
+import numpy as np
+from armLib import *
 
 HOST = "127.0.0.1" 
 PORT = 8192  
@@ -11,29 +13,13 @@ ACK_MAX_LNS = 100
 #-------------
 
 #-------------
-class ArmSt:
-    def __init__(self):
-        self.T = Trans()
-        self.grip = 0.0
-        self.joints = np.array([])
-        return
-
-    #---- 
-    def dec(self, j):
-        self.T.dec(j['T'])
-        self.grip = float(j['grip'])
-        self.joins = np.loadtxt(j['joints'])
-        return
-#-------------
 # ArmTcp
 #-------------
-class ArmTcp:
+class ArmTcp(Arm):
     def __init__(self, sCmdPrfx=""):
         self.sCmdPrfx = sCmdPrfx
         self.sock_ = None
         return
-
-    
 
     #----
     def recvLn(self):
@@ -80,7 +66,7 @@ class ArmTcp:
         return st
         
     #-----
-    def getAck(self):
+    def getAck_(self):
         ok = False
         sRes = ""
         bAck = False
@@ -110,7 +96,7 @@ class ArmTcp:
         
         #sLn = self.recvLn()
         #print("Recv ack:"+sLn)  
-        ok,sRes = self.getAck()
+        ok,sRes = self.getAck_()
         sOk = "True" if ok else "False"
         print("cmd_ok:" + sOk)
         print("sRes:"+sRes)

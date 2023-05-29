@@ -76,13 +76,13 @@ class JointCtrl:
 
 #---------
 class JointsPanel:
-    def __init__(self, container):
+    def __init__(self, container, N_joints):
         frm = ttk.Frame(container, padding=(3,3,12,12))
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         
         self.joints = []
-        for i in range(6):
+        for i in range(N_joints):
             jc = JointCtrl(frm, i)
             self.joints.append(jc)
             
@@ -117,7 +117,7 @@ def test():
     return
 
 #------------------
-class App:
+class TestApp:
     def __init__(self, root):
 
 
@@ -126,7 +126,7 @@ class App:
         frm = ttk.Frame(root, padding=(3,3,12,12))
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        self.jointsPanel = JointsPanel(frm)
+        self.jointsPanel = JointsPanel(frm, 6)
         
         self.cmdInp = ttk.Entry(frm)
         self.cmdInp.grid(column=0, row=1, columnspan=1, sticky=(tk.S,tk.E,tk.W), pady=5, padx=5)
@@ -137,6 +137,6 @@ class App:
 #    main 
 #-------------------------
 root = tk.Tk()
-app = App(root)
+app = TestApp(root)
 root.mainloop()
 
