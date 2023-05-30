@@ -2,18 +2,26 @@ from utils import *
 
 
 #-------------
-class ArmSt:
+class TipSt:
     def __init__(self):
         self.T = Trans()
         self.grip = 0.0
+    
+    def dec(self, j):
+        self.T.dec(j['T'])
+        self.grip = float(j['grip'])
+
+#-------------
+class ArmSt:
+    def __init__(self):
+        self.tipSt = TipSt()
         self.joints = np.array([])
         return
 
     #---- 
     def dec(self, j):
-        self.T.dec(j['T'])
-        self.grip = float(j['grip'])
-        self.joins = np.loadtxt(j['joints'])
+        self.tipSt.dec(j["tip"])
+        self.joins = np.array(j['joints'])
         return
     
 #-------------

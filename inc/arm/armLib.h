@@ -37,8 +37,7 @@ namespace arm{
     struct TipSt{
         Trans T;
         double gripper = 0;
-        string str()const 
-        { return "{T:"+ T.str() + ", gripper:"+vsn::str(gripper) +"}"; }
+        string str()const;
     };
     //---
     struct JointSt{

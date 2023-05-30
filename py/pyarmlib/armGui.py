@@ -100,8 +100,8 @@ class JointsPanel:
 
         #---- st thread
         print("start st thread...")
-        self.st_thread_ = Thread(self.func_get_st_())
-        self.st_thread_.run()
+        self.st_thread_ = Thread(self.func_get_st_(),  daemon=True)
+        self.st_thread_.start()
         print("st thread running.")
 
         return

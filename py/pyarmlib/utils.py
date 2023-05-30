@@ -29,9 +29,7 @@ class Trans:
     def enc(self):
         return {'t':vec2s(self.t), 'e':vec2s(self.e)}
     
-    def dec(self, s):
-        j = json.loads(s)
-        print("j[t]="+str(j['t']))
+    def dec(self, j):
         self.t = np.fromstring(str(j['t']), sep=',')
         self.e = np.fromstring(str(j['e']), sep=',')
         return 
@@ -53,7 +51,8 @@ def test():
     print("T+dT:"+T.str())
 
     #---
-    T.dec(s1)
+    j = json.loads(s1)
+    T.dec(j)
     print("s1 dec result:"+T.str())
     return 
 

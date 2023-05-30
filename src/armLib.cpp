@@ -10,8 +10,8 @@ namespace{
 //------
 string Trans::str()const
 { 
-    return "{t:\""+vsn::str(t,3)+
-            "\", euler:\"" +e.str()+"\"}";  
+    return "{\"t\":\""+vsn::str(t,3)+
+            "\", \"e\":\"" +e.str()+"\"}";  
 }
 
 //-----
@@ -29,6 +29,12 @@ bool Trans::set(const string& s)
     e.rz = ds[5];
     return true;
 }
+//----
+string TipSt::str()const 
+{ 
+    return "{\"T\":"+ T.str() + 
+        ", \"grip\":" + vsn::str(gripper) +"}"; 
+}
 
 //----
 string ArmSt::str()const
@@ -37,8 +43,8 @@ string ArmSt::str()const
     int N = joints.size();
     for(int i=0;i<N;i++)
         sj += ((i==0)?"":",")+::str(joints[i].r);
-    string s = "{ tip:"+tip.str() + 
-               ", joints:["+sj+"] }";
+    string s = "{ \"tip\":"+tip.str() + 
+               ", \"joints\":["+sj+"] }";
     return s;
         
 }
