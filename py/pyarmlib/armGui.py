@@ -11,7 +11,7 @@ SCROLL_DGR_UNITS = 1.0
 SCROLL_DGR_PAGES = 10.0
 SCROLL_BAR_W = 0.2
 
-T_ST_THREAD = 1.0
+T_ST_THREAD = 0.2
 
 #--- for test
 TEST_HOST = "127.0.0.1"
@@ -50,6 +50,7 @@ class JointCtrl:
         #----
         self.update()
         return
+
     
     #---- 
     def update(self):
@@ -89,28 +90,46 @@ class JointsPanel:
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         #----
-        self.joints = []
+        self.jointCtrls = []
         for i in range(N_joints):
             jc = JointCtrl(frm, i)
-            self.joints.append(jc)
+            self.jointCtrls.append(jc)
         
         #-----
         self.frm  = frm
         self.arm_ = arm
 
         #---- st thread
-        print("start st thread...")
-        self.st_thread_ = Thread(self.func_get_st_(),  daemon=True)
-        self.st_thread_.start()
-        print("st thread running.")
+        #print("start st thread...")
+        #self.st_thread_ = Thread(self.func_get_st_(),  daemon=True)
+        #self.st_thread_.start()
+        #print("st thread running.")
+
+        self.update()
 
         return
+    
+    #--
+    def update(self):
+        ok,st = self.arm_.getSt()
+        if not ok:
+            print("Error:wrong status")
+            return
+        
+        angles = st.joints
+        N = len(self.jointCtrls)
+        for i in range(N):
+            c = self.jointCtrls[i]
+            c.angle = angles[i]
+            c.update()
+            
+            return
     
     #--
     def func_get_st_(self):
         while True:
             print("func_get_st_() call...")
-            ok,st = self.arm_.getSt()
+            #ok,st = self.arm_.getSt()
             time.sleep(T_ST_THREAD)
         return
 
