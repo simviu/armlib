@@ -9,7 +9,7 @@ from threading import Thread
 #---- def
 SCROLL_DGR_UNITS = 1.0
 SCROLL_DGR_PAGES = 10.0
-SCROLL_BAR_W = 0.2
+SCROLL_BAR_W = 0.1
 
 T_ST_THREAD = 0.2
 
@@ -98,6 +98,7 @@ class JointsPanel:
         #-----
         self.frm  = frm
         self.arm_ = arm
+        self.st_ = ArmSt()
 
         #---- st thread
         #print("start st thread...")
@@ -105,25 +106,23 @@ class JointsPanel:
         #self.st_thread_.start()
         #print("st thread running.")
 
-        self.update()
+        ok,self.st_ = self.arm_.getSt()
+        if ok:
+            self.update()
+        else:
+            print("Error:wrong status")
 
         return
     
     #--
     def update(self):
-        ok,st = self.arm_.getSt()
-        if not ok:
-            print("Error:wrong status")
-            return
         
-        angles = st.joints
+        angles = self.st_.joints
         N = len(self.jointCtrls)
         for i in range(N):
             c = self.jointCtrls[i]
             c.angle = angles[i]
             c.update()
-            
-            return
     
     #--
     def func_get_st_(self):

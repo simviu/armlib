@@ -22,6 +22,8 @@ class ArmSt:
     def dec(self, j):
         self.tipSt.dec(j["tip"])
         self.joints = np.array(j['joints'])
+        #print("[dbg]: dec() joints :")
+        #print(self.joints)
         return
     
 #-------------
