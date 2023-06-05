@@ -62,12 +62,13 @@ class JointCtrl:
         df = SCROLL_BAR_W * 0.5
         self.bar.set(f-df, f+df)
 
-        self.frm.update()
+        #self.frm.update()
         return
     
     #----
     def scrollCbk(self, act,d,step=None):
         a = self.angle 
+        print("[dbg]: scrollcbk(), d="+str(d)+", step="+str(step))
         if act == tk.SCROLL:
             s = SCROLL_DGR_UNITS 
             if step == tk.PAGES:
@@ -131,7 +132,7 @@ class JointsPanel:
             c.angle = angles[i]
             c.update()
 
-        self.frm.update()
+        #self.frm.update()
 
     #--
     def setAngle(self, idx, a):
@@ -149,7 +150,9 @@ class JointsPanel:
 
         #--- do action
         self.arm_.setSt(st)
-        time.sleep(0.1)
+
+        #--- read back
+        time.sleep(0.2)
         ok,st_ret = self.arm_.getSt()
         self.st_ = st_ret if ok else st_save
 
