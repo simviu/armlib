@@ -61,6 +61,8 @@ class JointCtrl:
         f = self.angle /360.0 + 0.5
         df = SCROLL_BAR_W * 0.5
         self.bar.set(f-df, f+df)
+
+        self.frm.update()
         return
     
     #----
@@ -129,6 +131,8 @@ class JointsPanel:
             c.angle = angles[i]
             c.update()
 
+        self.frm.update()
+
     #--
     def setAngle(self, idx, a):
         st = self.st_
@@ -145,7 +149,7 @@ class JointsPanel:
 
         #--- do action
         self.arm_.setSt(st)
-        time.sleep(1)
+        time.sleep(0.1)
         ok,st_ret = self.arm_.getSt()
         self.st_ = st_ret if ok else st_save
 
