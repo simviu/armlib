@@ -5,6 +5,7 @@
 using namespace arm;
 using namespace UNITREE_ARM;
 
+
 namespace{
     struct LCfg{
         float grip_scl = -0.6; // 0 close, 1 open
@@ -12,6 +13,7 @@ namespace{
             double dt = 0.002;
             int n = 1000;
         }; JointsCtrl jsCtrl;
+        const int N_joints = 6;
     }; LCfg lc_;
 
     //----
@@ -101,6 +103,13 @@ bool ArmZ1::setJoints(const ArmSt& st, double t)
     assert(p_uarm_);
     auto& arm = *p_uarm_;
     
+    //--- check joints
+    if(st.joints.size()<lc_.N_joints)
+    {
+        log_e("setJoints(): joints num < "+str(lc_.N_joints));
+        return false;
+    }
+
     //arm.sendRecvThread->start();
     arm.startTrack(UNITREE_ARM::ArmFSMState::JOINTCTRL);
 

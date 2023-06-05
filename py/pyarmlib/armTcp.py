@@ -59,7 +59,7 @@ class ArmTcp(Arm):
     def setSt(self, st):
         ok = True
         g = st.tipSt.grip
-        sj = vec2s(st.joints)
+        sj = np2s(st.joints)
         # setJoints angles=30,10,-20,20,20,-15 grip=1 t=2
 
         s = "setJoints "
@@ -95,6 +95,9 @@ class ArmTcp(Arm):
         bAck = False
         for i in range(ACK_MAX_LNS):
             s = self.recvLn_()
+            if len(s) == 0:
+                continue
+
             print("[dbg]:getAck_() got s='"+s+"'")
             ss = s.split("=")
             if ss[0] == "cmd_ack":
@@ -108,7 +111,8 @@ class ArmTcp(Arm):
                 ok = True if ss[1] == "true" else False
             else:
                 sRes = sRes + s +"\n"
-        raise("Error: getAck() didn't recv cmd_ack_end")
+
+        raise("Error: getAck() ACK_MAX_LNS reached, didn't recv cmd_ack_end")
         return False,sRes
         
     

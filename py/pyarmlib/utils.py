@@ -7,6 +7,13 @@ import numpy as np
 def vec2s(v):
     return str(v[0]) + "," + str(v[1]) + "," + str(v[2])
 
+def np2s(v):
+    s = np.array2string(v, precision=2, separator=',')
+    s = s.replace("[", "")
+    s = s.replace("]", "")
+    s = s.replace(" ", "")
+    return s
+
 #----
 def dgrIn180(a):
         if a > 180:
