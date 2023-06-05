@@ -6,11 +6,13 @@ import threading
 import numpy as np
 from armLib import *
 
+
 HOST = "127.0.0.1" 
 PORT = 8192  
 
 LN_MAX_CHARS = 2048
 ACK_MAX_LNS = 100
+DFLT_setJoints_t = 2
 #-------------
 
 #-------------
@@ -53,6 +55,21 @@ class ArmTcp(Arm):
             st.dec(j)
         return ok,st
 
+    #----
+    def setSt(self, st):
+        ok = True
+        g = st.tipSt.grip
+        sj = vec2s(st.joints)
+        # setJoints angles=30,10,-20,20,20,-15 grip=1 t=2
+
+        s = "setJoints "
+        s = s + "angles=" + sj+" "
+        s = s + "grip="+str(g)+" "
+        s = s+ "t=" + str(DFLT_setJoints_t)
+
+        self.sendCmd_(s)
+        #print("[dbg]: to sendcmd:'"+s+"'")
+        return ok
 
     #------------- private -------------
     def recvLn_(self):
@@ -78,6 +95,7 @@ class ArmTcp(Arm):
         bAck = False
         for i in range(ACK_MAX_LNS):
             s = self.recvLn_()
+            print("[dbg]:getAck_() got s='"+s+"'")
             ss = s.split("=")
             if ss[0] == "cmd_ack":
                 bAck = True

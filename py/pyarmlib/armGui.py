@@ -19,11 +19,14 @@ TEST_PORT = 8192
 
 #----------
 class JointCtrl:
-    def __init__(self, container, idx):
-        #----
+    def __init__(self, panel, idx):
+        self.idx_ = idx
+        self.panel_ = panel
+        frm_top = panel.frm
         self.angle = 0.0 # degree -180 to 180
+
         #----
-        frm = ttk.Frame(container, padding=(3,3,12,12))
+        frm = ttk.Frame(frm_top, padding=(3,3,12,12))
         ln = tk.Label(frm, text = "joint"+str(idx+1))
         ls = tk.Label(frm, text = "q,qd,Torque")
         la = tk.Label(frm, text = "angle")
@@ -46,12 +49,10 @@ class JointCtrl:
         self.frm = frm
         self.label_st = ls
         self.label_angle = la
-
         #----
         self.update()
         return
 
-    
     #---- 
     def update(self):
         # angle
@@ -78,25 +79,29 @@ class JointCtrl:
 
         a = dgrIn180(a)
         self.angle = a
-
         self.update()
+
+        #--- call back top panel
+        self.panel_.setAngle(self.idx_, a)
         return
         
 
-#---------
+#---------------
+# JointsPanel
+#---------------
 class JointsPanel:
     def __init__(self, container, arm, N_joints):
         frm = ttk.Frame(container, padding=(3,3,12,12))
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.frm  = frm
 
         #----
         self.jointCtrls = []
         for i in range(N_joints):
-            jc = JointCtrl(frm, i)
+            jc = JointCtrl(self, i)
             self.jointCtrls.append(jc)
         
         #-----
-        self.frm  = frm
         self.arm_ = arm
         self.st_ = ArmSt()
 
@@ -123,8 +128,32 @@ class JointsPanel:
             c = self.jointCtrls[i]
             c.angle = angles[i]
             c.update()
-    
+
     #--
+    def setAngle(self, idx, a):
+        st = self.st_
+        st.joints[idx] = a
+        self.setSt(st)
+        return
+
+    #--
+    def setSt(self, st):
+        st_save = st # save first 
+        #--- update UI to new st 
+        self.st_ = st
+        self.update()
+
+        #--- do action
+        self.arm_.setSt(st)
+        time.sleep(1)
+        ok,st_ret = self.arm_.getSt()
+        self.st_ = st_ret if ok else st_save
+
+        # refresh UI
+        self.update()
+        return
+
+    #-----------------
     def func_get_st_(self):
         while True:
             print("func_get_st_() call...")
