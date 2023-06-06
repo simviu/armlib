@@ -1,5 +1,3 @@
-# Python program to demonstrate
-# scale widget
 import tkinter as tk
 from tkinter import ttk
 from armTcp import *
@@ -95,7 +93,7 @@ class JointCtrl:
 class JointsPanel:
     def __init__(self, container, arm, N_joints):
         frm = ttk.Frame(container, padding=(3,3,12,12))
-        frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        #frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.frm  = frm
 
         #----
