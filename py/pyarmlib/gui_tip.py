@@ -74,7 +74,8 @@ class TipPanel():
         ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
 
         self.st_ = ArmSt()
-        ok,self.st_ = self.arm_.getSt()
+        ok = False
+        #ok,self.st_ = self.arm_.getSt()
         if ok:
             self.update()
         else:
@@ -99,10 +100,10 @@ class TipPanel():
 #------------------
 class TestApp:
     def __init__(self, root):
-        
-        arm = ArmTcp()
-        arm.connect(TEST_HOST, TEST_PORT)
-        ok = arm.init('z1')
+        arm = None
+        #arm = ArmTcp()
+        #arm.connect(TEST_HOST, TEST_PORT)
+        #ok = arm.init('z1')
         #root.geometry("400x300")
 
         frm = ttk.Frame(root, padding=(3,3,12,12))
