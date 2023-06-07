@@ -33,9 +33,8 @@ class Ctrl3Dof():
         #--- [row,col] grid pair
         grids=np.array([[2,2],[2,0], [1,1], [3,1], [1,4], [3,4]])
         btns = []
-        
         for i in range(6):
-            b = tk.Button(frm, text =ss[i], command=self.onButton)
+            b = tk.Button(frm, text=ss[i], command=lambda:print("pressed "+str(i) ))
             b.grid(row=grids[i,0], column=grids[i,1], sticky=(tk.E,tk.W,tk.N,tk.S))
             btns.append(b)
 
@@ -46,8 +45,8 @@ class Ctrl3Dof():
         return
     
     #----
-    def onButton(self):
-        print("button pressed")
+    def onButton(self, sId):
+        print("button pressed:"+sId)
         if self.callbk_ is None:
             return 
         self.callbk_()
