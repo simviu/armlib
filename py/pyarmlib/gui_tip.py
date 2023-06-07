@@ -26,7 +26,7 @@ class Ctrl3Dof():
 
         #---- label
         self.lTitle_ = tk.Label(topFrm, text = sName)
-        self.lTitle_.grid(row=0, column=0, sticky=(E,W,N,S))
+        self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
 
         #--- [row,col] grid pair
         grids=np.array([[2,2],[2,0], [1,1], [3,1], [1,4], [3,4]])
@@ -34,11 +34,11 @@ class Ctrl3Dof():
         
         for i in range(6):
             b = tk.Button(frm, text =ss[i], command=self.onButton)
-            b.grid(row=grids(i,0), column=grids(i,1), sticky=(E,W,N,S))
+            b.grid(row=grids[i,0], column=grids[i,1], sticky=(tk.E,tk.W,tk.N,tk.S))
             btns.append(b)
 
         self.btns_ = btns
-        self.frm_ = frm
+        self.frm = frm
         return
     
     #----
@@ -50,15 +50,19 @@ class Ctrl3Dof():
 # TipPanel
 #---------------
 class TipPanel():
-    def __init__(self, container, arm):
-        frm = ttk.Frame(container, padding=(3,3,12,12))
+    def __init__(self, topFrm, arm):
+        frm = ttk.Frame(topFrm, padding=(3,3,12,12))
         self.frm  = frm
+
+        self.lTitle_ = tk.Label(frm, text = "Tip Control pannel")
+        self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+
 
         #----
         ctrl1 = Ctrl3Dof(frm, "pos", None)
         ctrl2 = Ctrl3Dof(frm, "Euler", None)
-        ctrl1.grid(row=0, column=0, sticky=(E,W,N,S))
-        ctrl2.grid(row=0, column=1, sticky=(E,W,N,S))
+        ctrl1.frm.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+        ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
 
         return 
     
@@ -79,18 +83,19 @@ class TipPanel():
 #------------------
 class TestApp:
     def __init__(self, root):
-
-        arm = ArmTcp()
+        arm = None
+        #arm = ArmTcp()
         #arm.connect(TEST_HOST, TEST_PORT)
         #arm.init('z1')
-        #self.root.geometry("400x300")
+        #root.geometry("400x300")
 
         frm = ttk.Frame(root, padding=(3,3,12,12))
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        self.tipPanel = TipPanel(frm, arm)
-        
-        
+        self.lTitle_ = tk.Label(frm, text = "Test")
+        self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+
+        #self.tipPanel = TipPanel(frm, arm)
         self.frm = frm
 
 #-------------------------
