@@ -21,12 +21,12 @@ TEST_PORT = 8192
 #
 class Ctrl3Dof():
     def __init__(self, topFrm, sName, callbk):
-        frm = ttk.Frame(topFrm, padding=(3,3,12,12))
+        frm = ttk.Frame(topFrm, padding=(30,30,60,60))
         ss = ["+x", "-x", "+y", "-y", "+z", "-z"]
 
         #---- label
-        self.lTitle_ = tk.Label(topFrm, text = sName)
-        self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+        self.lTitle_ = tk.Label(frm, text = sName)
+        self.lTitle_.grid(row=0, column=3, sticky=(tk.E,tk.W,tk.N,tk.S))
 
         #--- [row,col] grid pair
         grids=np.array([[2,2],[2,0], [1,1], [3,1], [1,4], [3,4]])
@@ -39,6 +39,8 @@ class Ctrl3Dof():
 
         self.btns_ = btns
         self.frm = frm
+        frm.columnconfigure(3, minsize=20)
+        frm.rowconfigure(0, minsize=80)
         return
     
     #----
@@ -51,11 +53,12 @@ class Ctrl3Dof():
 #---------------
 class TipPanel():
     def __init__(self, topFrm, arm):
-        frm = ttk.Frame(topFrm, padding=(3,3,12,12))
-        self.frm  = frm
-
-        self.lTitle_ = tk.Label(frm, text = "Tip Control pannel")
+        self.lTitle_ = tk.Label(topFrm, text = "Tip Control pannel")
         self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+
+        frm = ttk.Frame(topFrm, padding=(3,3,12,12))
+        frm.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.frm  = frm
 
 
         #----
@@ -90,12 +93,12 @@ class TestApp:
         #root.geometry("400x300")
 
         frm = ttk.Frame(root, padding=(3,3,12,12))
-        frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frm.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.lTitle_ = tk.Label(frm, text = "Test")
         self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
 
-        #self.tipPanel = TipPanel(frm, arm)
+        self.tipPanel = TipPanel(frm, arm)
         self.frm = frm
 
 #-------------------------
