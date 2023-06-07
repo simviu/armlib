@@ -20,18 +20,25 @@ TEST_PORT = 8192
 #  |  0  1   2   3    4
 #
 class Ctrl3Dof():
-    def __init__(self, container, arm, N_joints):
-        frm = ttk.Frame(container, padding=(3,3,12,12))
+    def __init__(self, topFrm, sName, callbk):
+        frm = ttk.Frame(topFrm, padding=(3,3,12,12))
         ss = ["+x", "-x", "+y", "-y", "+z", "-z"]
+
+        #---- label
+        self.lTitle_ = tk.Label(topFrm, text = sName)
+        self.lTitle_.grid(row=0, column=0, sticky=(E,W,N,S))
 
         #--- [row,col] grid pair
         grids=np.array([[2,2],[2,0], [1,1], [3,1], [1,4], [3,4]])
         btns = []
-        for s in ss:
-            b = tk.Button(frm, text ="+x", command=self.onButton)
+        
+        for i in range(6):
+            b = tk.Button(frm, text =ss[i], command=self.onButton)
+            b.grid(row=grids(i,0), column=grids(i,1), sticky=(E,W,N,S))
             btns.append(b)
-            b.grid(row=, column=, sticky=(E,W))
 
+        self.btns_ = btns
+        self.frm_ = frm
         return
     
     #----
@@ -43,12 +50,18 @@ class Ctrl3Dof():
 # TipPanel
 #---------------
 class TipPanel():
-    def __init__(self, container, arm, N_joints):
+    def __init__(self, container, arm):
         frm = ttk.Frame(container, padding=(3,3,12,12))
         self.frm  = frm
 
         #----
+        ctrl1 = Ctrl3Dof(frm, "pos", None)
+        ctrl2 = Ctrl3Dof(frm, "Euler", None)
+        ctrl1.grid(row=0, column=0, sticky=(E,W,N,S))
+        ctrl2.grid(row=0, column=1, sticky=(E,W,N,S))
 
+        return 
+    
         #-----
         self.arm_ = arm
         self.st_ = ArmSt()
@@ -59,12 +72,15 @@ class TipPanel():
             print("Error:wrong status")
 
         return
+    #----
+    def update(self):
+        return
 
 #------------------
 class TestApp:
     def __init__(self, root):
 
-        #arm = ArmTcp()
+        arm = ArmTcp()
         #arm.connect(TEST_HOST, TEST_PORT)
         #arm.init('z1')
         #self.root.geometry("400x300")
