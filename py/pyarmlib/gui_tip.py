@@ -21,6 +21,7 @@ TEST_PORT = 8192
 #
 class Ctrl3Dof():
     def __init__(self, topFrm, sName, callbk):
+
         self.callbk_ = callbk
         frm = ttk.Frame(topFrm, padding=(30,30,60,60))
         ss = ["+x", "-x", "+y", "-y", "+z", "-z"]
@@ -47,6 +48,9 @@ class Ctrl3Dof():
     #----
     def onButton(self):
         print("button pressed")
+        if self.callbk_ is None:
+            return 
+        self.callbk_()
         return
 
 #---------------
@@ -54,6 +58,7 @@ class Ctrl3Dof():
 #---------------
 class TipPanel():
     def __init__(self, topFrm, arm):
+        self.arm_ = arm
         self.lTitle_ = tk.Label(topFrm, text = "Tip Control pannel")
         self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
 
@@ -69,11 +74,6 @@ class TipPanel():
         ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
 
         self.st_ = ArmSt()
-
-        return 
-    
-        #-----
-        self.arm_ = arm
         ok,self.st_ = self.arm_.getSt()
         if ok:
             self.update()
@@ -86,7 +86,7 @@ class TipPanel():
     def onCtrlPos(self, dT):
         st = self.st_ 
         tst = st.tipSt
-
+        
         return
     
     #----
@@ -99,10 +99,10 @@ class TipPanel():
 #------------------
 class TestApp:
     def __init__(self, root):
-        arm = None
-        #arm = ArmTcp()
-        #arm.connect(TEST_HOST, TEST_PORT)
-        #arm.init('z1')
+        
+        arm = ArmTcp()
+        arm.connect(TEST_HOST, TEST_PORT)
+        ok = arm.init('z1')
         #root.geometry("400x300")
 
         frm = ttk.Frame(root, padding=(3,3,12,12))
