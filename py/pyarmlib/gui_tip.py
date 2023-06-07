@@ -21,6 +21,7 @@ TEST_PORT = 8192
 #
 class Ctrl3Dof():
     def __init__(self, topFrm, sName, callbk):
+        self.callbk_ = callbk
         frm = ttk.Frame(topFrm, padding=(30,30,60,60))
         ss = ["+x", "-x", "+y", "-y", "+z", "-z"]
 
@@ -67,17 +68,29 @@ class TipPanel():
         ctrl1.frm.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
 
+        self.st_ = ArmSt()
+
         return 
     
         #-----
         self.arm_ = arm
-        self.st_ = ArmSt()
         ok,self.st_ = self.arm_.getSt()
         if ok:
             self.update()
         else:
             print("Error:wrong status")
 
+        #----
+        return
+    #----
+    def onCtrlPos(self, dT):
+        st = self.st_ 
+        tst = st.tipSt
+
+        return
+    
+    #----
+    def onCtrlEuler(self, dE):
         return
     #----
     def update(self):
