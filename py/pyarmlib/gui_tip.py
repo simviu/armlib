@@ -3,7 +3,9 @@ from tkinter import ttk
 from armTcp import *
 from utils import *
 from threading import Thread
+from functools import partial
 
+import copy
 
 #--- for test
 TEST_HOST = "127.0.0.1"
@@ -34,7 +36,7 @@ class Ctrl3Dof():
         grids=np.array([[2,2],[2,0], [1,1], [3,1], [1,4], [3,4]])
         btns = []
         for i in range(6):
-            b = tk.Button(frm, text=ss[i], command=lambda:print("pressed "+str(i) ))
+            b = tk.Button(frm, text=ss[i], command=partial(self.onButton, ss[i]))
             b.grid(row=grids[i,0], column=grids[i,1], sticky=(tk.E,tk.W,tk.N,tk.S))
             btns.append(b)
 
