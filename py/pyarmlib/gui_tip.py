@@ -11,6 +11,10 @@ import copy
 TEST_HOST = "127.0.0.1"
 TEST_PORT = 8192
 
+#---
+POS_D_SCL = 0.01
+EULER_D_SCL = 5
+
 #------------------
 # Ctrl3Dof
 #------------------
@@ -23,7 +27,7 @@ TEST_PORT = 8192
 #
 class Ctrl3Dof():
     def __init__(self, topFrm, sName, callbk):
-
+        self.sName_ = sName
         self.callbk_ = callbk
         frm = ttk.Frame(topFrm, padding=(30,30,60,60))
         ss = ["+x", "-x", "+y", "-y", "+z", "-z"]
@@ -51,7 +55,15 @@ class Ctrl3Dof():
         print("button pressed:"+sId)
         if self.callbk_ is None:
             return 
-        self.callbk_()
+        d = np.array([0,0,0])
+        if sId=="+x" : d[0] = 1.0
+        if sId=="-x" : d[0] = -1.0
+        if sId=="+y" : d[1] = 1.0
+        if sId=="-y" : d[1] = -1.0
+        if sId=="+z" : d[2] = 1.0
+        if sId=="-z" : d[2] = -1.0
+        
+        self.callbk_(d)
         return
 
 #---------------
@@ -69,44 +81,52 @@ class TipPanel():
 
 
         #----
-        ctrl1 = Ctrl3Dof(frm, "pos", None)
-        ctrl2 = Ctrl3Dof(frm, "Euler", None)
+        ctrl1 = Ctrl3Dof(frm, "pos",   self.onCtrlPos_)
+        ctrl2 = Ctrl3Dof(frm, "Euler", self.onCtrlEuler_)
         ctrl1.frm.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
 
-        self.st_ = ArmSt()
-        ok = False
-        #ok,self.st_ = self.arm_.getSt()
-        if ok:
-            self.update()
-        else:
+        ok,st = self.arm_.getSt()
+        if not ok:
             print("Error:wrong status")
-
-        #----
-        return
-    #----
-    def onCtrlPos(self, dT):
-        st = self.st_ 
-        tst = st.tipSt
+            return
         
+        self.tipSt_ = st.tipSt
+        self.update()
         return
     
+    #---
+    
     #----
-    def onCtrlEuler(self, dE):
-        return
+    def onCtrlPos_(self, d):
+        tst = self.tipSt_ 
+        t = tst.T.t
+        t = t + d * POS_D_SCL
+        tst.T.t = t
+        ok = self.arm_.moveTo(tst)
+        return ok
+    
     #----
+    def onCtrlEuler_(self, d):
+        tst = self.tipSt_ 
+        e = tst.T.e
+        e = e + d * EULER_D_SCL
+        tst.T.e = e
+        ok = self.arm_.moveTo(tst)
+        return ok
+   
+    #---
     def update(self):
         return
 
 #------------------
 class TestApp:
     def __init__(self, root):
-        arm = None
-        #arm = ArmTcp()
-        #arm.connect(TEST_HOST, TEST_PORT)
-        #ok = arm.init('z1')
-        #root.geometry("400x300")
-
+        #arm = None
+        arm = ArmTcp()
+        arm.connect(TEST_HOST, TEST_PORT)
+        ok = arm.init('z1')
+        
         frm = ttk.Frame(root, padding=(3,3,12,12))
         frm.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
 

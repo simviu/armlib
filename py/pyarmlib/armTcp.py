@@ -67,9 +67,18 @@ class ArmTcp(Arm):
         s = s + "grip="+str(g)+" "
         s = s+ "t=" + str(DFLT_setJoints_t)
 
-        self.sendCmd_(s)
-        #print("[dbg]: to sendcmd:'"+s+"'")
+        ok = self.sendCmd_(s)
         return ok
+
+    #---
+    def moveTo(self, tipSt):
+        s = "moveTo "
+        s = s + "xyz=" + np2s(tipSt.T.t) + " "
+        s = s + "euler=" + np2s(tipSt.T.e) + " " 
+        s = s + "grip=" + str(tipSt.grip) 
+        ok = self.sendCmd_(s)
+        return ok
+        
 
     #------------- private -------------
     def recvLn_(self):

@@ -25,6 +25,8 @@ class ArmSt:
         #print("[dbg]: dec() joints :")
         #print(self.joints)
         return
+
+
     
 #-------------
 class Arm(object):
