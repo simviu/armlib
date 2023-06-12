@@ -1,7 +1,9 @@
 import tkinter as tk
+import time
 from tkinter import ttk
 from armTcp import *
 from utils import *
+
 from threading import Thread
 from functools import partial
 
@@ -122,6 +124,13 @@ class TipPanel():
     def update(self):
         return
 
+#--------
+def func_thd_test():
+    while True:
+        print("thd func run...")
+        time.sleep(0.5)
+    return
+
 #------------------
 class TestApp:
     def __init__(self, root):
@@ -140,11 +149,17 @@ class TestApp:
         self.tipPanel = TipPanel(frm, arm)
         self.frm = frm
 
+        #---- st thread test
+        #print("start st thread...")
+        #self.st_thread_ = Thread(target=func_thd_test,  daemon=True)
+        #self.st_thread_.start()
+        #print("st thread running.")
 
-#-------------------------
-#    main 
-#-------------------------
-root = tk.Tk()
-app = TestApp(root)
-root.mainloop()
+#----------
+# main
+#----------
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = TestApp(root)
+    root.mainloop()
 
