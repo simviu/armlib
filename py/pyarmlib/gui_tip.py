@@ -76,7 +76,7 @@ class TipPanel():
         self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
 
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
-        frm.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frm.grid(row=1, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.frm  = frm
 
 
@@ -86,7 +86,10 @@ class TipPanel():
         ctrl1.frm.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
 
-        ok,st = self.arm_.getSt()
+        ok,st = False,ArmSt()
+        if self.arm_ is not None:
+            ok,st = self.arm_.getSt()
+    
         if not ok:
             print("Error:wrong status")
             return
@@ -122,19 +125,21 @@ class TipPanel():
 #------------------
 class TestApp:
     def __init__(self, root):
-        #arm = None
-        arm = ArmTcp()
-        arm.connect(TEST_HOST, TEST_PORT)
-        ok = arm.init('z1')
+        arm = None
+        #arm = ArmTcp()
+        if arm is not None:
+            arm.connect(TEST_HOST, TEST_PORT)
+            ok = arm.init('z1')
         
         frm = ttk.Frame(root, padding=(3,3,12,12))
-        frm.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frm.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        self.lTitle_ = tk.Label(frm, text = "Test")
-        self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+        self.lTitle_ = tk.Label(root, text = "Test")
+        self.lTitle_.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
 
         self.tipPanel = TipPanel(frm, arm)
         self.frm = frm
+
 
 #-------------------------
 #    main 
