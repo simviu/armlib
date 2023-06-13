@@ -12,6 +12,8 @@ PORT = 8192
 
 LN_MAX_CHARS = 2048
 ACK_MAX_LNS = 100
+T_GET_ST = 0.5
+
 DFLT_setJoints_t = 2
 #-------------
 
@@ -22,7 +24,13 @@ class ArmTcp(Arm):
     def __init__(self, sCmdPrfx=""):
         self.sCmdPrfx = sCmdPrfx
         self.sock_ = None
-        self.lock_ = threading.Lock()
+        self.cmd_lock_ = threading.Lock()
+        self.st_lock_  = threading.Lock()
+        self.st_ = ArmSt()
+
+        #---- start thread of get st
+        self.st_thread_ = threading.Thread(target=self.getSt_thd_,  daemon=True)
+        self.st_thread_.start()
         return
 
         
@@ -44,23 +52,16 @@ class ArmTcp(Arm):
         
     #-----
     def getSt(self):
-        st = ArmSt()
-        if self.sock_ is None:
-            print("Error: sock_ none")
-            return False,st
-        
-        ok,sRes = self.sendCmd_("st")
-        if ok:
-            j = json.loads(sRes)
-            st.dec(j)
-        return ok,st
+        with self.st_lock_:
+            return True,self.st_
 
     #----
     def setSt(self, st):
         ok = True
         g = st.tipSt.grip
         sj = np2s(st.joints)
-        # setJoints angles=30,10,-20,20,20,-15 grip=1 t=2
+        # cmd e.g.:
+        #   setJoints angles=30,10,-20,20,20,-15 grip=1 t=2
 
         s = "setJoints "
         s = s + "angles=" + sj+" "
@@ -120,18 +121,36 @@ class ArmTcp(Arm):
                 ok = True if ss[1] == "true" else False
             else:
                 sRes = sRes + s +"\n"
-
+        #-----
         raise("Error: getAck() ACK_MAX_LNS reached, didn't recv cmd_ack_end")
-        return False,sRes
         
     
     #-----
     def sendCmd_(self, scmd):
         ok,sRes = False,""
-        with self.lock_:
+        with self.cmd_lock_:
             ok,sRes = self.sendCmd_core_(scmd)
         return ok,sRes
     
+    #---- thread running at background, keep getting st
+    def getSt_thd_(self):
+        print("  thread of getSt_thd_ running...")
+        while(True):
+            st = ArmSt()
+            ok,sRes = self.sendCmd_("st")
+            if ok:
+                j = json.loads(sRes)
+                st.dec(j)
+                st.sInfo = ""
+
+            st.ok = ok
+            with self.cmd_lock_:
+                self.st_ = st
+
+            time.sleep(T_GET_ST)            
+        
+    
+    #----
     def sendCmd_core_(self, scmd):
         self.sock_.sendall(bytes(self.sCmdPrfx +" "+ scmd+"\n", "utf-8"))
         print("cmd sent:"+scmd)

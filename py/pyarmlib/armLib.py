@@ -16,6 +16,8 @@ class ArmSt:
     def __init__(self):
         self.tipSt = TipSt()
         self.joints = np.array([])
+        self.ok = False
+        self.sInfo = "N/A"
         return
 
     #---- 
