@@ -2,14 +2,14 @@ import tkinter as tk
 from tkinter import ttk
 from armTcp import *
 from utils import *
-from threading import Thread
+import threading
 
 #---- def
 SCROLL_DGR_UNITS = 1.0
 SCROLL_DGR_PAGES = 10.0
 SCROLL_BAR_W = 0.1
 
-T_ST_THREAD = 0.2
+T_ST_THREAD = 1
 
 #--- for test
 TEST_HOST = "127.0.0.1"
@@ -106,16 +106,16 @@ class JointsPanel:
         self.st_ = ArmSt()
 
         #---- st thread
-        #print("start st thread...")
-        #self.st_thread_ = Thread(self.func_get_st_(),  daemon=True)
-        #self.st_thread_.start()
-        #print("st thread running.")
+        print("start st thread...")
+        self.sync_thread_ = threading.Thread(target=self.st_thd_,  daemon=True)
+        self.sync_thread_.start()
+        print("st thread running.")
 
-        ok,self.st_ = self.arm_.getSt()
-        if ok:
-            self.update()
-        else:
-            print("Error:wrong status")
+        #ok,self.st_ = self.arm_.getSt()
+        #if ok:
+        #    self.update()
+        #else:
+        #    print("Error:wrong status")
 
         return
     
@@ -149,19 +149,26 @@ class JointsPanel:
         self.arm_.setSt(st)
 
         #--- read back
-        time.sleep(0.2)
-        ok,st_ret = self.arm_.getSt()
-        self.st_ = st_ret if ok else st_save
+        #time.sleep(0.2)
+        #ok,st_ret = self.arm_.getSt()
+        #self.st_ = st_ret if ok else st_save
 
         # refresh UI
         self.update()
         return
 
     #-----------------
-    def func_get_st_(self):
+    def st_thd_(self):
+        print("  JointsPanel::st_thd_() thread started...")
         while True:
-            print("func_get_st_() call...")
-            #ok,st = self.arm_.getSt()
+            ok,st = self.arm_.getSt()
+            if ok:
+                self.st_ = st
+                self.update()
+            else :
+                self.st_.ok = False
+                print("JointsPanel failed to get st")
+
             time.sleep(T_ST_THREAD)
         return
 

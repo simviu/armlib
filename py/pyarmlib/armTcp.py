@@ -27,10 +27,11 @@ class ArmTcp(Arm):
         self.cmd_lock_ = threading.Lock()
         self.st_lock_  = threading.Lock()
         self.st_ = ArmSt()
+        self.sCmdReq_ = ""
 
         #---- start thread of get st
-        self.st_thread_ = threading.Thread(target=self.getSt_thd_,  daemon=True)
-        self.st_thread_.start()
+        self.sync_thread_ = threading.Thread(target=self.sync_thd_,  daemon=True)
+        self.sync_thread_.start()
         return
 
         
@@ -68,8 +69,7 @@ class ArmTcp(Arm):
         s = s + "grip="+str(g)+" "
         s = s+ "t=" + str(DFLT_setJoints_t)
 
-        ok = self.sendCmd_(s)
-        return ok
+        return self.sendCmd_(s)
 
     #---
     def moveTo(self, tipSt):
@@ -77,8 +77,8 @@ class ArmTcp(Arm):
         s = s + "xyz=" + np2s(tipSt.T.t) + " "
         s = s + "euler=" + np2s(tipSt.T.e) + " " 
         s = s + "grip=" + str(tipSt.grip) 
-        ok = self.sendCmd_(s)
-        return ok
+        
+        return self.sendCmd_(s)
         
 
     #------------- private -------------
@@ -127,31 +127,46 @@ class ArmTcp(Arm):
     
     #-----
     def sendCmd_(self, scmd):
-        ok,sRes = False,""
+        if self.sock_ is None:
+            return False
+        
         with self.cmd_lock_:
-            ok,sRes = self.sendCmd_core_(scmd)
-        return ok,sRes
+            self.sCmdReq_ = scmd
+        return True
     
-    #---- thread running at background, keep getting st
-    def getSt_thd_(self):
-        print("  thread of getSt_thd_ running...")
+    #---- thread running at background, 
+    #  getting st and send cmd req
+    def sync_thd_(self):
+        print("  thread of ArmTcp::sync_thd_ running...")
         while(True):
             st = ArmSt()
-            ok,sRes = self.sendCmd_("st")
+            ok,sRes = self.sendCmd_core_("st")
             if ok:
                 j = json.loads(sRes)
                 st.dec(j)
                 st.sInfo = ""
 
             st.ok = ok
-            with self.cmd_lock_:
+            with self.st_lock_:
                 self.st_ = st
 
+            #---- pull cmd req
+            scmd = ""
+            with self.cmd_lock_:
+                scmd = self.sCmdReq_
+                self.sCmdReq_ = ""
+
+            if scmd != "":    
+                ok,sRes = self.sendCmd_core_(scmd)
+            
+            #-----
             time.sleep(T_GET_ST)            
         
     
     #----
     def sendCmd_core_(self, scmd):
+        if self.sock_ is None:
+            return False,""
         self.sock_.sendall(bytes(self.sCmdPrfx +" "+ scmd+"\n", "utf-8"))
         print("cmd sent:"+scmd)
         time.sleep(1)      
