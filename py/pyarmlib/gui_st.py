@@ -19,6 +19,10 @@ class StPanel(object):
             lv = tk.Label(frm, borderwidth = BORDER_W, text = "0.0")
             lt.grid(column=i, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
             lv.grid(column=i, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+            for j in range(2):
+                frm.columnconfigure(j, minsize=100)
+                frm.rowconfigure(j, minsize=50)
+
             self.label_joints_.append(lv)
 
         self.frm = frm
@@ -37,8 +41,10 @@ class TestApp:
         frm = ttk.Frame(root, padding=(3,3,12,12))
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
+        lTitle = tk.Label(frm, borderwidth = BORDER_W, text = "0.0")
+        lTitle.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.pnl_ = StPanel(frm, arm, 6)
-        self.pnl_.frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.pnl_.frm.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.frm = frm
 
 #----------
