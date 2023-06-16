@@ -15,13 +15,14 @@ class StPanel(object):
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
         self.label_joints_ = []
         for i in range(N_joints):
-            lt = tk.Label(frm, borderwidth = BORDER_W, text = "J"+str(i+1))
-            lv = tk.Label(frm, borderwidth = BORDER_W, text = "0.0")
+            lt = tk.Label(frm, borderwidth=BORDER_W, relief="solid", text = "J"+str(i+1))
+            lv = tk.Label(frm, borderwidth=BORDER_W, relief="solid", text = "0.0")
             lt.grid(column=i, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
             lv.grid(column=i, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
-            for j in range(2):
-                frm.columnconfigure(j, minsize=100)
-                frm.rowconfigure(j, minsize=50)
+            frm.columnconfigure(i, minsize=100)
+
+        for i in range(2):
+            frm.rowconfigure(i, minsize=50)
 
             self.label_joints_.append(lv)
 
@@ -41,7 +42,7 @@ class TestApp:
         frm = ttk.Frame(root, padding=(3,3,12,12))
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        lTitle = tk.Label(frm, borderwidth = BORDER_W, text = "0.0")
+        lTitle = tk.Label(frm, borderwidth = BORDER_W, text = "Test")
         lTitle.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.pnl_ = StPanel(frm, arm, 6)
         self.pnl_.frm.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
