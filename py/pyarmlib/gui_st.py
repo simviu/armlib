@@ -3,12 +3,47 @@ from tkinter import ttk
 from utils import *
 
 BORDER_W = 2
+#----------
+class VecPnl(object):
+    def __init__(self, topFrm, sTitle, N):
+        self.labels_ = []
+        frm = ttk.Frame(topFrm, padding=(3,3,12,12))
+        lt = tk.Label(frm, text = sTitle, 
+                      borderwidth=BORDER_W, relief="solid")
+        #----
+        for i in range(N):
+            l = tk.Label(frm, text = "0",    
+                        borderwidth=BORDER_W, 
+                        relief="solid",
+                        fg="blue")
+            frm.columnconfigure(i, minsize=100)
+            l.grid(column=i, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+            self.labels_.append(l)
+        #----
+        lt.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.frm = frm
 
+    #----
+    def set(self, v):
+        for i in range(len(self.labels_)):
+            self.labels_[i] = str(v[i])
+        return 
+    
 #----------
 class StTipPanel(object):
     def __init__(self, topFrm):
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
-
+        p1 = VecPnl(frm, "Pos",   3)
+        p2 = VecPnl(frm, "Euler", 3)
+        p1.frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        p2.frm.grid(column=1, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        self.pnlPos_ = p1
+        self.pnlEuler_ = p2
+        self.frm = frm
+    #---
+    def set(self, T):
+        self.pnlPos_.set(T.t)
+        self.pnlEuler_.set(T.e)
 
 #----------
 class StJointsPanel(object):
@@ -45,14 +80,24 @@ class TestApp:
         frm = ttk.Frame(root, padding=(3,3,12,12))
         frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        lTitle = tk.Label(frm, borderwidth = BORDER_W, text = "Test")
-        lTitle.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
-        self.pnl_ = StJointsPanel(frm, 6)
-        self.pnl_.frm.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+        #-----
+        lt = tk.Label(frm, borderwidth = BORDER_W, text = "Test")
+        lt.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        
+        #-----
+        p1 = StJointsPanel(frm, 6)
+        p1.frm.grid(column=0, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+        p1.set([10,20,30,40,50,60])
+
+        #----
+        p2 = StTipPanel(frm)
+        p2.frm.grid(column=0, row=2, sticky=(tk.N, tk.S, tk.E, tk.W))
+        p2.set(Trans([1,2,3], [10,20,30]))
+        
+
+        #----
         self.frm = frm
 
-        #---- set
-        self.pnl_.set([10,20,30,40,50,60])
 
 #----------
 # main
