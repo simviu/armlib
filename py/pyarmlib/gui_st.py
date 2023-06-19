@@ -1,15 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
-from armLib import *
 from utils import *
-import threading
 
 BORDER_W = 2
 
 #----------
 class StTipPanel(object):
-    def __init__(self, topFrm, arm):
-        self.arm_ = arm
+    def __init__(self, topFrm):
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
 
 
