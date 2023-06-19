@@ -88,11 +88,14 @@ class TipPanel():
         ctrl2 = Ctrl3Dof(frm, "Euler", self.onCtrlEuler_)
         ctrl1.frm.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
+
         #----
-        pst1 = StTipPanel(frm)
-        pst2 = StTipPanel(frm)
+        pst1 = StTipPanel(frm, "target")
+        pst2 = StTipPanel(frm, "current")
+        pst3 = StTipPanel(frm, "delta")
         pst1.frm.grid(row=2, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         pst2.frm.grid(row=3, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+        pst3.frm.grid(row=4, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
 
 
         #----

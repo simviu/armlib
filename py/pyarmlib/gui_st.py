@@ -40,7 +40,7 @@ class StTipPanel(object):
 
         lt = tk.Label(frm, text = sTitle, font=("Arial Bold", 12))
         lt.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
-        frm.columnconfigure(0, minsize=100)
+        frm.columnconfigure(0, minsize=200)
 
         p1 = VecPnl(frm, "Pos",   3)
         p2 = VecPnl(frm, "Euler", 3)
