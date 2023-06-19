@@ -10,17 +10,19 @@ class VecPnl(object):
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
         lt = tk.Label(frm, text = sTitle, 
                       borderwidth=BORDER_W, relief="solid")
+        lt.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frm.columnconfigure(0, minsize=100)
+
         #----
         for i in range(N):
             l = tk.Label(frm, text = "0",    
                         borderwidth=BORDER_W, 
                         relief="solid",
                         fg="blue")
-            frm.columnconfigure(i, minsize=100)
-            l.grid(column=i, row=1, sticky=(tk.N, tk.S, tk.E, tk.W))
+            l.grid(column=i+1, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+            frm.columnconfigure(i+1, minsize=100)
             self.labels_.append(l)
         #----
-        lt.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.frm = frm
 
     #----
