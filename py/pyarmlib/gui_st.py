@@ -3,6 +3,8 @@ from tkinter import ttk
 from utils import *
 
 BORDER_W = 2
+STICKY_ALL = (tk.N, tk.S, tk.E, tk.W)
+
 #----------
 class VecPnl(object):
     def __init__(self, topFrm, sTitle, N):
@@ -19,7 +21,7 @@ class VecPnl(object):
                         borderwidth=BORDER_W, 
                         relief="solid",
                         fg="blue")
-            l.grid(column=i+1, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+            l.grid(column=i+1, row=0, sticky=STICKY_ALL)
             frm.columnconfigure(i+1, minsize=100)
             self.labels_.append(l)
         #----
@@ -33,15 +35,21 @@ class VecPnl(object):
     
 #----------
 class StTipPanel(object):
-    def __init__(self, topFrm):
+    def __init__(self, topFrm, sTitle):
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
+
+        lt = tk.Label(frm, text = sTitle, font=("Arial Bold", 12))
+        lt.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        frm.columnconfigure(0, minsize=100)
+
         p1 = VecPnl(frm, "Pos",   3)
         p2 = VecPnl(frm, "Euler", 3)
-        p1.frm.grid(column=0, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
-        p2.frm.grid(column=1, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        p1.frm.grid(column=1, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
+        p2.frm.grid(column=2, row=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.pnlPos_ = p1
         self.pnlEuler_ = p2
         self.frm = frm
+
     #---
     def set(self, T):
         self.pnlPos_.set(T.t)
@@ -92,11 +100,10 @@ class TestApp:
         p1.set([10,20,30,40,50,60])
 
         #----
-        p2 = StTipPanel(frm)
+        p2 = StTipPanel(frm, "Tip")
         p2.frm.grid(column=0, row=2, sticky=(tk.N, tk.S, tk.E, tk.W))
         p2.set(Trans([1,2,3], [10,20,30]))
         
-
         #----
         self.frm = frm
 

@@ -2,6 +2,7 @@ import tkinter as tk
 import time
 from tkinter import ttk
 from armTcp import *
+from gui_st import *
 from utils import *
 
 from threading import Thread
@@ -74,8 +75,8 @@ class Ctrl3Dof():
 class TipPanel():
     def __init__(self, topFrm, arm):
         self.arm_ = arm
-        self.lTitle_ = tk.Label(topFrm, text = "Tip Control pannel")
-        self.lTitle_.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+        lt = tk.Label(topFrm, text = "Tip Control pannel")
+        lt.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
 
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
         frm.grid(row=1, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
@@ -87,7 +88,14 @@ class TipPanel():
         ctrl2 = Ctrl3Dof(frm, "Euler", self.onCtrlEuler_)
         ctrl1.frm.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
+        #----
+        pst1 = StTipPanel(frm)
+        pst2 = StTipPanel(frm)
+        pst1.frm.grid(row=2, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+        pst2.frm.grid(row=3, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
 
+
+        #----
         ok,st = False,ArmSt()
         if self.arm_ is not None:
             ok,st = self.arm_.getSt()
@@ -139,12 +147,12 @@ class TestApp:
         if arm is not None:
             arm.connect(TEST_HOST, TEST_PORT)
             ok = arm.init('z1')
-        
-        frm = ttk.Frame(root, padding=(3,3,12,12))
-        frm.grid(row=0, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
-        self.lTitle_ = tk.Label(root, text = "Test")
-        self.lTitle_.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+        lt = tk.Label(root, text = "Test")
+        lt.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
+
+        frm = ttk.Frame(root, padding=(3,3,12,12))
+        frm.grid(row=1, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
 
         self.tipPanel = TipPanel(frm, arm)
         self.frm = frm
