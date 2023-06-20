@@ -7,8 +7,9 @@ STICKY_ALL = (tk.N, tk.S, tk.E, tk.W)
 
 #----------
 class VecPnl(object):
-    def __init__(self, topFrm, sTitle, N):
+    def __init__(self, topFrm, sTitle, N, deci=2):
         self.labels_ = []
+        self.deci_ = deci
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
         lt = tk.Label(frm, text = sTitle, 
                       borderwidth=BORDER_W, relief="solid")
@@ -22,7 +23,7 @@ class VecPnl(object):
                         relief="solid",
                         fg="blue")
             l.grid(column=i+1, row=0, sticky=STICKY_ALL)
-            frm.columnconfigure(i+1, minsize=100)
+            frm.columnconfigure(i+1, minsize=150)
             self.labels_.append(l)
         #----
         self.frm = frm
@@ -30,7 +31,9 @@ class VecPnl(object):
     #----
     def set(self, v):
         for i in range(len(self.labels_)):
-            self.labels_[i] = str(v[i])
+            d = float(v[i])
+            s = "%.2f" % d
+            self.labels_[i].config(text = s)
         return 
     
 #----------

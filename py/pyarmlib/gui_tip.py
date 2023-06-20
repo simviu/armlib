@@ -75,14 +75,18 @@ class Ctrl3Dof():
 class TipPanel():
     def __init__(self, topFrm, arm):
         self.arm_ = arm
+
+        self.st_lock_  = threading.Lock()
+        self.T_trgt_ = Trans()
+        self.T_cur_ = Trans()
+
+        #-----
         lt = tk.Label(topFrm, text = "Tip Control pannel")
         lt.grid(row=0, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
 
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
         frm.grid(row=1, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.frm  = frm
-
-
         #----
         ctrl1 = Ctrl3Dof(frm, "pos",   self.onCtrlPos_)
         ctrl2 = Ctrl3Dof(frm, "Euler", self.onCtrlEuler_)
@@ -96,18 +100,10 @@ class TipPanel():
         pst1.frm.grid(row=2, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         pst2.frm.grid(row=3, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         pst3.frm.grid(row=4, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
-
-
-        #----
-        ok,st = False,ArmSt()
-        if self.arm_ is not None:
-            ok,st = self.arm_.getSt()
-    
-        if not ok:
-            print("Error:wrong status")
-            return
         
-        self.tipSt_ = st.tipSt
+        self.pnl_trgt_  = pst1
+        self.pnl_cur_   = pst2
+        self.pnl_delta_ = pst3
         self.update()
         return
     
@@ -115,24 +111,29 @@ class TipPanel():
     
     #----
     def onCtrlPos_(self, d):
-        tst = self.tipSt_ 
-        t = tst.T.t
-        t = t + d * POS_D_SCL
-        tst.T.t = t
-        ok = self.arm_.moveTo(tst)
-        return ok
+        with self.st_lock_:
+            T = self.T_trgt_
+            T.t = T.t + d * POS_D_SCL
+
+        self.update()
+        #ok = self.arm_.moveTo(tst)
+        return True
     
     #----
     def onCtrlEuler_(self, d):
-        tst = self.tipSt_ 
-        e = tst.T.e
-        e = e + d * EULER_D_SCL
-        tst.T.e = e
-        ok = self.arm_.moveTo(tst)
-        return ok
+        with self.st_lock_:
+            T = self.T_trgt_
+            T.e = T.e + d * EULER_D_SCL
+
+        self.update()
+        return True
    
     #---
     def update(self):
+        with self.st_lock_:
+            T = self.T_trgt_
+            print("T="+T.str())
+            self.pnl_trgt_.set(T)
         return
 
 #--------
