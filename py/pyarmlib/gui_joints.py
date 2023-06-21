@@ -51,6 +51,12 @@ class JointCtrl:
         self.update()
         return
 
+    #----
+    def set(self, ang):
+        self.angle = ang
+        self.update()
+        return
+
     #---- 
     def update(self):
         # angle
@@ -94,6 +100,7 @@ class JointsPanel:
     def __init__(self, container, arm, N_joints):
         frm = ttk.Frame(container, padding=(3,3,12,12))
         self.frm  = frm
+        self.N_joints = N_joints
 
         #----
         self.jointCtrls = []
@@ -123,11 +130,12 @@ class JointsPanel:
     def update(self):
         
         angles = self.st_.joints
-        N = len(self.jointCtrls)
-        for i in range(N):
+        if len(angles) < self.N_joints:
+            return
+        
+        for i in range(self.N_joints):
             c = self.jointCtrls[i]
-            c.angle = angles[i]
-            c.update()
+            c.set(angles[i])
 
         #self.frm.update()
 
@@ -146,7 +154,10 @@ class JointsPanel:
         self.update()
 
         #--- do action
-        self.arm_.setSt(st)
+        ok = self.arm_.setSt(st)
+        if not ok :
+            print("Error: arm setSt() fail")
+            return False
 
         #--- read back
         #time.sleep(0.2)

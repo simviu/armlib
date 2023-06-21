@@ -167,8 +167,14 @@ class ArmTcp(Arm):
     def sendCmd_core_(self, scmd):
         if self.sock_ is None:
             return False,""
-        self.sock_.sendall(bytes(self.sCmdPrfx +" "+ scmd+"\n", "utf-8"))
-        print("cmd sent:"+scmd)
+        
+        scmdo = scmd+"\n"
+        if self.sCmdPrfx != "":
+            scmdo = self.sCmdPrfx + " " + scmdo
+
+        print("[dbg]: sending: '"+scmdo +"'")
+        self.sock_.sendall(bytes(scmdo, "utf-8"))
+        print("[dbg]: cmd sent:'"+scmdo+"'")
         time.sleep(1)      
         
         #sLn = self.recvLn()
