@@ -11,6 +11,7 @@ from pymycobot.mycobot import MyCobot
 from pymycobot.genre import Angle, Coord
 from port_setup import setup
 from pyarmlib import armLib
+from pyarmlib import utils as ut
 
 HOST = ''  
 PORT = 8192
@@ -18,25 +19,31 @@ K_spd_scl = 100
 K_spd_max_mc = 100 # mycobot spd max 100
 K_spd_dflt = 50
 
-K_pose_readyPick = [160, -100, 100, -80, 22, -160]
+#K_pose_readyPick = [160, -100, 100, -80, 22, -160]
 #K_pose_rst = [153.19, 137.81, -153.54, 156.79, 87.27, 13.62]
 
-K_pose_t1 = [120, -100, 80, -70, 42, -175]
-K_pose_t2 = [140, -80, 100, -60, 20, -170]
-K_pose_t3 = [140, -100, 100, -80, 22, -160]
+K_pose_t1 = [0.120, -0.100, 0.080, -70, 42, -175]
+#K_pose_t2 = [140, -80, 100, -60, 20, -170]
+#K_pose_t3 = [140, -100, 100, -80, 22, -160]
+
+K_pose_t4 = [0.180, -0.080, 0.100, -60, 20, -170]
 
 #-----
 def pose2vec(T):
-    t = T.t
+    t = T.t * 1000.0 # MyCobot use mm
     e = T.e
     v = [t[0],t[1],t[2],e[0],e[1],e[2]]
     return v
+
 #-----
 def vec2pose(v):
-    T = Trans()
+    print("[dbg]: v=")
+    print(v)
+    T = ut.Trans()
     T.t[0] = v[0]
     T.t[1] = v[1]
     T.t[2] = v[2]
+    T.t = T.t*0.001
     T.e[0] = v[3]
     T.e[1] = v[4]
     T.e[2] = v[5]
@@ -46,8 +53,8 @@ def vec2pose(v):
 # ArmMyCobot
 #----------
 class ArmMyCobot(armLib.Arm):
-    def __init__(self, port):
-        self.cfg_ =[]
+    def __init__(self):
+        self.cfg_ ={}
         self.cfg_['spd'] = K_spd_dflt
         return
     
@@ -94,6 +101,7 @@ class ArmMyCobot(armLib.Arm):
         for a in ans:
             st.angles[i] = ans[i]
             i = i + 1
+        return True,st
 
     #----
     def setJoints(self, angles, grip):
@@ -116,7 +124,12 @@ def test1():
     
     #----
     time.sleep(5)
-    st = arm.getSt()
+    ok,st = arm.getSt()
+    if not ok:
+        print("failed to getSt()")
+        return False
+
+    #----
     print("st=")
     print(st.str())
     return
@@ -131,16 +144,16 @@ def test2():
 #    time.sleep(5)
 
     print("pose t1")
-    mc.send_coords(K_pose_t1, spd, 0)
+    mc.send_coords(K_pose_t4, spd, 0)
     time.sleep(5)
 
-    print("pose t2")
-    mc.send_coords(K_pose_t2, spd, 0)
-    time.sleep(5)
+#    print("pose t2")
+#    mc.send_coords(K_pose_t2, spd, 0)
+#    time.sleep(5)
 
-    print("pose t3")
-    mc.send_coords(K_pose_t3, spd, 0)
-    time.sleep(5)
+#    print("pose t3")
+#    mc.send_coords(K_pose_t3, spd, 0)
+#    time.sleep(5)
 
 #----------
 # main
@@ -148,7 +161,7 @@ def test2():
 
 
 if __name__ == "__main__":
-   test1()
-
+#    test1()
+    test2()
 
     
