@@ -231,8 +231,11 @@ bool ArmMng::getSt()
 {
     string s;
     if(p_arm_==nullptr)
-        s = "arm not init";
-
+    {
+        sRes_ = "arm not init";
+        return false;
+    }
+    //----
     ArmSt st;
     if(p_arm_->getSt(st))
         s = st.str();

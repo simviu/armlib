@@ -18,6 +18,7 @@ TEST_PORT = 8192
 POS_D_SCL = 0.01
 EULER_D_SCL = 5
 
+T_SYNC_THREAD = 1.0
 #------------------
 # Ctrl3Dof
 #------------------
@@ -88,8 +89,8 @@ class TipPanel():
         frm.grid(row=1, column=0, sticky=(tk.N, tk.S, tk.E, tk.W))
         self.frm  = frm
         #----
-        ctrl1 = Ctrl3Dof(frm, "pos",   self.onCtrlPos_)
-        ctrl2 = Ctrl3Dof(frm, "Euler", self.onCtrlEuler_)
+        ctrl1 = Ctrl3Dof(frm, "pos ctrl",   self.onCtrlPos_)
+        ctrl2 = Ctrl3Dof(frm, "Euler ctrl", self.onCtrlEuler_)
         ctrl1.frm.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
 
@@ -135,6 +136,27 @@ class TipPanel():
             print("T="+T.str())
             self.pnl_trgt_.set(T)
         return
+    #----
+
+    #-----------------
+    def sync_thd_(self):
+        print("  TipPanel::sync_thd_() thread started...")
+        while True:
+
+            #----- get st
+            ok,st = self.arm_.getSt()
+            if ok:
+                self.st_ = st
+                self.update()
+            else :
+                self.st_.ok = False
+                print("TipPanel failed to get st")
+
+            #---- chk target req
+
+            #----
+            time.sleep(T_SYNC_THREAD)
+        return
 
 #--------
 def func_thd_test():
@@ -146,8 +168,8 @@ def func_thd_test():
 #------------------
 class TestApp:
     def __init__(self, root):
-        arm = None
-        #arm = ArmTcp()
+        #arm = None
+        arm = ArmTcp()
         if arm is not None:
             arm.connect(TEST_HOST, TEST_PORT)
             ok = arm.init('z1')

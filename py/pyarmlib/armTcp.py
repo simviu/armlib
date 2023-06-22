@@ -27,6 +27,8 @@ class ArmTcp(Arm):
         self.cmd_lock_ = threading.Lock()
         self.st_lock_  = threading.Lock()
         self.st_ = ArmSt()
+        self.st_.ok = False
+        
         self.sCmdReq_ = ""
 
         #---- start thread of get st
@@ -139,6 +141,8 @@ class ArmTcp(Arm):
     def sync_thd_(self):
         print("  thread of ArmTcp::sync_thd_ running...")
         while(True):
+
+            #---- 1. get st
             st = ArmSt()
             ok,sRes = self.sendCmd_core_("st")
             if ok:
@@ -150,7 +154,7 @@ class ArmTcp(Arm):
             with self.st_lock_:
                 self.st_ = st
 
-            #---- pull cmd req
+            #---- 2. pull cmd req and run
             scmd = ""
             with self.cmd_lock_:
                 scmd = self.sCmdReq_
