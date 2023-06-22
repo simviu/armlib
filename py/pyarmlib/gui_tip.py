@@ -78,8 +78,9 @@ class TipPanel():
         self.arm_ = arm
 
         self.st_lock_  = threading.Lock()
-        self.T_trgt_ = Trans()
-        self.T_cur_ = Trans()
+        self.tip_trgt_ = TipSt()
+        self.tip_cur_ = TipSt()
+        self.st_ok_ = False
 
         #-----
         lt = tk.Label(topFrm, text = "Tip Control pannel")
@@ -105,6 +106,12 @@ class TipPanel():
         self.pnl_trgt_  = pst1
         self.pnl_cur_   = pst2
         self.pnl_delta_ = pst3
+        
+        #---- st thread
+        self.sync_thread_ = threading.Thread(target=self.sync_thd_,  daemon=True)
+        self.sync_thread_.start()
+        
+        #----
         self.update()
         return
     
@@ -113,7 +120,7 @@ class TipPanel():
     #----
     def onCtrlPos_(self, d):
         with self.st_lock_:
-            T = self.T_trgt_
+            T = self.tip_trgt_.T
             T.t = T.t + d * POS_D_SCL
 
         self.update()
@@ -123,7 +130,7 @@ class TipPanel():
     #----
     def onCtrlEuler_(self, d):
         with self.st_lock_:
-            T = self.T_trgt_
+            T = self.tip_trgt_.T
             T.e = T.e + d * EULER_D_SCL
 
         self.update()
@@ -132,9 +139,14 @@ class TipPanel():
     #---
     def update(self):
         with self.st_lock_:
-            T = self.T_trgt_
+            #---
+            T = self.tip_trgt_.T
             print("T="+T.str())
             self.pnl_trgt_.set(T)
+            #---
+            Tc =  self.tip_cur_.T if self.st_ok_ else None
+            self.pnl_cur_.set(Tc)
+
         return
     #----
 
@@ -146,8 +158,14 @@ class TipPanel():
             #----- get st
             ok,st = self.arm_.getSt()
             if ok:
-                self.st_ = st
+                print("[dbg]:gui_tip sync_thd_() get st ok")
+                self.st_ok_ = st.ok
+                print("[dbg]: gui_tip sync_thd() get st...")
+                print(st.str())
+                self.tip_cur_ = st.tipSt
+                #---
                 self.update()
+
             else :
                 self.st_.ok = False
                 print("TipPanel failed to get st")

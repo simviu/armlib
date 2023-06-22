@@ -21,7 +21,7 @@ class VecPnl(object):
             l = tk.Label(frm, text = "0",    
                         borderwidth=BORDER_W, 
                         relief="solid",
-                        fg="blue")
+                        fg="gray")
             l.grid(column=i+1, row=0, sticky=STICKY_ALL)
             frm.columnconfigure(i+1, minsize=150)
             self.labels_.append(l)
@@ -30,10 +30,20 @@ class VecPnl(object):
 
     #----
     def set(self, v):
-        for i in range(len(self.labels_)):
+        #---- chk None, gray
+        if v is None:
+            for l in self.labels_: 
+                l.config(fg='gray')
+            return
+    
+        #----
+        i = 0
+        for l in self.labels_:
             d = float(v[i])
             s = "%.2f" % d
-            self.labels_[i].config(text = s)
+            l.config(text = s, fg='blue')
+            i = i + 1
+
         return 
     
 #----------
@@ -55,6 +65,11 @@ class StTipPanel(object):
 
     #---
     def set(self, T):
+        if T is None: 
+            self.pnlPos_.set(None)            
+            self.pnlEuler_.set(None)            
+            return
+
         self.pnlPos_.set(T.t)
         self.pnlEuler_.set(T.e)
 

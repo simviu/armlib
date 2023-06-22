@@ -147,9 +147,13 @@ class ArmTcp(Arm):
             ok,sRes = self.sendCmd_core_("st")
             if ok:
                 j = json.loads(sRes)
+                print("[dbg]: armTcp.sync_thd() j=...")
+                print(j)
                 st.dec(j)
                 st.sInfo = ""
+                st.ok = True
 
+            print("[dbg] armTcp sync_thd_() get st ok")
             st.ok = ok
             with self.st_lock_:
                 self.st_ = st
