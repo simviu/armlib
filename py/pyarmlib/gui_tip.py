@@ -178,9 +178,6 @@ class TipPanel():
     def sync_thd_(self):
         print("  TipPanel::sync_thd_() thread started...")
         while True:
-            #---- idle cnt
-            #with self.st_lock_:
-            #    if self.idle_cnt_ > 0
 
             #----- get st
             ok,st = self.arm_.getSt()
@@ -198,8 +195,18 @@ class TipPanel():
                 self.st_.ok = False
                 print("TipPanel failed to get st")
 
+            #---- when idle, copy cur to trgt 
+            with self.st_lock_:
+                if self.idle_cnt_ > 0:
+                    self.idle_cnt_ = self.idle_cnt_ - 1
+                else:
+                    self.tip_trgt_ = self.tip_cur_
 
             #---- chk target req
+            with self.st_lock_:
+                if self.req_:
+                    ok, sr = self.arm_.moveTo(self.tip_cur_)
+                    self.req_ = False
 
             #----
             time.sleep(T_SYNC_THREAD)
