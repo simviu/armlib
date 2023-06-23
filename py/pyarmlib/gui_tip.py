@@ -46,8 +46,10 @@ class Ctrl3Dof():
         for i in range(6):
             b = tk.Button(frm, text=ss[i], command=partial(self.onButton, ss[i]))
             b.grid(row=grids[i,0], column=grids[i,1], sticky=(tk.E,tk.W,tk.N,tk.S))
+            b['state'] = tk.DISABLED
             btns.append(b)
 
+        #----
         self.btns_ = btns
         self.frm = frm
         frm.columnconfigure(3, minsize=20)
@@ -69,6 +71,12 @@ class Ctrl3Dof():
         
         self.callbk_(d)
         return
+    
+    #----
+    def setEnable(self, en):
+        se = tk.NORMAL if en else tk.DISABLED
+        for b in self.btns_:
+            b['state'] = se
 
 #---------------
 # TipPanel
@@ -95,6 +103,9 @@ class TipPanel():
         ctrl1.frm.grid(row=1, column=0, sticky=(tk.E,tk.W,tk.N,tk.S))
         ctrl2.frm.grid(row=1, column=1, sticky=(tk.E,tk.W,tk.N,tk.S))
 
+        self.ctrl_pos_   = ctrl1
+        self.ctrl_euler_ = ctrl2
+
         #----
         pst1 = StTipPanel(frm, "target")
         pst2 = StTipPanel(frm, "current")
@@ -108,8 +119,10 @@ class TipPanel():
         self.pnl_delta_ = pst3
         
         #---- st thread
-        self.sync_thread_ = threading.Thread(target=self.sync_thd_,  daemon=True)
-        self.sync_thread_.start()
+        thd = threading.Thread(target=self.sync_thd_,  daemon=True)
+        thd.setDaemon(True)
+        thd.start()
+        self.sync_thread_ = thd
         
         #----
         self.update()
@@ -146,6 +159,11 @@ class TipPanel():
             #---
             Tc =  self.tip_cur_.T if self.st_ok_ else None
             self.pnl_cur_.set(Tc)
+
+            #----
+            en = self.st_ok_
+            self.ctrl_pos_.setEnable(en)
+            self.ctrl_euler_.setEnable(en)
 
         return
     #----

@@ -110,7 +110,7 @@ class ArmTcp(Arm):
             if len(s) == 0:
                 continue
 
-            print("[dbg]:getAck_() got s='"+s+"'")
+            #print("[dbg]:getAck_() got s='"+s+"'")
             ss = s.split("=")
             if ss[0] == "cmd_ack":
                 bAck = True
@@ -139,7 +139,7 @@ class ArmTcp(Arm):
     #---- thread running at background, 
     #  getting st and send cmd req
     def sync_thd_(self):
-        print("  thread of ArmTcp::sync_thd_ running...")
+    #    print("  thread of ArmTcp::sync_thd_ running...")
         while(True):
 
             #---- 1. get st
@@ -147,13 +147,13 @@ class ArmTcp(Arm):
             ok,sRes = self.sendCmd_core_("st")
             if ok:
                 j = json.loads(sRes)
-                print("[dbg]: armTcp.sync_thd() j=...")
-                print(j)
+            #    print("[dbg]: armTcp.sync_thd() j=...")
+            #    print(j)
                 st.dec(j)
                 st.sInfo = ""
                 st.ok = True
 
-            print("[dbg] armTcp sync_thd_() get st ok")
+        #    print("[dbg] armTcp sync_thd_() get st ok")
             st.ok = ok
             with self.st_lock_:
                 self.st_ = st
@@ -180,9 +180,9 @@ class ArmTcp(Arm):
         if self.sCmdPrfx != "":
             scmdo = self.sCmdPrfx + " " + scmdo
 
-        print("[dbg]: sending: '"+scmdo +"'")
+    #    print("[dbg]: sending: '"+scmdo +"'")
         self.sock_.sendall(bytes(scmdo, "utf-8"))
-        print("[dbg]: cmd sent:'"+scmdo+"'")
+    #    print("[dbg]: cmd sent:'"+scmdo+"'")
         time.sleep(1)      
         
         #sLn = self.recvLn()
