@@ -18,7 +18,8 @@ TEST_PORT = 8192
 POS_D_SCL = 0.01
 EULER_D_SCL = 5
 
-T_SYNC_THREAD = 1.0
+T_SYNC_THREAD = 0.5
+N_idle_cnt = 2.0/T_SYNC_THREAD
 #------------------
 # Ctrl3Dof
 #------------------
@@ -91,6 +92,8 @@ class TipPanel():
         self.tip_cur_  = TipSt()
         self.st_ok_ = False
         self.req_   = False
+        #---- idle check to copy cur to trgt
+        self.idle_cnt_ = -1
 
         #-----
         lt = tk.Label(topFrm, text = "Tip Control pannel")
@@ -134,7 +137,9 @@ class TipPanel():
     
     #----
     def onCtrlPos_(self, d):
+        
         with self.st_lock_:
+            self.idle_cnt_ = N_idle_cnt
             T = self.tip_trgt_.T
             T.t = T.t + d * POS_D_SCL
 
@@ -145,6 +150,7 @@ class TipPanel():
     #----
     def onCtrlEuler_(self, d):
         with self.st_lock_:
+            self.idle_cnt_ = N_idle_cnt
             T = self.tip_trgt_.T
             T.e = T.e + d * EULER_D_SCL
 
@@ -172,6 +178,9 @@ class TipPanel():
     def sync_thd_(self):
         print("  TipPanel::sync_thd_() thread started...")
         while True:
+            #---- idle cnt
+            #with self.st_lock_:
+            #    if self.idle_cnt_ > 0
 
             #----- get st
             ok,st = self.arm_.getSt()
@@ -188,6 +197,7 @@ class TipPanel():
             else :
                 self.st_.ok = False
                 print("TipPanel failed to get st")
+
 
             #---- chk target req
 
