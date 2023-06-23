@@ -85,10 +85,12 @@ class TipPanel():
     def __init__(self, topFrm, arm):
         self.arm_ = arm
 
-        self.st_lock_  = threading.Lock()
-        self.tip_trgt_ = TipSt()
-        self.tip_cur_ = TipSt()
+        self.st_lock_   = threading.Lock()
+        self.upd_lock_  = threading.Lock()
+        self.tip_trgt_  = TipSt()
+        self.tip_cur_  = TipSt()
         self.st_ok_ = False
+        self.req_   = False
 
         #-----
         lt = tk.Label(topFrm, text = "Tip Control pannel")
@@ -151,19 +153,17 @@ class TipPanel():
    
     #---
     def update(self):
-        with self.st_lock_:
-            #---
-            T = self.tip_trgt_.T
-            print("T="+T.str())
-            self.pnl_trgt_.set(T)
-            #---
-            Tc =  self.tip_cur_.T if self.st_ok_ else None
+        with self.upd_lock_:
+            with self.st_lock_:
+                st_ok = self.st_ok_
+                Tt = self.tip_trgt_.T
+                Tc = self.tip_cur_.T if st_ok else None
+                #print("Tc="+Tc.str())
+            #---            
+            self.pnl_trgt_.set(Tt)
             self.pnl_cur_.set(Tc)
-
-            #----
-            en = self.st_ok_
-            self.ctrl_pos_.setEnable(en)
-            self.ctrl_euler_.setEnable(en)
+            self.ctrl_pos_.setEnable(st_ok)
+            self.ctrl_euler_.setEnable(st_ok)
 
         return
     #----
@@ -176,11 +176,12 @@ class TipPanel():
             #----- get st
             ok,st = self.arm_.getSt()
             if ok:
-                print("[dbg]:gui_tip sync_thd_() get st ok")
-                self.st_ok_ = st.ok
-                print("[dbg]: gui_tip sync_thd() get st...")
-                print(st.str())
-                self.tip_cur_ = st.tipSt
+                with self.st_lock_:
+                    #print("[dbg]:gui_tip sync_thd_() get st ok")
+                    self.st_ok_ = st.ok
+                    #print("[dbg]: gui_tip sync_thd() get st...")
+                    #print(st.str())
+                    self.tip_cur_ = st.tipSt
                 #---
                 self.update()
 
