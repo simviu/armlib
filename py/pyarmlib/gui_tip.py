@@ -19,7 +19,7 @@ POS_D_SCL = 0.01
 EULER_D_SCL = 5
 
 T_SYNC_THREAD = 0.5
-N_idle_cnt = 2.0/T_SYNC_THREAD
+N_idle_cnt = 5.0/T_SYNC_THREAD
 #------------------
 # Ctrl3Dof
 #------------------
@@ -63,12 +63,12 @@ class Ctrl3Dof():
         if self.callbk_ is None:
             return 
         d = np.array([0,0,0])
-        if sId=="+x" : d[0] = 1.0
-        if sId=="-x" : d[0] = -1.0
-        if sId=="+y" : d[1] = 1.0
-        if sId=="-y" : d[1] = -1.0
-        if sId=="+z" : d[2] = 1.0
-        if sId=="-z" : d[2] = -1.0
+        if sId == "+x" : d[0] = 1.0
+        if sId =="-x" : d[0] = -1.0
+        if sId =="+y" : d[1] = 1.0
+        if sId =="-y" : d[1] = -1.0
+        if sId =="+z" : d[2] = 1.0
+        if sId =="-z" : d[2] = -1.0
         
         self.callbk_(d)
         return
@@ -87,7 +87,6 @@ class TipPanel():
         self.arm_ = arm
 
         self.st_lock_   = threading.Lock()
-        self.upd_lock_  = threading.Lock()
         self.tip_trgt_  = TipSt()
         self.tip_cur_  = TipSt()
         self.st_ok_ = False
@@ -137,39 +136,48 @@ class TipPanel():
     
     #----
     def onCtrlPos_(self, d):
-        
+        print("[dbg]: d=")
+        print(d)
+
         with self.st_lock_:
             self.idle_cnt_ = N_idle_cnt
-            T = self.tip_trgt_.T
+            tip = self.tip_trgt_ 
+            T = tip.T
             T.t = T.t + d * POS_D_SCL
+            self.req_ = True
 
+        #----
         self.update()
-        #ok = self.arm_.moveTo(tst)
         return True
     
     #----
     def onCtrlEuler_(self, d):
+        print("[dbg]: d=")
+        print(d)
+
         with self.st_lock_:
             self.idle_cnt_ = N_idle_cnt
-            T = self.tip_trgt_.T
+            tip = self.tip_trgt_ 
+            T = tip.T
             T.e = T.e + d * EULER_D_SCL
+            self.req_ = True
 
+        #---
         self.update()
         return True
    
     #---
     def update(self):
-        with self.upd_lock_:
-            with self.st_lock_:
-                st_ok = self.st_ok_
-                Tt = self.tip_trgt_.T
-                Tc = self.tip_cur_.T if st_ok else None
-                #print("Tc="+Tc.str())
-            #---            
-            self.pnl_trgt_.set(Tt)
-            self.pnl_cur_.set(Tc)
-            self.ctrl_pos_.setEnable(st_ok)
-            self.ctrl_euler_.setEnable(st_ok)
+        with self.st_lock_:
+            st_ok = self.st_ok_
+            Tt = self.tip_trgt_.T
+            Tc = self.tip_cur_.T if st_ok else None
+            #print("Tc="+Tc.str())
+        #---            
+        self.pnl_trgt_.set(Tt)
+        self.pnl_cur_.set(Tc)
+        self.ctrl_pos_.setEnable(st_ok)
+        self.ctrl_euler_.setEnable(st_ok)
 
         return
     #----
@@ -205,8 +213,8 @@ class TipPanel():
             #---- chk target req
             with self.st_lock_:
                 if self.req_:
-                    ok, sr = self.arm_.moveTo(self.tip_cur_)
                     self.req_ = False
+                    ok = self.arm_.moveTo(self.tip_cur_)
 
             #----
             time.sleep(T_SYNC_THREAD)

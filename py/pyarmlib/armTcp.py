@@ -75,7 +75,7 @@ class ArmTcp(Arm):
 
     #---
     def moveTo(self, tipSt):
-        s = "moveTo "
+        s = "moveto "
         s = s + "xyz=" + np2s(tipSt.T.t) + " "
         s = s + "euler=" + np2s(tipSt.T.e) + " " 
         s = s + "grip=" + str(tipSt.grip) 
