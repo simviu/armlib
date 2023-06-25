@@ -18,6 +18,10 @@ namespace{
         auto& T = tip.T;
         ok &= s2v(jT["t"].asString(), T.t);
         ok &= T.e.set(jT["e"].asString());
+
+        //----
+        auto& jans = jd["angles"];
+        ok &= s2data(jans.asString(), st.angles);
         return ok;
     }
     //---- decSt

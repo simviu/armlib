@@ -49,7 +49,7 @@ namespace arm{
     //-----
     struct ArmSt{
         TipSt tip;
-        vector<float> angles;
+        vector<double> angles;
         string str()const;
     };
     //----------
