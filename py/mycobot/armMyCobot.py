@@ -24,7 +24,22 @@ K_pose_t1 = [120, -100, 80, -70, 42, -175]
 K_pose_t2 = [140, -80, 100, -60, 20, -170]
 K_pose_t3 = [140, -100, 100, -80, 22, -160]
 
-
+#-----
+def pose2vec(T):
+    t = T.t
+    e = T.e
+    v = [t[0],t[1],t[2],e[0],e[1],e[2]]
+    return v
+#-----
+def vec2pose(v):
+    T = Trans()
+    T.t[0] = v[0]
+    T.t[1] = v[1]
+    T.t[2] = v[2]
+    T.e[0] = v[3]
+    T.e[1] = v[4]
+    T.e[2] = v[5]
+    return T
 
 #----------
 # ArmMyCobot
@@ -41,7 +56,7 @@ class ArmMyCobot():
         
         #--- initial release
         self.mc_.release_all_servos()
-        return 
+        return True
     
     #----
     def set_grip(self, grip):
@@ -55,48 +70,50 @@ class ArmMyCobot():
 
 
     #------
-    def moveTo(self, kvs):
-        ts = TipSt()
-        ts.parse(kvs)
-        spd = float(kvs["spd"]) * K_spd_scl
+    def moveTo(self, tip, spdIn=0.5):
+        spd = spdIn * K_spd_scl
         if spd > K_spd_max_mc:
             spd = K_spd_max_mc
-        s = "moveto: "+ ts.str() + ", spd="+str(spd)
-        pv = ts.pose_vec()
+        s = "moveto: "+ tip.str() + ", spd="+str(spd)
+        pv = pose2vec(tip.T)
         self.mc_.send_coords(pv, int(spd), 0)
-        self.set_grip(ts.gr)
+        self.set_grip(tip.grip)
         print(s)
 
     #-----
     def getSt(self):
-        with self.st_lock_:
-            return True,self.st_
+        mc = self.mc_
+        pv = mc.get_coords()
+        ans = mc.get_angles()
+        st = ArmSt()
+        st.T = vec2pose(pv)
+        i = 0
+        for a in ans:
+            st.joints[i] = ans[i]
+            i = i + 1
 
     #----
     def setSt(self, st):
-        ok = True
-        g = st.tipSt.grip
-        sj = np2s(st.joints)
-        # cmd e.g.:
-        #   setJoints angles=30,10,-20,20,20,-15 grip=1 t=2
-
-        s = "setJoints "
-        s = s + "angles=" + sj+" "
-        s = s + "grip="+str(g)+" "
-        s = s+ "t=" + str(DFLT_setJoints_t)
-
-        return self.sendCmd_(s)
+        return False
+    
 #----------
 # tests
 # ---------
 def test1():
-    scmd = "moveto xyz=1.2,3.4,5.6 rvec=10.2,20.4,30.5 grip=0.00"
-    print('scmd="'+scmd+'"')
-    cmd,kvs = parse_cmdln(scmd)
-    print("cmd:["+cmd+"]")
-    ts = TipSt()
-    ts.parse(kvs)
-    print("ts={"+ts.str()+"}")
+    arm = ArmMyCobot()
+    arm.init()
+
+    #----
+    tip = TipSt()
+    tip.T = vec2pose(K_pose_t1)
+    arm.moveTo(tip)
+    
+    #----
+    time.sleep(5)
+    st = arm.getSt()
+    print("st=")
+    print(st.str())
+    return
 
 #----
 def test2():
