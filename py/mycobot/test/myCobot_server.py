@@ -118,13 +118,21 @@ class ArmServer():
 
             print( "recv:"+scmd )     
             #--- run command
-            ok, jres = self.run_cmd(scmd)
+            ok, sRes = self.run_cmd(scmd)
 
             #--- acka
-            sr = json.dumps(jres) + "\n" 
+            #sr = json.dumps(jres) + "\n" 
+            sr = "cmd_ack\n"
+            sr = sr + "cmd_ok="
+            sr = sr + ("true" if ok else "false") + "\n"
+            sr = sr + sRes + "\n"
+            sr = sr + "cmd_ack_end\n"
+
             print("sending ["+sr+"]...")
             conn.send(bytes(sr, "utf-8"))
             print("  sent")
+
+
 
         #s.close()
     #------
@@ -142,6 +150,7 @@ class ArmServer():
             jres = self.enc_st()
         jr["res"] = jres
         return ok, jr
+    
     #------
     def enc_st(self):
         jres = {}
