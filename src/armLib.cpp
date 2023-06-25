@@ -40,11 +40,11 @@ string TipSt::str()const
 string ArmSt::str()const
 {
     string sj;
-    int N = joints.size();
+    int N = angles.size();
     for(int i=0;i<N;i++)
-        sj += ((i==0)?"":",")+::str(joints[i].r);
+        sj += ((i==0)?"":",")+::str(angles[i]);
     string s = "{ \"tip\":"+tip.str() + 
-               ", \"joints\":["+sj+"] }";
+               ", \"angles\":["+sj+"] }";
     return s;
         
 }

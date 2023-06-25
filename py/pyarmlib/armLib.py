@@ -22,7 +22,7 @@ class TipSt:
 class ArmSt:
     def __init__(self):
         self.tipSt = TipSt()
-        self.joints = np.zeros((N_joints_dummy), dtype=float)
+        self.angles = np.zeros((N_joints_dummy), dtype=float)
         self.ok = False
         self.sInfo = "N/A"
         return
@@ -30,16 +30,16 @@ class ArmSt:
     #---- 
     def dec(self, j):
         self.tipSt.dec(j["tip"])
-        self.joints = np.array(j['joints'])
-        #print("[dbg]: dec() joints :")
-        #print(self.joints)
+        self.angles = np.array(j['angles'])
+        #print("[dbg]: dec() angles :")
+        #print(self.angles)
         return
 
     #---
     def str(self):
         s = "{"
         s = s + self.tipSt.str() + ", "
-        s = s + "'joints':" + np2s(self.joints) 
+        s = s + "'angles':" + np2s(self.angles) 
         s = s + "}"
         return s
 
@@ -57,3 +57,6 @@ class Arm(object):
     def getSt(self):
         st = ArmSt()
         return True, st
+
+    def setJoints(self, angles, grip):
+        return True, sr

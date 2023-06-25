@@ -16,6 +16,7 @@ HOST = ''
 PORT = 8192
 K_spd_scl = 100
 K_spd_max_mc = 100 # mycobot spd max 100
+K_spd_dflt = 50
 
 K_pose_readyPick = [160, -100, 100, -80, 22, -160]
 #K_pose_rst = [153.19, 137.81, -153.54, 156.79, 87.27, 13.62]
@@ -46,7 +47,8 @@ def vec2pose(v):
 #----------
 class ArmMyCobot():
     def __init__(self, port):
-
+        self.cfg_ =[]
+        self.cfg_['spd'] = K_spd_dflt
         return
     
     #----
@@ -89,12 +91,16 @@ class ArmMyCobot():
         st.T = vec2pose(pv)
         i = 0
         for a in ans:
-            st.joints[i] = ans[i]
+            st.angles[i] = ans[i]
             i = i + 1
 
     #----
-    def setSt(self, st):
-        return False
+    def setJoints(self, angles, grip):
+        spd = self.cfg_['spd']
+        mc = self.mc_
+        mc.send_coords(angles, spd, 0)
+        sr = ''
+        return True, sr
     
 #----------
 # tests

@@ -59,16 +59,15 @@ class ArmTcp(Arm):
             return True,self.st_
 
     #----
-    def setSt(self, st):
+    def setJoints(self, angles, grip):
         ok = True
-        g = st.tipSt.grip
-        sj = np2s(st.joints)
+        sAns = np2s(angles)
         # cmd e.g.:
         #   setJoints angles=30,10,-20,20,20,-15 grip=1 t=2
 
         s = "setJoints "
-        s = s + "angles=" + sj+" "
-        s = s + "grip="+str(g)+" "
+        s = s + "angles=" + sAns+" "
+        s = s + "grip="+str(grip)+" "
         s = s+ "t=" + str(DFLT_setJoints_t)
 
         return self.sendCmd_(s)
