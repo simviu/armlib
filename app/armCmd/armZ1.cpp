@@ -51,11 +51,11 @@ namespace{
    Vec6 stJointsVec(const ArmSt& st)
    {
         Vec6 v;
-        auto& js = st.joints;
-        assert(js.size()==6);
+        auto& ans = st.angles;
+        assert(ans.size()>0);
         int i=0;
-        for(auto& j : js)
-            v(i++, 0) = toRad(j.r);
+        for(auto& a : ans)
+            v(i++, 0) = toRad(a);
         return v;
    }
 }
@@ -104,7 +104,7 @@ bool ArmZ1::setJoints(const ArmSt& st, double t)
     auto& arm = *p_uarm_;
     
     //--- check joints
-    if(st.joints.size()<lc_.N_joints)
+    if(st.angles.size()<lc_.N_joints)
     {
         log_e("setJoints(): joints num < "+str(lc_.N_joints));
         return false;
@@ -172,12 +172,11 @@ bool ArmZ1::getSt(ArmSt& st)
     auto& rs = uarm._ctrlComp->recvState;
     st.tip.T = conv(rs.cartesianState);
     st.tip.gripper = rs.jointState[6].Pos;
-    st.joints.clear();
+    st.angles.clear();
     for(int i=0;i<6;i++)
     {
-        JointSt j; 
-        j.r = toDgr(rs.jointState[i].Pos);
-        st.joints.push_back(j);
+        double a = toDgr(rs.jointState[i].Pos);
+        st.angles.push_back(a);
     }
     return true;
 }

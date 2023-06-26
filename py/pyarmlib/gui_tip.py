@@ -136,9 +136,9 @@ class TipPanel():
     
     #----
     def onCtrlPos_(self, d):
-        print("[dbg]: d=")
-        print(d)
-
+    #    print("[dbg]: d=")
+    #    print(d)
+        
         with self.st_lock_:
             self.idle_cnt_ = N_idle_cnt
             tip = self.tip_trgt_ 
@@ -152,8 +152,8 @@ class TipPanel():
     
     #----
     def onCtrlEuler_(self, d):
-        print("[dbg]: d=")
-        print(d)
+    #    print("[dbg]: d=")
+    #    print(d)
 
         with self.st_lock_:
             self.idle_cnt_ = N_idle_cnt
@@ -191,11 +191,13 @@ class TipPanel():
             ok,st = self.arm_.getSt()
             if ok:
                 with self.st_lock_:
-                    #print("[dbg]:gui_tip sync_thd_() get st ok")
+                    stOn = st.ok and not self.st_ok_                    
+                    if stOn: # copy over when st first on
+                        self.tip_trgt_ = st.tipSt 
+                    
                     self.st_ok_ = st.ok
-                    #print("[dbg]: gui_tip sync_thd() get st...")
-                    #print(st.str())
                     self.tip_cur_ = st.tipSt
+                    
                 #---
                 self.update()
 
@@ -204,11 +206,11 @@ class TipPanel():
                 print("TipPanel failed to get st")
 
             #---- when idle, copy cur to trgt 
-            with self.st_lock_:
-                if self.idle_cnt_ > 0:
-                    self.idle_cnt_ = self.idle_cnt_ - 1
-                else:
-                    self.tip_trgt_ = self.tip_cur_
+            #with self.st_lock_:
+            #    if self.idle_cnt_ > 0:
+            #        self.idle_cnt_ = self.idle_cnt_ - 1
+            #    else:
+            #        self.tip_trgt_ = self.tip_cur_
 
             #---- chk target req
             with self.st_lock_:
