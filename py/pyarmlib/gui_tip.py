@@ -206,21 +206,26 @@ class TipPanel():
                 print("TipPanel failed to get st")
 
             #---- when idle, copy cur to trgt 
-            #with self.st_lock_:
-            #    if self.idle_cnt_ > 0:
-            #        self.idle_cnt_ = self.idle_cnt_ - 1
-            #    else:
-            #        self.tip_trgt_ = self.tip_cur_
+            with self.st_lock_:
+                if self.idle_cnt_ > 0:
+                    self.idle_cnt_ = self.idle_cnt_ - 1
+                    print("idle_cnt="+str(self.idle_cnt_))
+                #else:
+                #    self.tip_trgt_ = self.tip_cur_
 
             #---- chk target req
             with self.st_lock_:
-                if self.req_:
+                if self.req_ and self.is_ui_idle_():
+                    print("is idle now, sendcmd...")
                     self.req_ = False
-                    ok = self.arm_.moveTo(self.tip_cur_)
+                    ok = self.arm_.moveTo(self.tip_trgt_)
 
             #----
             time.sleep(T_SYNC_THREAD)
         return
+    #-----
+    def is_ui_idle_(self):
+        return self.idle_cnt_ <= 0
 
 #--------
 def func_thd_test():
