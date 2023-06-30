@@ -42,49 +42,34 @@ class ConsolePanel(object):
         self.frm  = frm
         
         #------
-        self.run_(sCmd)
-    
-    #-----
-    def run_(self, sCmd):
-        args = shlex.split(sCmd)
-        print("Run cmd:'" + sCmd + "'")
-        p = subprocess.Popen(["./tmp.sh"],
-                             stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE) 
-                             
-        print("   subprocess.Popen() ok")
-        #print("stdout:")
-        #print(p.stdout)
-        self.proc_ = p
-
         #----
-        #thd = Thread(target=self.log_thd_,  daemon=True)
-        #thd.setDaemon(True)
-        #thd.start()
-        #self.log_thread_ = thd
-        
-        self.log_thd_()
-    
-    #----
-    def log_thd_(self):
-        if self.proc_ is None:
-            return 
-
-        print("log_thd_() started...")
-        #----
-        while True:
-            sOut, sErr = self.proc_.communicate()
-            self.tlog_.insert(tk.INSERT, sOut)
-            self.tlog_.insert(tk.INSERT, sErr, 'error')
-            print("[dbg]---- sOut ----")
-            print(sOut)
-            print("[dbg]---- sErr ----")
-            print(sErr)
-            time.sleep(T_LOG_DELAY)
-
+        thd = Thread(target=self.run_thd_,  daemon=True)
+        thd.setDaemon(True)
+        thd.start()
+        self.run_thd_ = thd
         return
 
+    
+    #-----
+    def run_thd_(self, sCmd):
+        args = shlex.split(sCmd)
+        print("Run cmd:'" + sCmd + "'")
+        with subprocess.Popen(["./tmp.sh"],
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE,
+                             text=True) as p:
+            print("run_thd_() started...")
+            while True:
+                sOut, sErr = self.proc_.communicate()
+                self.tlog_.insert(tk.INSERT, sOut)
+                self.tlog_.insert(tk.INSERT, sErr, 'error')
+                print("[dbg]---- sOut ----")
+                print(sOut)
+                print("[dbg]---- sErr ----")
+                print(sErr)
+                time.sleep(T_LOG_DELAY)
 
+    
 #------------------
 class TestApp:
     def __init__(self, root):
