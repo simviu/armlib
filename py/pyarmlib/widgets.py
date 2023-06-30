@@ -3,9 +3,13 @@ import time
 from tkinter import ttk
 from tkinter.scrolledtext import ScrolledText
 from utils import *
+import shlex, subprocess
+from threading import Thread
+
 
 BORDER_W = 2
 STICKY_ALL = (tk.N, tk.S, tk.E, tk.W)
+T_LOG_DELAY = 2.0
 
 #----
 class ConsolePanel(object):
@@ -19,8 +23,9 @@ class ConsolePanel(object):
        
         tlog = ScrolledText(frm)
         tlog.grid(row=1, column = 0, pady = 10, sticky="news")
+        tlog.tag_config('error', background="yellow", foreground="red")
         # dbg
-        if True:
+        if False:
             s = "Run console cmd: '"+sCmd+"'..."
             for i in range(100):
                 s = s + "log dbg line " + str(i) + "\n"
@@ -28,11 +33,56 @@ class ConsolePanel(object):
 
         #----
         tlog.configure(state ='disabled')  # read only 
+        self.tlog_ = tlog
+        
         frm.rowconfigure(0, weight=1)
         frm.rowconfigure(1, weight=3)
         frm.columnconfigure(0, weight=1)
 
         self.frm  = frm
+        
+        #------
+        self.run_(sCmd)
+    
+    #-----
+    def run_(self, sCmd):
+        args = shlex.split(sCmd)
+        print("Run cmd:'" + sCmd + "'")
+        p = subprocess.Popen(["./tmp.sh"],
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE) 
+                             
+        print("   subprocess.Popen() ok")
+        #print("stdout:")
+        #print(p.stdout)
+        self.proc_ = p
+
+        #----
+        #thd = Thread(target=self.log_thd_,  daemon=True)
+        #thd.setDaemon(True)
+        #thd.start()
+        #self.log_thread_ = thd
+        
+        self.log_thd_()
+    
+    #----
+    def log_thd_(self):
+        if self.proc_ is None:
+            return 
+
+        print("log_thd_() started...")
+        #----
+        while True:
+            sOut, sErr = self.proc_.communicate()
+            self.tlog_.insert(tk.INSERT, sOut)
+            self.tlog_.insert(tk.INSERT, sErr, 'error')
+            print("[dbg]---- sOut ----")
+            print(sOut)
+            print("[dbg]---- sErr ----")
+            print(sErr)
+            time.sleep(T_LOG_DELAY)
+
+        return
 
 
 #------------------
