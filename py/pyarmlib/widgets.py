@@ -51,16 +51,23 @@ class ConsolePanel(object):
 
     
     #-----
-    def run_thd_(self, sCmd):
-        args = shlex.split(sCmd)
-        print("Run cmd:'" + sCmd + "'")
+    def run_thd_(self):
+        #args = shlex.split(sCmd)
+        #print("Run cmd:'" + sCmd + "'")
         with subprocess.Popen(["./tmp.sh"],
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
                              text=True) as p:
             print("run_thd_() started...")
-            while True:
-                sOut, sErr = self.proc_.communicate()
+            #-----
+            
+            for s in p.stdout:
+                print(s)
+                self.tlog_.insert(tk.INSERT, s)
+                time.sleep(0.2)  
+            #-----
+            while False:
+                sOut, sErr = p.communicate()
                 self.tlog_.insert(tk.INSERT, sOut)
                 self.tlog_.insert(tk.INSERT, sErr, 'error')
                 print("[dbg]---- sOut ----")

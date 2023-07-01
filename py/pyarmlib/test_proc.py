@@ -11,13 +11,22 @@ p = sp.Popen(["./tmp.sh"],
                      text=True
                      ) 
                      #as p :
-#    for s in p.stdout:
-#        print(s)
+print("Popen Ok")                     
+
+for s in p.stdout:
+    if s is None:
+        print("None")
+    elif s == "":
+        print("empty")
+        
+    print("----")
+    print(s)
+    time.sleep(0.2)    
 
                      
 print("   subprocess.Popen() ok")
 
-while True:
+while False:
     sOut, sErr = p.communicate()
     print("[dbg]---- sOut ----")
     print(sOut)
