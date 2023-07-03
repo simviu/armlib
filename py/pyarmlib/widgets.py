@@ -14,6 +14,7 @@ T_LOG_DELAY = 2.0
 #----
 class ConsolePanel(object):
     def __init__(self, topFrm, sTitle, sCmd):
+        self.sCmd_ = sCmd
         frm = ttk.Frame(topFrm, padding=(3,3,12,12))
        
         #---- title
@@ -57,11 +58,15 @@ class ConsolePanel(object):
     
     #-----
     def run_bk_func_(self):
-        #args = shlex.split(sCmd)
-        #print("Run cmd:'" + sCmd + "'")
-        with subprocess.Popen(["./tmp.sh"],
+        sCmd = self.sCmd_
+        args = shlex.split(sCmd)
+        print("Run cmd:")
+        print(args)
+        print("----")
+        with subprocess.Popen(args,
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE,
+                             shell=True,
                              text=True) as p:
             print("run_thd_() started...")
             #-----
@@ -92,7 +97,9 @@ class TestApp:
                       font = ("Times New Roman", 25))
         lt.grid(row=0, column=0, sticky="news")
 
-        sCmd = "ping www.yahoo.com"
+        #sCmd = "ping www.yahoo.com"
+        #sCmd = "ping"
+        sCmd = "./tmp.sh"
         pnl = ConsolePanel(root, "Command Console", sCmd)
         pnl.frm.grid(row=1, column=0, sticky="news")
 
