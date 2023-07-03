@@ -19,22 +19,27 @@ class ConsolePanel(object):
         #---- title
         lt = tk.Label(frm, text = sTitle)
         lt.grid(row=0, column=0, sticky="news")
-
+        #----
        
         tlog = ScrolledText(frm)
         tlog.grid(row=1, column = 0, pady = 10, sticky="news")
         tlog.tag_config('error', background="yellow", foreground="red")
         # dbg
-        if False:
+        if True:
             s = "Run console cmd: '"+sCmd+"'..."
-            for i in range(100):
+            for i in range(2):
                 s = s + "log dbg line " + str(i) + "\n"
             tlog.insert(tk.INSERT, s)
 
         #----
-        tlog.configure(state ='disabled')  # read only 
+        #tlog.configure(state ='disabled')  # read only 
         self.tlog_ = tlog
-        
+        #----
+        #---- status bar
+        ls = tk.Label(frm, text = "status")
+        ls.grid(row=2, column=0, sticky="news")
+        self.l_status_ = ls
+        #----        
         frm.rowconfigure(0, weight=1)
         frm.rowconfigure(1, weight=3)
         frm.columnconfigure(0, weight=1)
@@ -43,7 +48,7 @@ class ConsolePanel(object):
         
         #------
         #----
-        thd = Thread(target=self.run_thd_,  daemon=True)
+        thd = Thread(target=self.run_bk_func_,  daemon=True)
         thd.setDaemon(True)
         thd.start()
         self.run_thd_ = thd
@@ -51,7 +56,7 @@ class ConsolePanel(object):
 
     
     #-----
-    def run_thd_(self):
+    def run_bk_func_(self):
         #args = shlex.split(sCmd)
         #print("Run cmd:'" + sCmd + "'")
         with subprocess.Popen(["./tmp.sh"],
@@ -60,21 +65,23 @@ class ConsolePanel(object):
                              text=True) as p:
             print("run_thd_() started...")
             #-----
+
+            while True:
+                time.sleep(0.2)
+                sout = p.stdout.readline()
+                serr = p.stderr.readline()
+                if p.poll() is not None:
+                    break  
+                #print(sout)
+                #print(serr)          
+                self.tlog_.insert(tk.INSERT, sout)
+                self.tlog_.insert(tk.INSERT, serr, 'error')
+
+            #for s in p.stdout:
+            #    #print(str(s))
+            #    self.tlog_.insert(tk.INSERT, s)
+
             
-            for s in p.stdout:
-                print(s)
-                self.tlog_.insert(tk.INSERT, s)
-                time.sleep(0.2)  
-            #-----
-            while False:
-                sOut, sErr = p.communicate()
-                self.tlog_.insert(tk.INSERT, sOut)
-                self.tlog_.insert(tk.INSERT, sErr, 'error')
-                print("[dbg]---- sOut ----")
-                print(sOut)
-                print("[dbg]---- sErr ----")
-                print(sErr)
-                time.sleep(T_LOG_DELAY)
 
     
 #------------------
