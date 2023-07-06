@@ -77,8 +77,8 @@ class ConsolePanel(object):
                 serr = p.stderr.readline()
                 if p.poll() is not None:
                     break  
-                #print(sout)
-                #print(serr)          
+                print(sout)
+                print(serr)          
                 self.tlog_.insert(tk.INSERT, sout)
                 self.tlog_.insert(tk.INSERT, serr, 'error')
 
