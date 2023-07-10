@@ -10,7 +10,7 @@ import json
 from pymycobot.mycobot import MyCobot
 from pymycobot.genre import Angle, Coord
 from port_setup import setup
-
+from pyarmlib import armLib
 
 HOST = ''  
 PORT = 8192
@@ -45,7 +45,7 @@ def vec2pose(v):
 #----------
 # ArmMyCobot
 #----------
-class ArmMyCobot():
+class ArmMyCobot(armLib.Arm):
     def __init__(self, port):
         self.cfg_ =[]
         self.cfg_['spd'] = K_spd_dflt
@@ -81,13 +81,14 @@ class ArmMyCobot():
         self.mc_.send_coords(pv, int(spd), 0)
         self.set_grip(tip.grip)
         print(s)
+        return True
 
     #-----
     def getSt(self):
         mc = self.mc_
         pv = mc.get_coords()
         ans = mc.get_angles()
-        st = ArmSt()
+        st = armLib.ArmSt()
         st.T = vec2pose(pv)
         i = 0
         for a in ans:
@@ -99,8 +100,7 @@ class ArmMyCobot():
         spd = self.cfg_['spd']
         mc = self.mc_
         mc.send_coords(angles, spd, 0)
-        sr = ''
-        return True, sr
+        return True
     
 #----------
 # tests
@@ -110,7 +110,7 @@ def test1():
     arm.init()
 
     #----
-    tip = TipSt()
+    tip = armLib.TipSt()
     tip.T = vec2pose(K_pose_t1)
     arm.moveTo(tip)
     
@@ -148,9 +148,7 @@ def test2():
 
 
 if __name__ == "__main__":
-   # test2()
+   test1()
 
-    svr = ArmMyCobot(PORT)
-    svr.run()
 
     

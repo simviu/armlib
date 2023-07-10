@@ -58,5 +58,8 @@ class Arm(object):
         st = ArmSt()
         return True, st
 
+    def moveTo(self, tipSt):
+        return True 
+
     def setJoints(self, angles, grip):
-        return True, sr
+        return True
