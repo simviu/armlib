@@ -11,7 +11,10 @@ reset = [153.19, 137.81, -153.54, 156.79, 87.27, 13.62]
 
 # Pick0 : coords:[-110, -200, 80,    85, 40, 0]
 
-
+Pa = [ 240 -30, 50,    80, 45, 70  ] # approach
+Pg = [ 240 -30, 0,     80, 45, 70  ] # grab
+Pwp1=[ 0,  100, 150,    80, 40, 0   ] # waypnt 1
+Pd = [-120, 150, 100,  75, 40, -50 ] # drop
 
 def set_grip(mc, on):
     if on:
@@ -27,30 +30,45 @@ def test(mycobot):
     time.sleep(3)
 
 
-    sp = 50
+    sp = 10 
 
     set_grip(mycobot, False)
     time.sleep(1)
-    mycobot.send_coords([-110, -200, 160,  85, 40, 0  ], sp, 0)
+
+    #---- reset point
+    mycobot.send_coords(Pwp1, sp, 0)
     time.sleep(3)
-    mycobot.send_coords([-170, -200, 140,  85, 40, -10], sp, 0)
+
+    #---- approach point
+    mycobot.send_coords(Pa, sp, 0)
     time.sleep(5)
-    mycobot.send_coords([-173, -190, 80,  70, 43, -17], sp, 0)
+
+    #--- grab point
+    mycobot.send_coords(Pg, sp, 0)
     time.sleep(5)
+
+    #---- grab
     set_grip(mycobot, True)
     time.sleep(2)
-    mycobot.send_coords([-110, -200, 160,  85, 40, 0], sp, 0)
+
+    #---- lift up
+    mycobot.send_coords(Pa, sp, 0)
     time.sleep(2)
-    mycobot.send_coords([ 110, -200, 160,  85, 40, 0  ], sp, 0)
+
+    #----- reset place
+    mycobot.send_coords(Pwp1, sp, 0)
     time.sleep(3)
 
-    mycobot.send_coords([ 120, -220, 60,  170, -5, -110  ], sp, 0)
-
+    #---- drop point
+    mycobot.send_coords(Pd, sp, 0)
     time.sleep(3)
+
+    #---- drop
     set_grip(mycobot, False)
     time.sleep(1)
 
-    mycobot.send_coords([ 110, -160, 160,  85, 40, 0   ], sp, 0)
+    #---- back to idle
+    mycobot.send_coords(Pwp1, sp, 0)
     time.sleep(1)
 
 
