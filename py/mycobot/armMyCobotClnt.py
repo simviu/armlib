@@ -2,6 +2,7 @@ import time
 import threading
 
 import numpy as np
+from pyarmlib import armLib
 from armLib import *
 from pymycobot import MyCobotSocket
 
@@ -12,7 +13,7 @@ PORT=9000
 #-------------
 # ArmMyCobot
 #-------------
-class ArmMyCobot(Arm):
+class ArmMyCobotClnt(Arm):
     def __init__(self):
         self.k_spd = 20 # 1-100
 
