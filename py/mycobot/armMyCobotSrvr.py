@@ -72,7 +72,7 @@ def test():
     #time.sleep(2)
     #----
     print("test() setJoints...")
-    arm.setJoints([-15, 0, 120, 10, -5 ,10], 0.5)
+    arm.setJoints([15, 10, -50, 20, 15 , -30], 0.5)
     time.sleep(5)
 
 #----------
