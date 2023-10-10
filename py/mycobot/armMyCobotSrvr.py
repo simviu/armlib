@@ -4,8 +4,16 @@ import threading
 import numpy as np
 from pyarmlib.armLib import *
 from pymycobot import MyCobotSocket
+from pymycobot.mycobot import MyCobot
+
 from port_setup import setup
 from pyarmlib.armServer import ArmServer
+
+
+#---- Bridge mode
+MC_HOST="ubuntu.local"
+MC_PORT=9000
+
 #-------------
 # ArmMyCobotSrvr
 #-------------
@@ -18,7 +26,11 @@ class ArmMyCobotSrvr(ArmServer):
     #---- overide
     def init(self):
         print("ArmMyCobot init ok")
-        self.mc = setup()
+
+        #---- Bridge mode, connect to remote Pi
+        self.mc = MyCobotSocket(MC_HOST, MC_PORT)
+        #---- Local mode : run in Pi
+        #self.mc = setup()
         return True,""
     
     def getSt(self):
@@ -58,8 +70,8 @@ def test():
 # main
 #----------
 if __name__ == "__main__":
-   # test()
-   arm = ArmMyCobot()
-   arm.init()
-   arm.run()
+   test()
+   #arm = ArmMyCobotSrvr()
+   #arm.init()
+   #arm.run()
     
