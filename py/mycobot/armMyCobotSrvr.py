@@ -7,9 +7,9 @@ from pymycobot import MyCobotSocket
 from port_setup import setup
 from pyarmlib.armServer import ArmServer
 #-------------
-# ArmMyCobot
+# ArmMyCobotSrvr
 #-------------
-class ArmMyCobot(ArmServer):
+class ArmMyCobotSrvr(ArmServer):
     def __init__(self):
         self.k_spd = 20 # 1-100
 
@@ -44,7 +44,7 @@ class ArmMyCobot(ArmServer):
 # test
 #----------
 def test():
-    arm = ArmMyCobot()
+    arm = ArmMyCobotSrvr()
     arm.init()      
     #time.sleep(2)  
     #st = arm.getSt()
@@ -58,6 +58,8 @@ def test():
 # main
 #----------
 if __name__ == "__main__":
-    test()
-
+   # test()
+   arm = ArmMyCobot()
+   arm.init()
+   arm.run()
     
