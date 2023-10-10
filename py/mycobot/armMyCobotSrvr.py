@@ -1,13 +1,18 @@
-import time
+import time, sys
 import threading
 
 import numpy as np
-from pyarmlib.armLib import *
+
+sys.path.append('pyarmlib/')
+
+#from pyarmlib import armLib
+#from armLib import *
 from pymycobot import MyCobotSocket
 from pymycobot.mycobot import MyCobot
 
 from port_setup import setup
-from pyarmlib.armServer import ArmServer
+from pyarmlib import armServer 
+from armServer import ArmServer
 
 
 #---- Bridge mode
@@ -24,13 +29,16 @@ class ArmMyCobotSrvr(ArmServer):
         return
 
     #---- overide
-    def init(self):
+    def init(self, isBridge=False):
         print("ArmMyCobot init ok")
 
-        #---- Bridge mode, connect to remote Pi
-        self.mc = MyCobotSocket(MC_HOST, MC_PORT)
-        #---- Local mode : run in Pi
-        #self.mc = setup()
+        if isBridge:
+            #---- Bridge mode, connect to remote Pi
+            print("Connect to MyCobotSocket ", MC_HOST, ":", MC_PORT, " ...")
+            self.mc = MyCobotSocket(MC_HOST, MC_PORT)
+        else:
+            #---- Local mode : run in Pi
+            self.mc = setup()
         return True,""
     
     def getSt(self):
@@ -57,13 +65,14 @@ class ArmMyCobotSrvr(ArmServer):
 #----------
 def test():
     arm = ArmMyCobotSrvr()
-    arm.init()      
+    arm.init(isBridge=True)      
     #time.sleep(2)  
     #st = arm.getSt()
     #print("got st"+ st.str())
     #time.sleep(2)
     #----
-    arm.setJoints([15, 0, 100, 10, -5 ,10], 0.5)
+    print("test() setJoints...")
+    arm.setJoints([-15, 0, 120, 10, -5 ,10], 0.5)
     time.sleep(5)
 
 #----------
