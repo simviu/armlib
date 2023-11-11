@@ -31,6 +31,7 @@ def coords():
 
 if __name__ == "__main__":
     start()
+    print("sel: 1.focus 2.release 3.angles 4.coords")
     in_ = int(input("number:"))
     mc.release_all_servos()
     while not False:

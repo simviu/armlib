@@ -7,11 +7,13 @@ import numpy as np
 import time
 import json
 
+sys.path.append("./pyarmlib")
+
 from pymycobot.mycobot import MyCobot
 from pymycobot.genre import Angle, Coord
 from port_setup import setup
 from pyarmlib import armLib
-from pyarmlib import utils as ut
+from pyarmlib import utils 
 
 HOST = ''  
 PORT = 8192
@@ -37,9 +39,8 @@ def pose2vec(T):
 
 #-----
 def vec2pose(v):
-    print("[dbg]: v=")
-    print(v)
-    T = ut.Trans()
+    print("[dbg]: v=", v)
+    T = utils.Trans()
     T.t[0] = v[0]
     T.t[1] = v[1]
     T.t[2] = v[2]
@@ -60,6 +61,7 @@ class ArmMyCobot(armLib.Arm):
     
     #----
     def init(self):
+        print("ArmMyCobot init")
         #---- setup mycobot
         self.mc_ = setup()
         
@@ -93,6 +95,7 @@ class ArmMyCobot(armLib.Arm):
     #-----
     def getSt(self):
         mc = self.mc_
+        #print("mc is:", mc)
         pv = mc.get_coords()
         ans = mc.get_angles()
         st = armLib.ArmSt()
@@ -161,7 +164,7 @@ def test2():
 
 
 if __name__ == "__main__":
-#    test1()
-    test2()
+    test1()
+#    test2()
 
     
