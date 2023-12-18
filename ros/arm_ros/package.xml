@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>facAutoRos</name>
+  <version>0.0.1</version>
+  <description>
+    Factory Automation ROS
+  </description>
+  <license>Apache 2.0</license>
+  <author email="schen@simviu.com">S. Chen</author>
+  <maintainer email="schen@simviu.com">S. Chen</maintainer>
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>eigen3</build_depend>
+
+
+  <build_depend>moveit_core</build_depend>
+  <build_depend>moveit_ros_planning</build_depend>
+  <build_depend>moveit_ros_planning_interface</build_depend>
+
+  <depend>roscpp</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>tf</depend>
+  <depend>gazebo_ros</depend>
+  <exec_depend>gazebo</exec_depend>
+
+  <exec_depend>moveit_core</exec_depend>
+  <exec_depend>moveit_ros_planning</exec_depend>
+  <exec_depend>moveit_ros_planning_interface</exec_depend>
+
+  <export>
+    <gazebo_ros gazebo_media_path="${prefix}"/>
+    <gazebo_ros gazebo_model_path="${prefix}/models"/>
+  </export>
+</package>
