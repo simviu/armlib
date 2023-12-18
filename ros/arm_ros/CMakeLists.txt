@@ -221,4 +221,6 @@ include_directories(
 #----------------------------------
 
 
-add_subdirectory(node)
+add_subdirectory(dep/utlib)
+add_subdirectory(dep/armCpp)
+
