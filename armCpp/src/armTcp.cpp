@@ -17,7 +17,7 @@ namespace{
         auto& jT = jtip["T"];
         auto& T = tip.T;
         ok &= s2v(jT["t"].asString(), T.t);
-        ok &= T.e.set(jT["e"].asString());
+        ok &= s2q(jT["e"].asString(), T.q);
 
         //----
         auto& jans = jd["angles"];
@@ -222,7 +222,7 @@ bool ArmTcp::moveTo(const TipSt& ts, float spd)
     string s = "moveto ";
 
     s += "xyz=" + remove(str(ts.T.t), ' ') + " ";
-    s += "rvec=" + remove(ts.T.e.str(), ' ') + " ";
+    s += "quat=" + remove(str(ts.T.q), ' ') + " ";
     s += "grip=" + str(ts.gripper) +" ";
 
     float spdm = Arm::cfg_.maxSpeed;

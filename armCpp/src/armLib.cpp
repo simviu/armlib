@@ -11,10 +11,13 @@ namespace{
 string Trans::str()const
 { 
     return "{\"t\":\""+vsn::str(t,3)+
-            "\", \"e\":\"" +e.str()+"\"}";  
+           // "\", \"e\":\"" +e.str()+"\"}";  
+           "\", \"q\":\"" +str(q)+"\"}";  
+
 }
 
-//-----
+//----- TODO: deprecated
+/*
 bool Trans::set(const string& s)
 {
     vector<double> ds;
@@ -24,11 +27,13 @@ bool Trans::set(const string& s)
         return false;
 
     t << ds[0], ds[1], ds[2];
-    e.rx = ds[3];
-    e.ry = ds[4];
-    e.rz = ds[5];
+
+ //   e.rx = ds[3];
+ //   e.ry = ds[4];
+ //   e.rz = ds[5];
     return true;
 }
+*/
 //----
 string TipSt::str()const 
 { 
@@ -79,13 +84,13 @@ void Arm::waitDone()
 
 //----
 bool Arm::grab(const Trans& T_target,
-               const Trans& dT0)
+               const vec3& dt0)
 {
     TipSt t; 
 
     //---- Approach
     t.T = T_target;
-    t.T += dT0;
+    t.T.t += dt0;
     t.gripper = 1;
     auto& v = cfg_.dfltSpeed;
     moveTo(t, v);

@@ -38,7 +38,7 @@ void ArmMng::init_cmds()
     add("setJoints", mkSp<Cmd>("angles=[j1,j2,j3...] grip=GRIP t=SECONDS",
     [&](CStrs& args)->bool{ return setJoints(args); }));
     //----
-    add("moveto", mkSp<Cmd>("xyz=x,y,z [euler=rx,ry,rz] [grip=0...1]",
+    add("moveto", mkSp<Cmd>("xyz=x,y,z [quat=w,x,y,z] [grip=0...1]",
     [&](CStrs& args)->bool{ return moveto(args); }));
     //----
     add("st", mkSp<Cmd>("(get status)",
@@ -52,8 +52,8 @@ void ArmMng::init_cmds()
         return play(lookup(kv, "name"));
     }));
     //----
-    string s_h = "target=<x,y,z>  dT0=<dx,dy,dz> euler=rx,ry,rz";
-    s_h += "\n      (dT0 is offset for approach point)";
+    string s_h = "target=<x,y,z>  dt0=<dx,dy,dz> quat=w,x,y,z";
+    s_h += "\n      (dt0 is offset for approach point)";
     add("grab", mkSp<Cmd>(s_h,
     [&](CStrs& args)->bool{ return grab(args);  }));
   
@@ -177,7 +177,8 @@ bool ArmMng::moveto(CStrs& args)
     //----
     StrTbl kv; parseKV(args, kv);
     string sxyz = lookup(kv, string("xyz"));
-    string se = lookup(kv, string("euler"));
+//    string se = lookup(kv, string("euler"));
+    string sq = lookup(kv, string("quat"));
     string sgrip = lookup(kv, string("grip"));
 
     //----
@@ -191,13 +192,24 @@ bool ArmMng::moveto(CStrs& args)
         log_e("Error parsing args");
         return false;
     }
-
+    //---
     // option
     if(sgrip!="")
-        s2d(sgrip, st.gripper);
-    if(se!="")
-        st.T.e.set(se);
+        ok &= s2d(sgrip, st.gripper);
+
+    if(sq!="")
+        ok &=s2q(sq, st.T.q); 
+        // TODO: Euler to be deprecated
+  //  if(se!="")
+    //    st.T.e.set(se);
    // log_i("run cmd moveto:"+st.str());
+
+    //----
+    if(!ok)
+    {
+        log_e("parsing fail");
+        return false;
+    }
 
     //---- run
     return arm.moveTo(st);
@@ -211,16 +223,17 @@ bool ArmMng::grab(CStrs& args)
         return false;
 
     StrTbl kv; parseKV(args, kv);
-    Trans Tt, Tc;
+    Trans Tt;
+    vec3 dt0;
     bool ok = true;
     ok &= s2v(lookup(kv, "target"), Tt.t);
-    ok &= s2v(lookup(kv, "dt0"), Tc.t);
-    Euler e;
-    ok &= e.set(lookup(kv, "euler"));
+    ok &= s2v(lookup(kv, "dt0"), dt0);
+    quat q;
+    ok &= s2q(lookup(kv, "quat"));
     if(!ok){ log_e("syntax err"); return false; }
-    Tt.e = Tc.e = e;
+    Tt.q = q;
     assert(p_arm_!=nullptr);
-    return p_arm_->grab(Tt, Tc);    
+    return p_arm_->grab(Tt, dt0);    
 }
 
 //----

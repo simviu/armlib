@@ -23,15 +23,18 @@ namespace arm{
     struct Trans{
         Trans(){ t << 0,0,0; }
         vec3 t;
-        Euler e;
+        quat q;
+        //Euler e;
         
         string str()const ;
-        bool set(const string& s);
+        //bool set(const string& s);
+        /*
         void operator += (const Trans& T)
         { 
             e += T.e;
             t += T.t;
         }
+        */
     };
     //----------
     struct TipSt{
@@ -82,9 +85,9 @@ namespace arm{
                                FuncCre f);
 
         //---- grab a place, with Pose,
-        // dT0 is offset for approach point
+        // dt0 is offset for approach point
         bool grab(const Trans& T_target,
-                  const Trans& dT0);
+                  const vec3& dt0);
         void waitDone();
 
     };
