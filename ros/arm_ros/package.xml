@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>facAutoRos</name>
+  <name>arm_ros</name>
   <version>0.0.1</version>
   <description>
-    Factory Automation ROS
+    Arm ROS lib
   </description>
   <license>Apache 2.0</license>
   <author email="schen@simviu.com">S. Chen</author>

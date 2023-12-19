@@ -1,11 +1,11 @@
 
 #include <stdio.h>
-#include "facRosTest.h"
+#include "arm_ros.h"
 #include "geometry_msgs/TwistStamped.h"
 
 #include <moveit/move_group_interface/move_group_interface.h>
 
-using namespace fac;
+using namespace arm_ros;
 #define SPD_SCL 0.5
 
 //-----
@@ -135,11 +135,8 @@ bool ArmRosTest::test_arm_pose()
 // run()
 //-------------
 void ArmRosTest::run()
-{
-
- 
-    
-    string s = "FacRosTest node started...";
+{   
+    string s = "arm_ros_test node started...";
     s += "CurDir:"+ sys::pwd();
     ut::log_i(s);
     //----
@@ -171,7 +168,7 @@ void ArmRosTest::run()
 int main(int argc, char **argv)
 {
   using namespace std;
-  ros::init(argc, argv, "facRosTest");
+  ros::init(argc, argv, "arm_ros_test");
 
   ArmRosTest nn;
   nn.run();
