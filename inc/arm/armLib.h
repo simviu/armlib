@@ -70,6 +70,8 @@ namespace arm{
         virtual bool getSt(ArmSt& st) { return false; }
         virtual bool play(const string& sf){ return false; };
         virtual bool test(){ return false; };
+
+        // TODO: busy()
         virtual bool done()const{return true;};
         
         //---- factory 
