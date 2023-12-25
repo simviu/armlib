@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   image_transport
-  cv_bridge
+  #cv_bridge
   moveit_core
   moveit_ros_planning
   moveit_ros_planning_interface
