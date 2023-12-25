@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(arm_ros)
+project(arm_ros_node)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -221,5 +221,31 @@ include_directories(
 #----------------------------------
 
 
-add_subdirectory(node)
+#add_subdirectory(dep/utlib)
+#add_subdirectory(dep/vsnlib)
+#add_subdirectory(dep/armCpp)
 
+
+#-----
+include_directories( 
+    inc
+    ${catkin_INCLUDE_DIRS} 
+    ${OpenCV_INCLUDE_DIRS} 
+    $ENV{utLib_DIR}/inc
+    $ENV{vsnLib_DIR}/inc
+    $ENV{armLib_DIR}/inc
+    ${EIGEN3_INCLUDE_DIR}
+    common
+    #vrpcpp/inc
+    vsnLib/inc
+    )
+
+
+
+#---- test node
+FILE(GLOB  SRC_TEST src/test/*.cpp)
+add_executable(arm_ros_test  ${SRC_TEST} )
+target_link_libraries(arm_ros_test 
+    ${catkin_LIBRARIES}
+    vsnLib
+    )

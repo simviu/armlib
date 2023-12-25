@@ -10,8 +10,6 @@
   <maintainer email="schen@simviu.com">S. Chen</maintainer>
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>eigen3</build_depend>
-
-
   <build_depend>moveit_core</build_depend>
   <build_depend>moveit_ros_planning</build_depend>
   <build_depend>moveit_ros_planning_interface</build_depend>
