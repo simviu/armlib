@@ -12,7 +12,7 @@ string Trans::str()const
 { 
     return "{\"t\":\""+vsn::str(t,3)+
            // "\", \"e\":\"" +e.str()+"\"}";  
-           "\", \"q\":\"" +str(q)+"\"}";  
+           "\", \"q\":\"" +vsn::str(q)+"\"}";  
 
 }
 

@@ -38,13 +38,5 @@ namespace arm_ros{
         Sp<moveit::planning_interface::MoveGroupInterface> 
             p_arm_ = nullptr;
     };
-    //---------
-    class ArmRosTest{
-    public:
-        void run();
-    protected:
-        ros::NodeHandle nh_;
-        bool test_arm_joints();
-        bool test_arm_pose();
-    };
+    
 }

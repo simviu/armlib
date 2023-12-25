@@ -229,7 +229,7 @@ bool ArmMng::grab(CStrs& args)
     ok &= s2v(lookup(kv, "target"), Tt.t);
     ok &= s2v(lookup(kv, "dt0"), dt0);
     quat q;
-    ok &= s2q(lookup(kv, "quat"));
+    ok &= s2q(lookup(kv, "quat"), q);
     if(!ok){ log_e("syntax err"); return false; }
     Tt.q = q;
     assert(p_arm_!=nullptr);

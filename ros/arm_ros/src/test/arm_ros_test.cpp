@@ -1,15 +1,14 @@
 
 #include <stdio.h>
-#include "arm_ros.h"
+#include "arm_ros_test.h"
 #include "geometry_msgs/TwistStamped.h"
-
 #include <moveit/move_group_interface/move_group_interface.h>
 
 using namespace arm_ros;
 #define SPD_SCL 0.5
 
 //-----
-bool ArmRosTest::test_arm_joints()
+bool ArmRosTest::test_moveit_joints()
 {
     moveit::planning_interface::MoveGroupInterface arm("arm_group");
 
@@ -40,7 +39,7 @@ bool ArmRosTest::test_arm_joints()
     return true;
 }
 //-----
-bool ArmRosTest::test_arm_pose()
+bool ArmRosTest::test_moveit_pose()
 {
     ros::AsyncSpinner spinner(1);
     spinner.start();
@@ -140,8 +139,8 @@ void ArmRosTest::run()
     s += "CurDir:"+ sys::pwd();
     ut::log_i(s);
     //----
-    //test_arm_joints();
-    test_arm_pose();
+    //test_moveit_joints();
+    test_moveit_pose();
 
     //-------------------
     //---- test chatter
