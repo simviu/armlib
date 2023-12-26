@@ -45,5 +45,13 @@ namespace arm_ros{
             return false;
         }
     };
+    //----- ArmROS_svr
+    class ArmROS_svr : public ArmMng{
+    public:
+        bool init();
+        
+    protected:
+
+    }; 
     
 }

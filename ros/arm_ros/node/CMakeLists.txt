@@ -230,6 +230,14 @@ target_link_libraries(arm_ros
     armLib
     )
 
+
+#---- server node
+FILE(GLOB  SRC_SVR src/server/*.cpp)
+add_executable(arm_ros_server  ${SRC_SVR} )
+target_link_libraries(arm_ros_server 
+    arm_ros
+    )
+
 #---- test node
 FILE(GLOB  SRC_TEST src/test/*.cpp)
 add_executable(arm_ros_test  ${SRC_TEST} )
