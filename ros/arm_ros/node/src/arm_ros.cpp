@@ -7,7 +7,7 @@ bool ArmROS::init()
 {
     log_i("ArmROS init MoveIt...");    
 
-    p_arm_ = moveit::planning_interface::MoveGroupInterface(cfg_.sGroup);
+    p_arm_ = mkSp<moveit::planning_interface::MoveGroupInterface>(cfg_.sGroup);
     auto& arm = * p_arm_;
     arm.allowReplanning(true);
     arm.setPoseReferenceFrame("g_base");
@@ -21,8 +21,10 @@ bool ArmROS::init()
 //-----
 bool ArmROS::setJoints(const ArmSt& st, double t)
 {
+    if(!chkInit()) return false;
+    auto& arm = * p_arm_;
 
-    std::vector<double> arm_joint_positions = {0.9, -1.4, -0.7, 0.8, -0.5, -0.6};
+    //std::vector<double> arm_joint_positions = {0.9, -1.4, -0.7, 0.8, -0.5, -0.6};
     vector<double> js;
     for(auto& j : st.angles)
         js.push_back(toRad(j));
@@ -31,37 +33,49 @@ bool ArmROS::setJoints(const ArmSt& st, double t)
     return true;
 }
 //----
-bool ArmROS::moveTo(const TipSt& ts, float spd=1.0)
+bool ArmROS::moveTo(const TipSt& ts, float spd)
 {
-    if(p_arm_ == nullptr) {
-        log_e("ArmROS not init")
-        return false;
-    }
+    if(!chkInit()) return false;
+    auto& arm = * p_arm_;
+
     //-----
     arm.setStartStateToCurrentState();
     log_i("  moving to p ...");
 
     //-----
     string sFrm = arm.getPlanningFrame();
-    geometry_msgs::PoseStamped p; 
+    geometry_msgs::PoseStamped ps; 
     //----
-    p.header.frame_id = sFrm;
-    p.header.stamp = ros::Time::now();
-    p.pose.position = st.pos;
-    p.pose.orientation.x = 0.026;
-    p.pose.orientation.y = 1.0;
-    p.pose.orientation.z = 0.0;
-    p.pose.orientation.w = 0.014;
+    ps.header.frame_id = sFrm;
+    ps.header.stamp = ros::Time::now();
+    //--- pos
+    auto& p = ps.pose.position;
+    auto& t = ts.T.t;
+    p.x = t.x(); 
+    p.y = t.y();
+    p.z = t.z();
 
+    //--- orient
+    auto& o =  ps.pose.orientation;
+    auto& q = ts.T.q;
+    o.w = q.w();
+    o.x = q.x();
+    o.y = q.y();
+    o.z = q.z();
 
-    arm.setPoseTarget(p);
+    arm.setPoseTarget(ps);
 
     return true;
 
 }
+//----
+
 //-----
 bool ArmROS::getSt(ArmSt& st)
 {
-    return true;
+    if(!chkInit()) return false;
+    auto& arm = * p_arm_;
+
+    return false;
 
 }

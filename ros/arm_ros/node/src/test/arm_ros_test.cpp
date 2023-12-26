@@ -8,6 +8,27 @@ using namespace arm_ros;
 #define SPD_SCL 0.5
 
 //-----
+bool ArmRosTest::test_arm_ros()
+{
+    ArmROS arm;
+    arm.init();
+    //----- set joints
+    log_i("ArmROS set joints1...");
+    ArmSt st;
+    st.angles = {10,-5,-10,15,-20,30};
+    arm.setJoints(st, 5);
+    sys::sleep(2);
+    //---
+    log_i("ArmROS set joints2...");
+    st.angles = {-10,5,10,-15,20,-30};
+    arm.setJoints(st, 5);
+    sys::sleep(2);
+    //-----
+
+    return true;
+}
+
+//-----
 bool ArmRosTest::test_moveit_joints()
 {
     moveit::planning_interface::MoveGroupInterface arm("arm_group");
@@ -41,8 +62,7 @@ bool ArmRosTest::test_moveit_joints()
 //-----
 bool ArmRosTest::test_moveit_pose()
 {
-    ros::AsyncSpinner spinner(1);
-    spinner.start();
+    
     //--------------------
 
     // 创建对象arm连接到xarm规划组
@@ -135,12 +155,16 @@ bool ArmRosTest::test_moveit_pose()
 //-------------
 void ArmRosTest::run()
 {   
+    ros::AsyncSpinner spinner(1);
+    spinner.start();
+    
     string s = "arm_ros_test node started...";
     s += "CurDir:"+ sys::pwd();
     ut::log_i(s);
     //----
     //test_moveit_joints();
-    test_moveit_pose();
+    //test_moveit_pose();
+    test_arm_ros();
 
     //-------------------
     //---- test chatter

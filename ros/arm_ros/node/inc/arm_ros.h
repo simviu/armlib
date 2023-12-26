@@ -31,12 +31,19 @@ namespace arm_ros{
         virtual bool setJoints(const ArmSt& st, double t)override;
         virtual bool moveTo(const TipSt& ts, float spd=1.0)override;
         virtual bool getSt(ArmSt& st) override;
-        virtual bool test()override;
-        virtual bool done()const override;  
+        virtual bool test()override{ return false; };
+        virtual bool done()const override{ return false; };  
 
     protected:      
         Sp<moveit::planning_interface::MoveGroupInterface> 
             p_arm_ = nullptr;
+        //---
+        bool chkInit()const
+        {
+            if(p_arm_!=nullptr) return true;
+            log_e("Arm not init");
+            return false;
+        }
     };
     
 }

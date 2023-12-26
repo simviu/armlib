@@ -11,6 +11,6 @@ namespace arm_ros{
         ros::NodeHandle nh_;
         bool test_moveit_joints();
         bool test_moveit_pose();
-        
+        bool test_arm_ros();
     };
 }

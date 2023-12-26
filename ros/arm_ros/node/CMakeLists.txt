@@ -221,10 +221,18 @@ include_directories(
 
 
 
+#---- arm_ros lib
+FILE(GLOB  SRC_ARM_ROS src/*.cpp)
+add_library(arm_ros  ${SRC_ARM_ROS} )
+target_link_libraries(arm_ros
+    ${catkin_LIBRARIES}
+    vsnLib
+    armLib
+    )
+
 #---- test node
 FILE(GLOB  SRC_TEST src/test/*.cpp)
 add_executable(arm_ros_test  ${SRC_TEST} )
 target_link_libraries(arm_ros_test 
-    ${catkin_LIBRARIES}
-    vsnLib
+    arm_ros
     )
