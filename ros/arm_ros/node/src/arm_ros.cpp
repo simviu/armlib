@@ -64,7 +64,16 @@ bool ArmROS::moveTo(const TipSt& ts, float spd)
     o.z = q.z();
 
     arm.setPoseTarget(ps);
-
+    moveit::planning_interface::MoveGroupInterface::Plan plan;
+    bool ok = (arm.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    if(!ok)
+    {
+        log_e("ArmROS::moveTo() Planning failed.");
+        return false;
+    }
+    
+    arm.execute(plan);
+    
     return true;
 
 }

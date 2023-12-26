@@ -23,7 +23,15 @@ bool ArmRosTest::test_arm_ros()
     st.angles = {-10,5,10,-15,20,-30};
     arm.setJoints(st, 5);
     sys::sleep(2);
-    //-----
+
+    //-----moveit
+    log_i("ArmROS move to pose 1...");
+    TipSt ts;
+    ts.T.t = vec3(0.132, -0.150, 0.20);
+    ts.T.q = quat(0.014, 0.026, 1.0, 0.0);// w,x,y,z
+    arm.moveTo(ts);
+    sys::sleep(5);
+    log_i("ArmROS test done.");
 
     return true;
 }
