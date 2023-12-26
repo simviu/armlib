@@ -1,4 +1,4 @@
-./init.sh
+#./init.sh
 
 source env.sh
 
