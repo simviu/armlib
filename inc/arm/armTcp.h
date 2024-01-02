@@ -35,7 +35,6 @@ namespace arm{
         std::mutex mtx_st_; 
 
         bool run_once(); // one run in thread loop
-        bool read_st();
         //bool send_cmds();
 
         bool send(const string& scmd);

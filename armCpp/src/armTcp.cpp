@@ -9,19 +9,21 @@ namespace{
     bool decSt_json(const Json::Value& jd, 
                     ArmSt& st)
     {
-
+        //---- tip
         auto& jtip = jd["tip"];
         auto& tip = st.tip;
         bool ok = true;
         //--- options
         auto& jT = jtip["T"];
         auto& T = tip.T;
-        ok &= s2v(jT["t"].asString(), T.t);
-        ok &= s2q(jT["e"].asString(), T.q);
+        string s_t = ut::remove(jT["t"].asString(), ' ');
+        string s_q = ut::remove(jT["q"].asString(), ' ');
+        ok &= s2v(s_t, T.t);
+        ok &= s2q(s_q, T.q);
 
         //----
-        auto& jans = jd["angles"];
-        ok &= s2data(jans.asString(), st.angles);
+        string sas = ut::remove(jd["angles"].asString(), ' ');
+        ok &= s2data(sas, st.angles);  
         return ok;
     }
     //---- decSt
@@ -35,7 +37,7 @@ namespace{
             rdr.parse(sln, jd);
             //ok &= jd["ok"].asBool();
             //if(ok)
-            ok &= decSt_json(jd["res"]["st"], st);
+            ok &= decSt_json(jd, st);
         }
         catch(exception& e)
         {
@@ -101,23 +103,6 @@ bool ArmTcp::run_once()
     return ok;
 }
 */
-//----
-bool ArmTcp::read_st()    
-{   
-    //log_d("read_st()...");
-    if(!send("st")) return false;
-    //----
-    ArmSt st;
-    if(!decSt(ack_.s_res, st))
-    {
-        log_e("read_st() json err");
-        return false;
-    }
-    
-    log_d("ArmTcp read_st() ok");
-    log_d(st.str());
-    return true;
-}
 
 //---- deprecated, switch to blocking mode
 /*
@@ -227,8 +212,16 @@ bool ArmTcp::moveTo(const TipSt& ts, float spd)
 bool ArmTcp::getSt(ArmSt& st)
 {
     std::unique_lock<std::mutex> lk(mtx_st_);
-    return read_st();
-   
+    if(!send("st")) return false;
+    //----
+    if(!decSt(ack_.s_res, st))
+    {
+        log_e("read_st() json err");
+        return false;
+    }
+    log_d("ArmTcp read_st() ok");
+    log_d(st.str());
+    return true;   
 }
 
 bool ArmTcp::test()

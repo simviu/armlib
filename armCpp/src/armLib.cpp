@@ -49,7 +49,7 @@ string ArmSt::str()const
     for(int i=0;i<N;i++)
         sj += ((i==0)?"":",")+::str(angles[i]);
     string s = "{ \"tip\":"+tip.str() + 
-               ", \"angles\":["+sj+"] }";
+               ", \"angles\":\""+sj+"\" }";
     return s;
         
 }
