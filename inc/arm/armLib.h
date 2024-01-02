@@ -100,6 +100,8 @@ namespace arm{
         ArmMng();
 
         auto getArm(){ return p_arm_; }
+        void set(Sp<Arm>p)
+        { p_arm_ = p; data_.hasInit = true; }
     protected:
         struct Data{
             bool hasInit = false;

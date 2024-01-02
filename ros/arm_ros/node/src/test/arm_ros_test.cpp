@@ -125,10 +125,11 @@ bool ArmRosTest::test_moveit_pose()
     target_pose.pose.position.x = 0.132;
     target_pose.pose.position.y = -0.150;
     target_pose.pose.position.z = 0.20;
+
+    target_pose.pose.orientation.w = 0.014;
     target_pose.pose.orientation.x = 0.026;
     target_pose.pose.orientation.y = 1.0;
     target_pose.pose.orientation.z = 0.0;
-    target_pose.pose.orientation.w = 0.014;
 
     //------------------
     // 显示地把开始状态设置为机械臂的当前状态
