@@ -4,6 +4,10 @@ project(arm_ros)
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
+#---- OpenCV4
+#set(CMAKE_MODULE_PATH  ${CMAKE_MODULE_PATH};/opt/dep/opencv4/lib/cmake/opencv4/)
+set(OpenCV_DIR ~/opt/dep/opencv4/lib/cmake/opencv4/)
+
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
