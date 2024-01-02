@@ -43,5 +43,7 @@ namespace arm{
         //---
         std::thread thd_;
         std::mutex  thd_mtx_;
+        Cmd::Ack ack_;
+
     };
 }

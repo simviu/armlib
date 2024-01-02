@@ -33,9 +33,9 @@ namespace{
             Json::Reader rdr;
             Json::Value jd;
             rdr.parse(sln, jd);
-            ok &= jd["ok"].asBool();
-            if(ok)
-                ok &= decSt_json(jd["res"]["st"], st);
+            //ok &= jd["ok"].asBool();
+            //if(ok)
+            ok &= decSt_json(jd["res"]["st"], st);
         }
         catch(exception& e)
         {
@@ -105,25 +105,17 @@ bool ArmTcp::run_once()
 bool ArmTcp::read_st()    
 {   
     //log_d("read_st()...");
-    client_.send("st");
-    string sln;
-    if(!client_.recvLn(sln)) {
-        log_d("read_st failed");
-        return false;
-    }
-    log_d("read_st() recv:["+sln+"]");
+    if(!send("st")) return false;
     //----
     ArmSt st;
-    if(!decSt(sln, st))
+    if(!decSt(ack_.s_res, st))
     {
         log_e("read_st() json err");
         return false;
     }
-    //---- fill st
-    std::unique_lock<std::mutex> lk(mtx_st_);
-    data_.cur_st = st;
-    data_.b_st_val = true;
-    log_d("ArmTcp read_st() cur_st ok, tip at:"+str(st.tip.T.t));
+    
+    log_d("ArmTcp read_st() ok");
+    log_d(st.str());
     return true;
 }
 
@@ -172,8 +164,7 @@ bool ArmTcp::send(const string& scmd)
     }
     log_d("  wait ack...");
     //--- receive ack
-    Cmd::Ack ack;
-    if(!getAck(ack)) return false;
+    if(!getAck(ack_)) return false;
     return true;
 }
 //----
@@ -236,8 +227,8 @@ bool ArmTcp::moveTo(const TipSt& ts, float spd)
 bool ArmTcp::getSt(ArmSt& st)
 {
     std::unique_lock<std::mutex> lk(mtx_st_);
-    st = data_.cur_st;
-    return data_.b_st_val;
+    return read_st();
+   
 }
 
 bool ArmTcp::test()

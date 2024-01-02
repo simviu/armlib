@@ -84,7 +84,13 @@ bool ArmROS::getSt(ArmSt& st)
 {
     if(!chkInit()) return false;
     auto& arm = * p_arm_;
+    auto psm = arm.getCurrentPose();
+    auto p = psm.pose.position;
+    auto o = psm.pose.orientation;
+    st.tip.T.t << p.x,p.y,p.z;
+    st.tip.T.q = quat(o.w,o.x,o.y,o.z);
+    st.angles = arm.getCurrentJointValues();
 
-    return false;
+    return true;
 
 }
