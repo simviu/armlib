@@ -21,7 +21,7 @@ namespace UNITREE_ARM
         }
 
         virtual bool init()override;
-        virtual bool setJoints(const ArmSt& st, double t)override;
+        virtual bool setJoints(const ArmSt& st, double spd)override;
         virtual bool moveTo(const TipSt& ts, float spd) override;
         virtual bool getSt(ArmSt& st) override; 
         virtual bool test()override;

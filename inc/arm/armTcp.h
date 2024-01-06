@@ -18,10 +18,11 @@ namespace arm{
         virtual bool init()override;
         virtual bool release()override;
         virtual bool reset()override;
+        virtual bool setGrip(double d, double spd)override;
         virtual bool moveTo(const TipSt& ts, float spd) override;
         virtual bool getSt(ArmSt& st) override; 
         virtual bool test()override;
-        virtual bool setJoints(const ArmSt& st, double t)override;
+        virtual bool setJoints(const ArmSt& st, double spd)override;
         // init remote arm
         bool init_arm(const string& sModel);
     protected:

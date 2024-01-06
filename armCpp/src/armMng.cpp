@@ -35,15 +35,23 @@ void ArmMng::init_cmds()
         return client(args);
     }));
     //----
-    add("setJoints", mkSp<Cmd>("angles=[j1,j2,j3...] grip=GRIP t=SECONDS",
+    string sH = "angles=j1,j2,j3,j4,j5,j6 [grip=<GRIP>] [spd=0..1] \n";
+    sH += "  angles are degree\n";
+    sH += "  GRIP: [close,open] => [0, 1.0]";
+    add("setJoints", mkSp<Cmd>(sH,
     [&](CStrs& args)->bool{ return setJoints(args); }));
+    
     //----
-    add("moveto", mkSp<Cmd>("xyz=x,y,z [quat=w,x,y,z] [grip=0...1]",
+    add("setGrip", mkSp<Cmd>("grip=<GRIP> [spd=0..1]",
+    [&](CStrs& args)->bool{ return setGrip(args); }));
+    
+    //----
+    add("moveto", mkSp<Cmd>("xyz=x,y,z [quat=w,x,y,z] [grip=0...1] [spd=0..1]",
     [&](CStrs& args)->bool{ return moveto(args); }));
     //----
     add("st", mkSp<Cmd>("(get status)",
     [&](CStrs& args)->bool{ 
-        return getSt();
+        return getSt(); 
     }));
     //----
     add("play", mkSp<Cmd>("name=<LABEL_NAME> ",
@@ -87,6 +95,14 @@ bool ArmMng::init(CStrs& args)
     p_arm_ = p;
     data_.hasInit = true;
     return true;
+}
+//----
+bool ArmMng::chkInit()const
+{
+    if(data_.hasInit && (p_arm_!=nullptr))
+        return true;
+    log_e("ArmMng arm not init");
+    return false;
 }
 //----
 bool ArmMng::client(CStrs& args)
@@ -135,7 +151,9 @@ bool ArmMng::client(CStrs& args)
 //----
 bool ArmMng::checkInit()
 {
-    if(data_.hasInit) return true;
+    if(data_.hasInit && (p_arm_!=nullptr))
+        return true;
+
     log_e("Arm not init");
     return false;
 }
@@ -149,7 +167,7 @@ bool ArmMng::setJoints(CStrs& args)
     vector<double> as;
     if(!s2data(kvs["angles"], as)) return false;
     
-    assert(p_arm_!=nullptr);
+    if(!chkInit())return false;
     auto& arm = *p_arm_;
     
     ArmSt st;
@@ -157,12 +175,27 @@ bool ArmMng::setJoints(CStrs& args)
     st.angles.clear();
     for(auto& a: as)
         st.angles.push_back(a);
-
-    if(!kvs.get("grip", st.tip.gripper))
+    //----
+    string sGrip = kvs["grip"];
+    if( sGrip!="" &&  s2d(sGrip, st.tip.gripper))
         return false;
-    double t=0;
-    if(!kvs.get("t", t))return false;
-    return arm.setJoints(st, t);
+    else st.tip.gripper = -1; // -1 for inactive
+    double spd = 1; kvs.get("spd", spd);
+    return arm.setJoints(st, spd);
+}
+//----
+bool ArmMng::setGrip(CStrs& args)
+{
+    KeyVals kvs(args);
+    assert(p_arm_!=nullptr);
+    auto& arm = *p_arm_;
+    
+    string sGrip = kvs["grip"];
+    double d = -1;
+    if( sGrip!="" &&  s2d(sGrip, d))
+        return false;    
+    double spd = 1; kvs.get("spd", spd);
+    return arm.setGrip(d, spd);
 }
 
 //----
@@ -171,21 +204,19 @@ bool ArmMng::moveto(CStrs& args)
     if(!checkInit())
         return false;
 
+    KeyVals kvs(args);
+
     assert(p_arm_!=nullptr);
     auto& arm = *p_arm_;
 
     //----
-    StrTbl kv; parseKV(args, kv);
-    string sxyz = lookup(kv, string("xyz"));
-//    string se = lookup(kv, string("euler"));
-    string sq = lookup(kv, string("quat"));
-    string sgrip = lookup(kv, string("grip"));
+    string sxyz  = kvs["xyz"];
+    string sq    = kvs["quat"];
+    string sgrip = kvs["grip"];
 
     //----
     TipSt st;
-    
-    bool ok = true;
-    
+    bool ok = true;    
     ok &= s2v(sxyz, st.T.t);
     if(!ok)
     {
@@ -194,16 +225,13 @@ bool ArmMng::moveto(CStrs& args)
     }
     //---
     // option
+    st.gripper = -1;
     if(sgrip!="")
         ok &= s2d(sgrip, st.gripper);
 
     if(sq!="")
         ok &=s2q(sq, st.T.q); 
-        // TODO: Euler to be deprecated
-  //  if(se!="")
-    //    st.T.e.set(se);
-   // log_i("run cmd moveto:"+st.str());
-
+    double spd = 1; kvs.get("spd", spd);
     //----
     if(!ok)
     {
@@ -212,7 +240,7 @@ bool ArmMng::moveto(CStrs& args)
     }
 
     //---- run
-    return arm.moveTo(st);
+    return arm.moveTo(st, spd);
 
 }
 

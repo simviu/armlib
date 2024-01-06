@@ -233,5 +233,18 @@ bool ArmTcp::test()
 //----
 bool ArmTcp::setJoints(const ArmSt& st, double t)
 {
-    return true; 
+    string s = "setJoints ";
+    string sas; 
+    for(auto& a :st.angles) sas += f2s(a,1)+",";
+    s += "angles=" + remove(sas, ' ') + " ";
+    s += "grip=" + str(st.tip.gripper) +" ";
+    return send(s);
+}
+
+bool ArmTcp::setGrip(double d, double spd)
+{
+    string s = "setGrip ";
+    s += "grip=" + str(d) +" ";
+    s += "spd=" + str(spd);
+    return send(s);
 }
