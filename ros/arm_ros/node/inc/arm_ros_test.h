@@ -10,6 +10,7 @@ namespace arm_ros{
     protected:
         ros::NodeHandle nh_;
         bool test_moveit_joints();
+        bool test_moveit_grip();
         bool test_moveit_pose();
         bool test_arm_ros();
     };

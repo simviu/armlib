@@ -15,6 +15,10 @@ bool ArmROS::init()
     arm.setGoalPositionTolerance(cfg_.goalToler.pos);
     arm.setGoalOrientationTolerance(cfg_.goalToler.orien);
     arm.setMaxVelocityScalingFactor(cfg_.max_spd_scl);
+
+    auto& grip = *p_grip_;
+    grip.setGoalJointTolerance(cfg_.grip_toler);
+    grip.setMaxVelocityScalingFactor(cfg_.max_spd_scl);
     log_i("  init MoveIt done");    
 
     return true;
@@ -42,12 +46,12 @@ bool ArmROS::setGrip(double d, double spd)
     const float& a0 = cfg_.grip_min;
     const float& a1 = cfg_.grip_max;
     float a = a0 + (a1 - a0)*d;
-    log_d("  set grip :"+ str(toDgr(a)));
+    log_d("  set grip :"+ str(a));
     //---
     auto& grip = *p_grip_;
     grip.setMaxVelocityScalingFactor(spd);
-    grip.setJointValueTarget({a});
-
+    grip.setJointValueTarget({toRad(a)});
+    grip.move();
     return true;
 }
 

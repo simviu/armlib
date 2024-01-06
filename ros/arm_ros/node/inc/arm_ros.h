@@ -24,8 +24,9 @@ namespace arm_ros{
             string sPoseRefFrm = "g_base";
             float max_spd_scl = 0.8;
             //---
-            float grip_min = toRad(-40);
-            float grip_max = toRad(10);
+            float grip_min = -39;
+            float grip_max = 9;
+            float grip_toler = 0.01;
             //---
             struct GoalToler{
                 float pos = 0.01;

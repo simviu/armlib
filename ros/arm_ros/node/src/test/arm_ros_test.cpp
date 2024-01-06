@@ -68,6 +68,46 @@ bool ArmRosTest::test_moveit_joints()
     return true;
 }
 //-----
+bool ArmRosTest::test_moveit_grip()
+{
+    moveit::planning_interface::MoveGroupInterface grip("gripper");
+
+    grip.setGoalJointTolerance(0.01);
+    grip.setMaxVelocityScalingFactor(0.8);
+
+    //----
+    /*
+    ROS_INFO("Moveing to init pose...");
+    arm.setNamedTarget("init_pose");
+    arm.move();
+    ROS_INFO("done");
+    */
+    //----
+    ROS_INFO("Moveing to joint-space goal: joint_positions");
+
+    grip.setJointValueTarget({toRad(-40)});
+    grip.move();
+    sys::sleep(2);
+    //----
+    grip.setJointValueTarget({toRad(10)});
+    grip.move();
+    sys::sleep(2);
+    //-----
+    grip.setJointValueTarget({toRad(-40)});
+    grip.move();
+    sys::sleep(2);
+    //-----
+    // moveit::planning_interface::MoveGroupInterface::Plan plan;
+   // bool success = (arm.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+  //  ROS_INFO_NAMED("moveit_joint_pose_demo", "Visualizing plan 1 (joint space goal) %s", success ? "" : "FAILED");
+  //  if(success){
+  //      arm.execute(plan);
+  //  }
+    //-----    
+    return true;
+}
+
+//-----
 bool ArmRosTest::test_moveit_pose()
 {
     
@@ -172,8 +212,9 @@ void ArmRosTest::run()
     ut::log_i(s);
     //----
     //test_moveit_joints();
+    test_moveit_grip();
     //test_moveit_pose();
-    test_arm_ros();
+    //test_arm_ros();
 
     //-------------------
     //---- test chatter
