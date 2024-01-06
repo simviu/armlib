@@ -20,15 +20,21 @@ namespace arm_ros{
     public:
         struct Cfg{
             string sGroup = "arm_group";
+            string sGrip = "gripper";
             string sPoseRefFrm = "g_base";
             float max_spd_scl = 0.8;
+            //---
+            float grip_min = toRad(-40);
+            float grip_max = toRad(10);
+            //---
             struct GoalToler{
                 float pos = 0.01;
                 float orien = 0.05;
             }; GoalToler goalToler;
         }; Cfg cfg_;
         virtual bool init()override;
-        virtual bool setJoints(const ArmSt& st, double t)override;
+        virtual bool setJoints(const ArmSt& st, double spd=1.0)override;
+        virtual bool setGrip(double d, double spd=1.0)override;
         virtual bool moveTo(const TipSt& ts, float spd=1.0)override;
         virtual bool getSt(ArmSt& st) override;
         virtual bool test()override{ return false; };
@@ -37,10 +43,13 @@ namespace arm_ros{
     protected:      
         Sp<moveit::planning_interface::MoveGroupInterface> 
             p_arm_ = nullptr;
+        Sp<moveit::planning_interface::MoveGroupInterface> 
+            p_grip_ = nullptr;            
         //---
         bool chkInit()const
         {
-            if(p_arm_!=nullptr) return true;
+            if( (p_arm_ !=nullptr) &&
+                (p_grip_!=nullptr) )return true;
             log_e("Arm not init");
             return false;
         }

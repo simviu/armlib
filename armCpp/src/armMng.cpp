@@ -175,11 +175,14 @@ bool ArmMng::setJoints(CStrs& args)
     st.angles.clear();
     for(auto& a: as)
         st.angles.push_back(a);
+
     //----
+    st.tip.gripper = -1; // -1 for inactive
     string sGrip = kvs["grip"];
-    if( sGrip!="" &&  s2d(sGrip, st.tip.gripper))
-        return false;
-    else st.tip.gripper = -1; // -1 for inactive
+    bool ok = true;
+    if( sGrip!="")
+        ok = s2d(sGrip, st.tip.gripper);
+    if(!ok) return false;
     double spd = 1; kvs.get("spd", spd);
     return arm.setJoints(st, spd);
 }
@@ -192,8 +195,10 @@ bool ArmMng::setGrip(CStrs& args)
     
     string sGrip = kvs["grip"];
     double d = -1;
-    if( sGrip!="" &&  s2d(sGrip, d))
-        return false;    
+    bool ok = true;
+    if( sGrip!="")  
+        ok = s2d(sGrip, d);
+    if(!ok) return false;    
     double spd = 1; kvs.get("spd", spd);
     return arm.setGrip(d, spd);
 }

@@ -7,10 +7,11 @@ bool ArmROS::init()
 {
     log_i("ArmROS init MoveIt...");    
 
-    p_arm_ = mkSp<moveit::planning_interface::MoveGroupInterface>(cfg_.sGroup);
+    p_arm_  = mkSp<moveit::planning_interface::MoveGroupInterface>(cfg_.sGroup);
+    p_grip_ = mkSp<moveit::planning_interface::MoveGroupInterface>(cfg_.sGrip);
     auto& arm = * p_arm_;
     arm.allowReplanning(true);
-    arm.setPoseReferenceFrame("g_base");
+    arm.setPoseReferenceFrame(cfg_.sPoseRefFrm);
     arm.setGoalPositionTolerance(cfg_.goalToler.pos);
     arm.setGoalOrientationTolerance(cfg_.goalToler.orien);
     arm.setMaxVelocityScalingFactor(cfg_.max_spd_scl);
@@ -19,10 +20,12 @@ bool ArmROS::init()
     return true;
 }
 //-----
-bool ArmROS::setJoints(const ArmSt& st, double t)
+bool ArmROS::setJoints(const ArmSt& st, double spd)
 {
     if(!chkInit()) return false;
     auto& arm = * p_arm_;
+
+    arm.setMaxVelocityScalingFactor(spd);
 
     //std::vector<double> arm_joint_positions = {0.9, -1.4, -0.7, 0.8, -0.5, -0.6};
     vector<double> js;
@@ -33,10 +36,27 @@ bool ArmROS::setJoints(const ArmSt& st, double t)
     return true;
 }
 //----
+bool ArmROS::setGrip(double d, double spd)
+{
+    if(!chkInit()) return false;
+    const float& a0 = cfg_.grip_min;
+    const float& a1 = cfg_.grip_max;
+    float a = a0 + (a1 - a0)*d;
+    log_d("  set grip :"+ str(toDgr(a)));
+    //---
+    auto& grip = *p_grip_;
+    grip.setMaxVelocityScalingFactor(spd);
+    grip.setJointValueTarget({a});
+
+    return true;
+}
+
+//----
 bool ArmROS::moveTo(const TipSt& ts, float spd)
 {
     if(!chkInit()) return false;
     auto& arm = * p_arm_;
+    arm.setMaxVelocityScalingFactor(spd);
 
     //-----
     arm.setStartStateToCurrentState();
