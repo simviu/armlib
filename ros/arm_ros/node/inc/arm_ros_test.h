@@ -6,7 +6,7 @@
 namespace arm_ros{
     class ArmRosTest{
     public:
-        void run();
+        bool run();
     protected:
         ros::NodeHandle nh_;
         bool test_moveit_joints();

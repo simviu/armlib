@@ -202,7 +202,7 @@ bool ArmRosTest::test_moveit_pose()
 //-------------
 // run()
 //-------------
-void ArmRosTest::run()
+bool ArmRosTest::run()
 {   
     ros::AsyncSpinner spinner(1);
     spinner.start();
@@ -211,25 +211,42 @@ void ArmRosTest::run()
     s += "CurDir:"+ sys::pwd();
     ut::log_i(s);
     //----
-    //test_moveit_joints();
-    test_moveit_grip();
-    //test_moveit_pose();
-    //test_arm_ros();
-
+    s = "Test choices:\n"; 
+    s += "  1) test_moveit_joints()\n";
+    s += "  2) test_moveit_grip()\n";
+    s += "  3) test_moveit_pose()\n";
+    s += "  4) test_arm_ros()\n"; 
+    log_i(s);
+    std::cout << "Enter choice:";
+    char c=0;
+    std::cin >> c;
+    std::cout << "entered:" << c << endl;
+    //----
+    switch(int(c-'0'))
+    {
+        case 1: test_moveit_joints(); break;
+        case 2: test_moveit_grip(); break;
+        case 3: test_moveit_pose(); break;
+        case 4: test_arm_ros(); break;
+        default : 
+         {  log_e("unknown choice"); return false; break; }
+    }
     //-------------------
     //---- test chatter
     //  ros::Subscriber subCmd = 
     //    nh_.subscribe(lc_.topic.cmd, 1000, vrp_cmd_cb);
-
     //---- publisher
     //pub_ = nh_.advertise<std_msgs::String>(lc_.topic.vision, 1000);
 
 
     //---- ROS mainloop
+    /*
     log_d("ros spin...");
     ros::spin();
     log_d("ros spin done.");
-
+    */
+    sys::sleep(2);
+    return true;
 
 }
 
