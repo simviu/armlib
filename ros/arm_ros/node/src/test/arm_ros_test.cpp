@@ -44,27 +44,11 @@ bool ArmRosTest::test_moveit_joints()
     arm.setGoalJointTolerance(0.01);
     arm.setMaxVelocityScalingFactor(0.8);
 
-    //----
-    /*
-    ROS_INFO("Moveing to init pose...");
-    arm.setNamedTarget("init_pose");
-    arm.move();
-    ROS_INFO("done");
-    */
-    //----
     ROS_INFO("Moveing to joint-space goal: joint_positions");
 
     std::vector<double> arm_joint_positions = {0.9, -1.4, -0.7, 0.8, -0.5, -0.6};
     arm.setJointValueTarget(arm_joint_positions);
     arm.move();
-    //-----
-    // moveit::planning_interface::MoveGroupInterface::Plan plan;
-   // bool success = (arm.plan(plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
-  //  ROS_INFO_NAMED("moveit_joint_pose_demo", "Visualizing plan 1 (joint space goal) %s", success ? "" : "FAILED");
-  //  if(success){
-  //      arm.execute(plan);
-  //  }
-    //-----    
     return true;
 }
 //-----
@@ -74,22 +58,13 @@ bool ArmRosTest::test_moveit_grip()
 
     grip.setGoalJointTolerance(0.01);
     grip.setMaxVelocityScalingFactor(0.8);
-
-    //----
-    /*
-    ROS_INFO("Moveing to init pose...");
-    arm.setNamedTarget("init_pose");
-    arm.move();
-    ROS_INFO("done");
-    */
-    //----
     ROS_INFO("Moveing to joint-space goal: joint_positions");
 
     grip.setJointValueTarget({toRad(-40)});
     grip.move();
     sys::sleep(2);
     //----
-    grip.setJointValueTarget({toRad(10)});
+    grip.setJointValueTarget({toRad(-10)});
     grip.move();
     sys::sleep(2);
     //-----
