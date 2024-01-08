@@ -37,7 +37,7 @@ void ArmMng::init_cmds()
     //----
     string sH = "angles=j1,j2,j3,j4,j5,j6 [grip=<GRIP>] [spd=0..1] \n";
     sH += "  angles are degree\n";
-    sH += "  GRIP: [close,open] => [0, 1.0]";
+    sH += "  GRIP: [open,close] => [0, 1.0]";
     add("setJoints", mkSp<Cmd>(sH,
     [&](CStrs& args)->bool{ return setJoints(args); }));
     

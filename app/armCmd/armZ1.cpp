@@ -8,7 +8,7 @@ using namespace UNITREE_ARM;
 
 namespace{
     struct LCfg{
-        float grip_scl = -0.6; // 0 close, 1 open
+        float grip_scl = 0.6; // 1 close, 0 open
         
         struct JointsCtrl{
             double dt = 0.002;
